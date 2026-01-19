@@ -29,6 +29,10 @@ public class RobotContainer {
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
+    private final SwerveRequest.RobotCentric robotCentricDrive = new SwerveRequest.RobotCentric()
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+
     private final Telemetry logger = new Telemetry(MaxSpeed);
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -42,11 +46,16 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-OI.getRightJoystickX() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-OI.getRightJoystickY() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-OI.getLeftJoystickX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            // drivetrain.applyRequest(() ->
+            //     drive.withVelocityX(-OI.getRightJoystickX() * MaxSpeed) // Drive forward with negative Y (forward)
+            //         .withVelocityY(-OI.getRightJoystickY() * MaxSpeed) // Drive left with negative X (left)
+            //         .withRotationalRate(-OI.getLeftJoystickX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            // )
+
+            drivetrain.applyRequest(() -> 
+                robotCentricDrive.withVelocityX(-OI.getRightJoystickX() * MaxSpeed) // Drive forward with negative Y (forward)
+                     .withVelocityY(-OI.getRightJoystickY() * MaxSpeed) // Drive left with negative X (left)
+                     .withRotationalRate(-OI.getLeftJoystickX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -56,7 +65,7 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
-
+ 
         // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         // joystick.b().whileTrue(drivetrain.applyRequest(() ->
         //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))

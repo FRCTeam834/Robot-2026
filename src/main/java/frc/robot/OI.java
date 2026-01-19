@@ -19,16 +19,18 @@ public class OI {
     public static final double getLeftJoystickX () {
         double raw = leftJoystick.getX();
         if (Math.abs(raw) < flightJoystickDeadzone) raw = 0.0;
-        return calculateUnitQuad(raw);
+        //return calculateUnitQuad(raw);
+        return raw;
     }
 
     /**
      * @return left joystick y input
      */
     public static final double getLeftJoystickY () {
-        double raw = -leftJoystick.getY();
+        double raw = leftJoystick.getY();
         if (Math.abs(raw) < flightJoystickDeadzone) raw = 0.0;
-        return calculateUnitQuad(raw);
+       // return calculateUnitQuad(raw);
+        return raw;
     }
 
     /**
@@ -37,16 +39,18 @@ public class OI {
     public static final double getRightJoystickX () {
         double raw = rightJoystick.getX();
         if (Math.abs(raw) < flightJoystickDeadzone) raw = 0.0;
-        return calculateUnitQuad(raw);
+        //return calculateUnitQuad(raw);
+        return raw;
     }
 
     /**
      * @return right joystick y input
      */
     public static final double getRightJoystickY () {
-        double raw = -rightJoystick.getY();
+        double raw = rightJoystick.getY();
         if (Math.abs(raw) < flightJoystickDeadzone) raw = 0.0;
-        return calculateUnitQuad(raw);
+        //return calculateUnitQuad(raw);
+        return raw;
     }
 
     public static final double calculateUnitQuad (double value) {
