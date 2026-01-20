@@ -8,6 +8,7 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,6 +17,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import frc.robot.Constants;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
@@ -30,6 +33,9 @@ public class Module {
   private final Alert turnDisconnectedAlert;
   private final Alert turnEncoderDisconnectedAlert;
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
+
+  private final LoggedTunableNumber turn_kP = new LoggedTunableNumber("turn_kP");
+  private final LoggedTunableNumber drive_kP = new LoggedTunableNumber("drive_kP");
 
   public Module(
       ModuleIO io,
@@ -50,11 +56,25 @@ public class Module {
         new Alert(
             "Disconnected turn encoder on module " + Integer.toString(index) + ".",
             AlertType.kError);
+
+    turn_kP.initDefault(0);
+    drive_kP.initDefault(0);
   }
 
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
+
+    if (Constants.tuningMode && drive_kP.hasChanged(hashCode())) {
+      var driveConfig = new Slot0Configs();
+      driveConfig.kP = drive_kP.get();
+      io.updateDrivePID(driveConfig);
+    }
+    if (Constants.tuningMode && turn_kP.hasChanged(hashCode())) {
+      var turnConfig = new Slot0Configs();
+      turnConfig.kP = turn_kP.get();
+      io.updateTurnPID(turnConfig);
+    }
 
     // Calculate positions for odometry
     int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together

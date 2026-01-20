@@ -8,6 +8,7 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import edu.wpi.first.math.MathUtil;
@@ -34,8 +35,8 @@ public class ModuleIOSim implements ModuleIO {
   private static final double DRIVE_KV = 1.0 / Units.rotationsToRadians(1.0 / DRIVE_KV_ROT);
   private static final double TURN_KP = 8.0;
   private static final double TURN_KD = 0.0;
-  private static final DCMotor DRIVE_GEARBOX = DCMotor.getKrakenX60Foc(1);
-  private static final DCMotor TURN_GEARBOX = DCMotor.getKrakenX60Foc(1);
+  private static final DCMotor DRIVE_GEARBOX = DCMotor.getKrakenX60(1);
+  private static final DCMotor TURN_GEARBOX = DCMotor.getKrakenX44(1);
 
   private final DCMotorSim driveSim;
   private final DCMotorSim turnSim;
@@ -134,5 +135,16 @@ public class ModuleIOSim implements ModuleIO {
   public void setTurnPosition(Rotation2d rotation) {
     turnClosedLoop = true;
     turnController.setSetpoint(rotation.getRadians());
+  }
+
+  @Override
+  public void updateDrivePID(Slot0Configs config) {
+    driveController.setP(config.kP);
+  }
+  ;
+
+  @Override
+  public void updateTurnPID(Slot0Configs config) {
+    turnController.setP(config.kP);
   }
 }
