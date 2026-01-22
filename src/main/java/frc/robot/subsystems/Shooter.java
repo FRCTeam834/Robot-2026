@@ -11,8 +11,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.Voltage;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.VoltageUnit;
+//import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -97,11 +97,11 @@ public class Shooter extends SubsystemBase {
           log -> {
             log.motor("ShooterFlywheel")
               .voltage(
-                Units.volts.of(
-                  shooterFlywheel.getMotorVoltage().getValue()))
-              .velocity(
+                Units.Volts.of(
+                  shooterFlywheel.getMotorVoltage().getValueAsDouble()))
+              .angularVelocity(
                 Units.RotationsPerSecond.of(
-                  shooterFlywheel.getVelocity().getValue()))
+                  shooterFlywheel.getVelocity().getValueAsDouble()));
           },
           this
         )
@@ -128,8 +128,8 @@ public class Shooter extends SubsystemBase {
 
   //stop all shooter motors
   public void stop(){
-    shooterFlywheel.set(0);
-    hoodPivot.set(0);
+    shooterFlywheel.stopMotor();
+    hoodPivot.stopMotor();
   }
 
   //SysId Commands (RETURN Command)
@@ -151,6 +151,10 @@ public class Shooter extends SubsystemBase {
   }
 
   
+
+  //pose estimation at zero
+  //make something to input a distance and output a velocity
+
   //akshaya added end
 }
 // Kraken x60 for shooter flywheels
