@@ -49,8 +49,6 @@ public interface ModuleIO {
   public default void setTurnPosition(Rotation2d rotation) {}
 
   public default void updateDrivePID(Slot0Configs config) {}
-  ;
 
   public default void updateTurnPID(Slot0Configs config) {}
-  ;
 }

@@ -57,8 +57,8 @@ public class Module {
             "Disconnected turn encoder on module " + Integer.toString(index) + ".",
             AlertType.kError);
 
-    turn_kP.initDefault(0);
-    drive_kP.initDefault(0);
+    turn_kP.initDefault(80);
+    drive_kP.initDefault(0.1);
   }
 
   public void periodic() {
