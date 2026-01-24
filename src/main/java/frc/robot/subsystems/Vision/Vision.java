@@ -8,17 +8,22 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
-  // List of hardware
+
+  // holds all camera IO interfaces
   private final VisionIO[] io;
-  // Data storage list
+
+  // holds logged inputs for each camera
   private final VisionIOInputsAutoLogged[] inputs;
 
+  // any number of IO inputs
   public Vision(VisionIO... io) {
+
     this.io = io;
-    // storage size
+    
+    // inputs array with the same size
     this.inputs = new VisionIOInputsAutoLogged[io.length];
 
-    // Create each data folder
+    // create empty input object for each camera
     for (int i = 0; i < io.length; i++) {
       inputs[i] = new VisionIOInputsAutoLogged();
     }
@@ -26,16 +31,22 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Loop through hardware devices (Cameras)
+
+    // Loop through every camera 
     for (int i = 0; i < io.length; i++) {
-      // Get new data
+
+      // Refresh data from hardware
       io[i].updateInputs(inputs[i]);
-      // Save to logger
+      
+      // Send all raw data to the logger
       Logger.processInputs("Vision/Camera" + i, inputs[i]);
-      // If target is found, record to AdvantageScope
-      if (inputs[i].poseEstimates.length > 0) {
-        // Record array to AdvantageScope
-        Logger.recordOutput("Vision/PoseEstimates/Camera" + i, inputs[i].poseEstimates);
+
+      // Check if camera actually sees target
+      if (inputs[i].hasTarget && inputs[i].poseEstimate != null) {
+
+        // Extract ".pose" field (Pose2d) from the wrapper
+        Logger.recordOutput("Vision/PoseEstimate/Camera" + i, inputs[i].poseEstimate.pose);
+        
       }
     }
   }
