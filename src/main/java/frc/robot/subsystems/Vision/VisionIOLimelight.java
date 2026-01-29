@@ -13,11 +13,11 @@ public class VisionIOLimelight implements VisionIO {
 
   // Updates inputs object with new data
   public void updateInputs(VisionIOInputs inputs) {
+    var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
     // Check if the limelight sees a target and save it
     inputs.hasTarget = LimelightHelpers.getTV(name);
-
-    // Get pose estimate from MegaTag2
-    // Grab even if hasTarget == false
-    inputs.poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    inputs.pose = estimate.pose;
+    inputs.tagCount = estimate.tagCount;
+    inputs.timestampSeconds = estimate.timestampSeconds;
   }
 }

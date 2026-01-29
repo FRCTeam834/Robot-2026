@@ -19,7 +19,7 @@ public class Vision extends SubsystemBase {
   public Vision(VisionIO... io) {
 
     this.io = io;
-    
+
     // inputs array with the same size
     this.inputs = new VisionIOInputsAutoLogged[io.length];
 
@@ -32,21 +32,20 @@ public class Vision extends SubsystemBase {
   @Override
   public void periodic() {
 
-    // Loop through every camera 
+    // Loop through every camera
     for (int i = 0; i < io.length; i++) {
-
       // Refresh data from hardware
       io[i].updateInputs(inputs[i]);
-      
+
       // Send all raw data to the logger
       Logger.processInputs("Vision/Camera" + i, inputs[i]);
 
       // Check if camera actually sees target
-      if (inputs[i].hasTarget && inputs[i].poseEstimate != null) {
-
-        // Extract ".pose" field (Pose2d) from the wrapper
-        Logger.recordOutput("Vision/PoseEstimate/Camera" + i, inputs[i].poseEstimate.pose);
-        
+      if (inputs[i].hasTarget && inputs[i].tagCount > 0) {
+        Logger.recordOutput("Vision/PoseEstimate/CameraPose" + i, inputs[i].pose);
+        Logger.recordOutput("Vision/PoseEstimate/CameraTagCount" + i, inputs[i].tagCount);
+        Logger.recordOutput("Vision/PoseEstimate/CameraTimestampSeconds", inputs[i].timestampSeconds);
+        Logger.recordOutput("Vision/PoseEstimate/CameraHasTarget", inputs[i].hasTarget);
       }
     }
   }

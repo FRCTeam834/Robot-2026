@@ -1,17 +1,17 @@
 package frc.robot.subsystems.Vision;
 
-import frc.robot.LimelightHelpers;
+import edu.wpi.first.math.geometry.Pose2d;
+
 import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionIO {
   // tells AdvantageKit to log this class
   @AutoLog
   public static class VisionIOInputs {
-    // True if camera sees tag
     public boolean hasTarget = false;
-    
-    // Calculated position of robot
-    public LimelightHelpers.PoseEstimate poseEstimate = new LimelightHelpers.PoseEstimate();
+    public int tagCount = 0;
+    public Pose2d pose = new Pose2d();
+    public double timestampSeconds = 0.0;
   }
 
   // Method to update the inputs variable
