@@ -261,7 +261,7 @@ public class Drive extends SubsystemBase {
     return states;
   }
 
-  @AutoLogOutput(key = "SwerveStates/WrappedMeasured") 
+  @AutoLogOutput(key = "SwerveStates/WrappedMeasured")
   private SwerveModuleState[] getModuleRotationsWrapped() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
