@@ -1,4 +1,4 @@
-package frc.robot.subsystems.shooter;
+package frc.robot.subsystems.Shooter;
 
 import edu.wpi.first.units.VoltageUnit;
 import org.littletonrobotics.junction.AutoLog;
