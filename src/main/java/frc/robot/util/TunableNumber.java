@@ -26,14 +26,15 @@
 //         this.defaultValue = defaultValue;
 //         hasDefaultValue = true;
 //         if (Constants.robotMode == RobotMode.DEVELOPMENT) {
-//             SmartDashboard.putNumber(key, 
+//             SmartDashboard.putNumber(key,
 //                 SmartDashboard.getNumber(key, defaultValue));
 //         }
 //     }
 
 //     public double get () {
 //         if (!hasDefaultValue) {
-//             throw new RuntimeException("No default value set for TunableNumber with key: " + key);
+//             throw new RuntimeException("No default value set for TunableNumber with key: " +
+// key);
 //         }
 //         if (Constants.robotMode == RobotMode.DEVELOPMENT) {
 //             return SmartDashboard.getNumber(key, defaultValue);
