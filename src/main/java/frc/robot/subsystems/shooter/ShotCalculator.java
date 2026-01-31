@@ -4,5 +4,41 @@
 
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+
 /** Add your docs here. */
-public class ShotCalculator {}
+public class ShotCalculator {
+    private static InterpolatingDoubleTreeMap shotAngleTable = new InterpolatingDoubleTreeMap();
+    private static InterpolatingDoubleTreeMap shotSpeedTable = new InterpolatingDoubleTreeMap();
+
+    static {
+        /** key: <horizontal distance m>, value: <pivot angle rad> */
+        shotAngleTable.put(0.0, 0.75);
+        shotAngleTable.put(1.998, 0.743);
+        shotAngleTable.put(2.235, 0.7148);
+        shotAngleTable.put(2.576, 0.6854);
+        shotAngleTable.put(2.872, 0.6213);
+        shotAngleTable.put(3.27, 0.6);
+        shotAngleTable.put(3.508, 0.565);
+        shotAngleTable.put(3.976, 0.523);
+        shotAngleTable.put(100.0, 0.523);
+
+        /** key: <horizontal distance m>, value: <rpm> */
+        shotSpeedTable.put(0.0, 4000.0);
+        shotSpeedTable.put(1.998, 4000.0);
+        shotSpeedTable.put(2.235, 4000.0);
+        shotSpeedTable.put(3.27, 4200.0);
+        shotSpeedTable.put(3.976, 4600.0);
+        shotSpeedTable.put(100.0, 4600.0);
+    }
+
+    public double angleForDist (double dist) {
+        return shotAngleTable.get(dist);
+    }
+
+    public double rpmForDist (double dist) {
+        return shotSpeedTable.get(dist);
+    }
+
+    
+}

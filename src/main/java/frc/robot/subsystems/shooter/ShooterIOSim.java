@@ -13,7 +13,7 @@ public class ShooterIOSim implements ShooterIO {
   private static final DCMotor hoodMotorModel =
       DCMotor.getKrakenX60(1); // Name or Number of motors?
   private static final DCMotor flywheelMotorModel = DCMotor.getKrakenX60(1);
-
+  
   // Create Sim; CHANGE PLACEHOLDER VALUES LATER
   private static final SingleJointedArmSim hoodSim =
       new SingleJointedArmSim(

@@ -22,8 +22,8 @@ public class Shooter extends SubsystemBase {
   private final SysIdRoutine flywheelSysId;
 
   // Interpolating Tables
-  private static InterpolatingDoubleTreeMap shotAngleTable = new InterpolatingDoubleTreeMap();
-  private static InterpolatingDoubleTreeMap shotSpeedTable = new InterpolatingDoubleTreeMap();
+  public static InterpolatingDoubleTreeMap shotAngleTable = new InterpolatingDoubleTreeMap();
+  public static InterpolatingDoubleTreeMap shotSpeedTable = new InterpolatingDoubleTreeMap();
 
   // PID Shooter
   private static final LoggedTunableNumber flywheelkP =
@@ -37,30 +37,6 @@ public class Shooter extends SubsystemBase {
   private static final LoggedTunableNumber hoodkP = new LoggedTunableNumber("Shooter/hoodkP");
   private static final LoggedTunableNumber hoodkS = new LoggedTunableNumber("Shooter/hoodkS");
   private static final LoggedTunableNumber hoodkV = new LoggedTunableNumber("Shooter/hoodkV");
-  // yeah kMaxV and kMaxA, but why's it in radians
-  // Units.degreesToRadians(360) = kMaxV and  Units.degreesToRadians(300) = kMaxA
-
-  // initializing values for shot table -- THESE #s ARE IRRELEVANT AND NOT TESTED
-  static {
-    /** key: <horizontal distance m>, value: <pivot angle rad> */
-    shotAngleTable.put(0.0, 0.75);
-    shotAngleTable.put(1.998, 0.743);
-    shotAngleTable.put(2.235, 0.7148);
-    shotAngleTable.put(2.576, 0.6854);
-    shotAngleTable.put(2.872, 0.6213);
-    shotAngleTable.put(3.27, 0.6);
-    shotAngleTable.put(3.508, 0.565);
-    shotAngleTable.put(3.976, 0.523);
-    shotAngleTable.put(100.0, 0.523);
-
-    /** key: <horizontal distance m>, value: <rpm> */
-    shotSpeedTable.put(0.0, 4000.0);
-    shotSpeedTable.put(1.998, 4000.0);
-    shotSpeedTable.put(2.235, 4000.0);
-    shotSpeedTable.put(3.27, 4200.0);
-    shotSpeedTable.put(3.976, 4600.0);
-    shotSpeedTable.put(100.0, 4600.0);
-  }
 
   // Shooter Constructor
   public Shooter(ShooterIO io) {
