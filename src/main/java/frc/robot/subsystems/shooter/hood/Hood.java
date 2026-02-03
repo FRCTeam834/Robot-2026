@@ -4,11 +4,11 @@
 
 package frc.robot.subsystems.shooter.hood;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import frc.robot.Constants;
 
 public class Hood extends SubsystemBase {
   private final HoodIO io;
@@ -27,12 +27,12 @@ public class Hood extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
-    Logger.processInputs("Hood", inputs); 
+    Logger.processInputs("Hood", inputs);
 
     if (Constants.tuningMode && hood_kP.hasChanged(hashCode())) {
       var hoodConfig = new Slot0Configs();
       hoodConfig.kP = hood_kP.get();
-      io.updateHoodPID(hoodConfig); //FIX PID IMPLEMENTATION
+      io.updateHoodPID(hoodConfig); // FIX PID IMPLEMENTATION
     }
   }
 }

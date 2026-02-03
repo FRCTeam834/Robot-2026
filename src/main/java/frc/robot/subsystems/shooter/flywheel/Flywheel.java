@@ -4,33 +4,34 @@
 
 package frc.robot.subsystems.shooter.flywheel;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.subsystems.shooter.hood.HoodIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.Logger;
 
 public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
 
   private static final LoggedTunableNumber flywheelkP =
-  new LoggedTunableNumber("Flywheel/flywheelkP");
+      new LoggedTunableNumber("Flywheel/flywheelkP");
   private static final LoggedTunableNumber flywheelkS =
-  new LoggedTunableNumber("Flywheel/flywheelkS");
+      new LoggedTunableNumber("Flywheel/flywheelkS");
   private static final LoggedTunableNumber flywheelkV =
-  new LoggedTunableNumber("Flywheel/flywheelkV");
+      new LoggedTunableNumber("Flywheel/flywheelkV");
 
   public Flywheel(FlywheelIO io) {
     this.io = io;
-    
-  //Flywheel SysId Routine
+
+    // Flywheel SysId Routine
     flywheelSysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                null, null, null, (state) -> Logger.recordOutput("FlywheelSysIdTestState", state.toString())),
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput("FlywheelSysIdTestState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> io.setFlywheelVoltage(voltage.in(Units.Volts)), null, this));
   }
@@ -41,22 +42,21 @@ public class Flywheel extends SubsystemBase {
   }
 
   // Flywheel SysId Commands
-    public Command flywheelQuasistaticForward() {
-      return flywheelSysId.quasistatic(SysIdRoutine.Direction.kForward);
-    }
+  public Command flywheelQuasistaticForward() {
+    return flywheelSysId.quasistatic(SysIdRoutine.Direction.kForward);
+  }
 
-    public Command flywheelQuasistaticReverse() {
-      return flywheelSysId.quasistatic(SysIdRoutine.Direction.kReverse);
-    }
+  public Command flywheelQuasistaticReverse() {
+    return flywheelSysId.quasistatic(SysIdRoutine.Direction.kReverse);
+  }
 
-    public Command sysIdFlywheelDynamicForward() {
-      return flywheelSysId.dynamic(SysIdRoutine.Direction.kForward);
-    }
+  public Command sysIdFlywheelDynamicForward() {
+    return flywheelSysId.dynamic(SysIdRoutine.Direction.kForward);
+  }
 
-    public Command sysIdFlywheelDynamicReverse() {
-      return flywheelSysId.dynamic(SysIdRoutine.Direction.kReverse);
-    }
-
+  public Command sysIdFlywheelDynamicReverse() {
+    return flywheelSysId.dynamic(SysIdRoutine.Direction.kReverse);
+  }
 
   public Flywheel() {}
 }

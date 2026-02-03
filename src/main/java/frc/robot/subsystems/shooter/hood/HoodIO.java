@@ -1,8 +1,8 @@
 package frc.robot.subsystems.shooter.hood;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.units.VoltageUnit;
 import org.littletonrobotics.junction.AutoLog;
-import com.ctre.phoenix6.configs.Slot0Configs;
 
 public interface HoodIO {
   @AutoLog
