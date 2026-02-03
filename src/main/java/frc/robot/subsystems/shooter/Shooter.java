@@ -32,7 +32,7 @@
 //   private static final LoggedTunableNumber flywheelkS =
 //       new LoggedTunableNumber("Shooter/flywheelkS");
 //   private static final LoggedTunableNumber flywheelkV =
-//       new LoggedTunableNumber("Shotter/flywheelkV");
+//       new LoggedTunableNumber("Shooter/flywheelkV");
 
 //   // PID Hood
 //   private static final LoggedTunableNumber hoodkP = new LoggedTunableNumber("Shooter/hoodkP");

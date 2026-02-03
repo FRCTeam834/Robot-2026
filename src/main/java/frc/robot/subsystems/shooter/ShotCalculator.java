@@ -39,4 +39,14 @@ public class ShotCalculator {
   public double rpmForDist(double dist) {
     return shotSpeedTable.get(dist);
   }
+
+
+  /*  public boolean atSetpoint(double distance) {
+    double setpointRPM = shotSpeedTable.get(distance);
+      double setpointAngle = shotAngleTable.get(distance);
+      return Math.abs(setpointRPM - getCurrentTopRollerSpeed())
+        && Math.abs(setpointRPM - getCurrentButtonRollerSpeed())
+        && Math.abs(setpointAngle - getCurrentPivotAngle()) <= toleranceAngle;
+   } */
+
 }
