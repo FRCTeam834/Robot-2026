@@ -25,7 +25,7 @@ public class Flywheel extends SubsystemBase {
     this.io = io;
 
     // Flywheel SysId Routine
-    flywheelSysId =
+    final SysIdRoutine flywheelSysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
                 null,
@@ -42,19 +42,19 @@ public class Flywheel extends SubsystemBase {
   }
 
   // Flywheel SysId Commands
-  public Command flywheelQuasistaticForward() {
+  public Command flywheelQuasistaticForward(final SysIdRoutine flywheelSysId) {
     return flywheelSysId.quasistatic(SysIdRoutine.Direction.kForward);
   }
 
-  public Command flywheelQuasistaticReverse() {
+  public Command flywheelQuasistaticReverse(final SysIdRoutine flywheelSysId) {
     return flywheelSysId.quasistatic(SysIdRoutine.Direction.kReverse);
   }
 
-  public Command sysIdFlywheelDynamicForward() {
+  public Command sysIdFlywheelDynamicForward(final SysIdRoutine flywheelSysId) {
     return flywheelSysId.dynamic(SysIdRoutine.Direction.kForward);
   }
 
-  public Command sysIdFlywheelDynamicReverse() {
+  public Command sysIdFlywheelDynamicReverse(final SysIdRoutine flywheelSysId) {
     return flywheelSysId.dynamic(SysIdRoutine.Direction.kReverse);
   }
 
