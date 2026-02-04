@@ -4,16 +4,21 @@
 
 package frc.robot.subsystems.shooter.flywheel;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
-  private static final DCMotor flywheelMotorModel = DCMotor.getKrakenX60(1);
+  private static final DCMotor flywheelMotorModel = DCMotor.getKrakenX60(9);
+
+  public double flywheelVolts = 0.0;
 
   public FlywheelIOTalonFX() {}
 
-  private static final FlywheelSim flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(flywheelMotorModel, .025, 1), flywheelMotorModel);
+  private static final FlywheelSim flywheelSim =
+      new FlywheelSim(
+          LinearSystemId.createFlywheelSystem(flywheelMotorModel, .025, 1), flywheelMotorModel);
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
@@ -21,5 +26,11 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     inputs.flywheelConnected = true;
     inputs.flywheelVelocityRadsPerSec = flywheelSim.getAngularVelocityRadPerSec();
     inputs.flywheelAppliedVoltage = flywheelSim.getInputVoltage();
+  }
+
+  @Override
+  public void setFlywheelVoltage(double volts) {
+    this.flywheelVolts = MathUtil.clamp(volts, -12.0, 12.0);
+    flywheelSim.setInputVoltage(this.flywheelVolts);
   }
 }

@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.shooter.flywheel;
 
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -25,7 +27,7 @@ public class Flywheel extends SubsystemBase {
     this.io = io;
 
     // Flywheel SysId Routine
-    final SysIdRoutine flywheelSysId =
+    SysIdRoutine flywheelSysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
                 null,
@@ -33,7 +35,7 @@ public class Flywheel extends SubsystemBase {
                 null,
                 (state) -> Logger.recordOutput("FlywheelSysIdTestState", state.toString())),
             new SysIdRoutine.Mechanism(
-                (voltage) -> io.setFlywheelVoltage(voltage.in(Units.Volts)), null, this));
+                (Voltage voltage) -> io.setFlywheelVoltage(voltage.in(Units.Volts)), null, this));
   }
 
   public void periodic() {
@@ -42,21 +44,19 @@ public class Flywheel extends SubsystemBase {
   }
 
   // Flywheel SysId Commands
-  public Command flywheelQuasistaticForward(final SysIdRoutine flywheelSysId) {
+  public Command flywheelQuasistaticForward(SysIdRoutine flywheelSysId) {
     return flywheelSysId.quasistatic(SysIdRoutine.Direction.kForward);
   }
 
-  public Command flywheelQuasistaticReverse(final SysIdRoutine flywheelSysId) {
+  public Command flywheelQuasistaticReverse(SysIdRoutine flywheelSysId) {
     return flywheelSysId.quasistatic(SysIdRoutine.Direction.kReverse);
   }
 
-  public Command sysIdFlywheelDynamicForward(final SysIdRoutine flywheelSysId) {
+  public Command sysIdFlywheelDynamicForward(SysIdRoutine flywheelSysId) {
     return flywheelSysId.dynamic(SysIdRoutine.Direction.kForward);
   }
 
-  public Command sysIdFlywheelDynamicReverse(final SysIdRoutine flywheelSysId) {
+  public Command sysIdFlywheelDynamicReverse(SysIdRoutine flywheelSysId) {
     return flywheelSysId.dynamic(SysIdRoutine.Direction.kReverse);
   }
-
-  public Flywheel() {}
 }
