@@ -1,21 +1,21 @@
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems.shooter.flywheel;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
-public class FlywheelIOTalonFX implements FlywheelIO {
+public class FlywheelIOSim implements FlywheelIO {
   private static final DCMotor flywheelMotorModel = DCMotor.getKrakenX60(9);
 
   public double flywheelVolts = 0.0;
 
-  public FlywheelIOTalonFX() {}
+  public FlywheelIOSim() {}
 
   private static final FlywheelSim flywheelSim =
       new FlywheelSim(
@@ -33,9 +33,5 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   public void setFlywheelVoltage(double volts) {
     this.flywheelVolts = MathUtil.clamp(volts, -12.0, 12.0);
     flywheelSim.setInputVoltage(this.flywheelVolts);
-  }
-
-  public void updateFlywheelPID (Slot0Configs config) {
-    flywheelMotorModel.talonFXConfigurator().apply(config);
   }
 }

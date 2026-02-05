@@ -11,35 +11,23 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class HoodIONeo extends SubsystemBase {
+public class HoodIOSparkMax implements HoodIO {
+  private CANSparkMax 
+
 
   // Motor Models
   private static final DCMotor hoodMotorModel = DCMotor.getNeo550(1); // Possibly Change Later
-
-  // Create Sim; CHANGE PLACEHOLDER VALUES LATER
-  private static final SingleJointedArmSim hoodSim =
-      new SingleJointedArmSim(
-          hoodMotorModel,
-          1.0,
-          .004,
-          .33,
-          0.0,
-          Units.degreesToRadians(45),
-          false,
-          0,
-          null); // Placeholder Values for now
 
   // Variables
   private double hoodVolts = 0.0;
 
   // Constructor
-  public HoodIONeo() {}
+  public HoodIOSparkMax() {}
 
   @Override
-  public void updateInputs(HoodIOInputs inputs) {
+  public void updateInputs(HoodIOSparkMax inputs) {
     // Update sim state
-    hoodSim.update(
-        0.02); // if we add a constants folder, lable this as double loopPeriodSecs = 0.05 inside
+    hoodSim.update(0.02); // if we add a constants folder, lable this as double loopPeriodSecs = 0.05 inside
     // the constants file
 
     // Hood inputs
@@ -57,6 +45,7 @@ public class HoodIONeo extends SubsystemBase {
 
   @Override
   public void updateHoodPID(Slot0Configs config) {
-    driveTalon.getConfigurator().apply(config); // FIX PID IMPLEMENTATION
+    hoodMotorModel.getConfigurator().apply(config); // FIX PID IMPLEMENTATION
   }
+
 }

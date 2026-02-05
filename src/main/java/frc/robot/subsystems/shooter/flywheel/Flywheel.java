@@ -9,8 +9,11 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
 
 public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
@@ -41,6 +44,15 @@ public class Flywheel extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Flywheel", inputs);
+
+    if (Constants.tuningMode && flywheelkP.hasChanged(hashCode()) && flywheelkS.hasChanged(hashCode())&& flywheelkV.hasChanged(hashCode())){
+      var flywheelConfig = new Slot0Configs();
+      flywheelConfig.kP = flywheelkP.get();
+      flywheelConfig.kS = flywheelkS.get();
+      flywheelConfig.kV = flywheelkV.get();
+      io.updateFlywheelPID(flywheelConfig);
+    }
+
   }
 
   // Flywheel SysId Commands
