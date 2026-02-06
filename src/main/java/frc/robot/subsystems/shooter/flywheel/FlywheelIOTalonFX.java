@@ -5,37 +5,37 @@
 package frc.robot.subsystems.shooter.flywheel;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.math.util.Units;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
-  private static final DCMotor flywheelMotorModel = DCMotor.getKrakenX60(9);
+  private final TalonFX flywheelMotor;
+  private double flywheelVolts;
 
-  public double flywheelVolts = 0.0;
+  public FlywheelIOTalonFX(int canId, String canBus) {
+    flywheelMotor = new TalonFX(9, canBus);
+    this.flywheelVolts = flywheelMotor.getMotorVoltage().getValueAsDouble();
+  }
 
-  public FlywheelIOTalonFX() {}
-
-  private static final FlywheelSim flywheelSim =
-      new FlywheelSim(
-          LinearSystemId.createFlywheelSystem(flywheelMotorModel, .025, 1), flywheelMotorModel);
+  
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
     // need to fix implementation
-    inputs.flywheelConnected = true;
-    inputs.flywheelVelocityRadsPerSec = flywheelSim.getAngularVelocityRadPerSec();
-    inputs.flywheelAppliedVoltage = flywheelSim.getInputVoltage();
+    inputs.flywheelConnected = flywheelMotor.isConnected();
+    inputs.flywheelVelocityRadsPerSec =
+        Units.rotationsToRadians(flywheelMotor.getVelocity().getValueAsDouble());
+    inputs.flywheelAppliedVoltage = flywheelMotor.getMotorVoltage().getValueAsDouble();
   }
 
   @Override
   public void setFlywheelVoltage(double volts) {
     this.flywheelVolts = MathUtil.clamp(volts, -12.0, 12.0);
-    flywheelSim.setInputVoltage(this.flywheelVolts);
+    flywheelMotor.setVoltage(this.flywheelVolts);
   }
 
-  public void updateFlywheelPID (Slot0Configs config) {
-    flywheelMotorModel.talonFXConfigurator().apply(config);
+  public void updateFlywheelPID(Slot0Configs config) {
+    flywheelMotor.getConfigurator().apply(config);
   }
 }

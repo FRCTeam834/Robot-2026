@@ -4,48 +4,47 @@
 
 package frc.robot.subsystems.shooter.hood;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkAbsoluteEncoder;
+
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix6.configs.Slot0Configs;
 
+
+
+
+/** Add your docs here. */
 public class HoodIOSparkMax implements HoodIO {
-  private CANSparkMax 
+    private SparkMax hoodMotor;
+    private double hoodVolts = hoodMotor.getBusVoltage();
+    SparkAbsoluteEncoder absEncoder = hoodMotor.getAbsoluteEncoder();
+    private double velocity = absEncoder.getVelocity();
+    private double positionRads = absEncoder.getPosition();
+
+    public HoodIOSparkMax (int canId, String canBus) {
+        hoodMotor = new SparkMax(canId, null);
+    }
+
+    @Override
+    public void updateInputs(HoodIOInputs inputs) {
+        inputs.hoodConnected = true;
+        inputs.hoodPositionRads = positionRads;
+        inputs.hoodVelocityRadsPerSec = Units.rotationsPerMinuteToRadiansPerSecond(velocity);
+        inputs.hoodAppliedVoltage = hoodVolts;
 
 
-  // Motor Models
-  private static final DCMotor hoodMotorModel = DCMotor.getNeo550(1); // Possibly Change Later
 
-  // Variables
-  private double hoodVolts = 0.0;
+    }
 
-  // Constructor
-  public HoodIOSparkMax() {}
+    public void setHoodVoltage(double volts) {
+        this.hoodVolts = MathUtil.clamp(volts, -12.0, 12.0);
+        hoodMotor.setVoltage(this.hoodVolts);
+    }
 
-  @Override
-  public void updateInputs(HoodIOSparkMax inputs) {
-    // Update sim state
-    hoodSim.update(0.02); // if we add a constants folder, lable this as double loopPeriodSecs = 0.05 inside
-    // the constants file
-
-    // Hood inputs
-    inputs.hoodConnected = true;
-    inputs.hoodPositionRads = hoodSim.getAngleRads();
-    inputs.hoodVelcoityRadsPerSec = hoodSim.getVelocityRadPerSec();
-    inputs.hoodAppliedVoltage = hoodVolts;
-  }
-
-  @Override
-  public void setHoodVoltage(double volts) {
-    this.hoodVolts = MathUtil.clamp(volts, -12.0, 12.0);
-    hoodSim.setInputVoltage(this.hoodVolts);
-  }
-
-  @Override
-  public void updateHoodPID(Slot0Configs config) {
-    hoodMotorModel.getConfigurator().apply(config); // FIX PID IMPLEMENTATION
-  }
+    @Override
+    public void updateHoodPID(Slot0Configs config) {
+        hoodMotor.getConfigurator().apply(config); // FIX PID IMPLEMENTATION
+    }
 
 }

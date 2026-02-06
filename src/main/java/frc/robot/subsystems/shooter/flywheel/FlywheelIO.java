@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.shooter.flywheel;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.units.VoltageUnit;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -21,4 +22,6 @@ public interface FlywheelIO {
       double velocityRadsPerSec, VoltageUnit feedforwardVolts) {}
 
   public default void setFlywheelVoltage(double volts) {}
+
+  public default void updateFlywheelPID(Slot0Configs configs) {}
 }
