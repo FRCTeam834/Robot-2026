@@ -23,7 +23,7 @@ public class HoodIOSparkMax implements HoodIO {
   private double positionRads = absEncoder.getPosition();
 
   public HoodIOSparkMax(int canId, String canBus) {
-    hoodMotor = new SparkMax(canId, null);
+    hoodMotor = new SparkMax(10, null);
     // hoodPID = hoodMotor.getClosedLoopController();
     absEncoder = hoodMotor.getAbsoluteEncoder();
     hoodConfig = new SparkMaxConfig();
@@ -41,6 +41,8 @@ public class HoodIOSparkMax implements HoodIO {
     this.hoodVolts = MathUtil.clamp(volts, -12.0, 12.0);
     hoodMotor.setVoltage(this.hoodVolts);
   }
+
+  //Make method for hood position
 
   public void updateHoodPID(SparkMaxConfig hoodMaxConfig, double kS, double kV) {
     this.hoodConfig = hoodMaxConfig;

@@ -20,7 +20,6 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
-    // need to fix implementation
     inputs.flywheelConnected = flywheelMotor.isConnected();
     inputs.flywheelVelocityRadsPerSec =
         Units.rotationsToRadians(flywheelMotor.getVelocity().getValueAsDouble());
@@ -32,6 +31,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     this.flywheelVolts = MathUtil.clamp(volts, -12.0, 12.0);
     flywheelMotor.setVoltage(this.flywheelVolts);
   }
+
+  //public void setFlywheelVelocity(double velocityRadsPerSec, VoltageUnit feedforwardVolts){}
 
   public void updateFlywheelPID(Slot0Configs config) {
     flywheelMotor.getConfigurator().apply(config);

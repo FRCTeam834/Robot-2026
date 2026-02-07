@@ -22,7 +22,6 @@ public class FlywheelIOSim implements FlywheelIO {
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
-    // need to fix implementation
     inputs.flywheelConnected = true;
     inputs.flywheelVelocityRadsPerSec = flywheelSim.getAngularVelocityRadPerSec();
     inputs.flywheelAppliedVoltage = flywheelSim.getInputVoltage();
