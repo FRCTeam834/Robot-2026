@@ -1,6 +1,6 @@
 package frc.robot.subsystems.shooter.hood;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.units.VoltageUnit;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -19,5 +19,6 @@ public interface HoodIO {
 
   public default void setHoodVoltage(double volts) {}
 
-  public default void updateHoodPID(Slot0Configs config) {} // FIX PID IMPLEMENTATION
+  public default void updateHoodPID(
+      SparkMaxConfig hoodConfig, double kS, double kV) {} // FIX PID IMPLEMENTATION
 }

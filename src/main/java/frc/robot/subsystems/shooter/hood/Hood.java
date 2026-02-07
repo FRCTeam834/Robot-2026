@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems.shooter.hood;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
@@ -18,24 +18,22 @@ public class Hood extends SubsystemBase {
   private static final LoggedTunableNumber hood_kS = new LoggedTunableNumber("Hood/hood_kS");
   private static final LoggedTunableNumber hood_kV = new LoggedTunableNumber("Hood/hood_kV");
 
-  /** Creates a new Hood. */
+  /* Creates a new Hood. */
   public Hood(HoodIO io) {
     this.io = io;
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("Hood", inputs);
 
-    if (Constants.tuningMode
-        && hood_kP.hasChanged(hashCode())
-        && hood_kS.hasChanged(hashCode())
-        && hood_kV.hasChanged(hashCode())) {
-      var hoodConfig = new Slot0Configs();
-      hoodConfig.kP = hood_kP.get();
-      io.updateHoodPID(hoodConfig); // FIX PID IMPLEMENTATION
+    if (Constants.tuningMode && hood_kP.hasChanged(hashCode())
+        || hood_kS.hasChanged(hashCode())
+        || hood_kV.hasChanged(hashCode())) {
+      var hoodConfig = new SparkMaxConfig();
+      hoodConfig.closedLoop.p(hood_kP.get());
+      io.updateHoodPID(hoodConfig, hood_kS.get(), hood_kV.get());
     }
   }
 }

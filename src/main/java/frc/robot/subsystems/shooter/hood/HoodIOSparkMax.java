@@ -4,47 +4,55 @@
 
 package frc.robot.subsystems.shooter.hood;
 
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
-
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig; // trying to see if this works
+// import com.revrobotics.spark.SparkClosedLoopController;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
-import com.ctre.phoenix6.configs.Slot0Configs;
-
-
-
 
 /** Add your docs here. */
 public class HoodIOSparkMax implements HoodIO {
-    private SparkMax hoodMotor;
-    private double hoodVolts = hoodMotor.getBusVoltage();
-    SparkAbsoluteEncoder absEncoder = hoodMotor.getAbsoluteEncoder();
-    private double velocity = absEncoder.getVelocity();
-    private double positionRads = absEncoder.getPosition();
+  private SparkMax hoodMotor;
+  private SparkMaxConfig hoodConfig;
+  // private SparkClosedLoopController hoodPID;
+  private SparkAbsoluteEncoder absEncoder;
 
-    public HoodIOSparkMax (int canId, String canBus) {
-        hoodMotor = new SparkMax(canId, null);
-    }
+  private double hoodVolts = hoodMotor.getBusVoltage();
+  private double velocity = absEncoder.getVelocity();
+  private double positionRads = absEncoder.getPosition();
 
-    @Override
-    public void updateInputs(HoodIOInputs inputs) {
-        inputs.hoodConnected = true;
-        inputs.hoodPositionRads = positionRads;
-        inputs.hoodVelocityRadsPerSec = Units.rotationsPerMinuteToRadiansPerSecond(velocity);
-        inputs.hoodAppliedVoltage = hoodVolts;
+  public HoodIOSparkMax(int canId, String canBus) {
+    hoodMotor = new SparkMax(canId, null);
+    // hoodPID = hoodMotor.getClosedLoopController();
+    absEncoder = hoodMotor.getAbsoluteEncoder();
+    hoodConfig = new SparkMaxConfig();
+  }
 
+  @Override
+  public void updateInputs(HoodIOInputs inputs) {
+    inputs.hoodConnected = true;
+    inputs.hoodPositionRads = positionRads;
+    inputs.hoodVelocityRadsPerSec = Units.rotationsPerMinuteToRadiansPerSecond(velocity);
+    inputs.hoodAppliedVoltage = hoodVolts;
+  }
 
+  public void setHoodVoltage(double volts) {
+    this.hoodVolts = MathUtil.clamp(volts, -12.0, 12.0);
+    hoodMotor.setVoltage(this.hoodVolts);
+  }
 
-    }
+  public void updateHoodPID(SparkMaxConfig hoodMaxConfig, double kS, double kV) {
+    this.hoodConfig = hoodMaxConfig;
+    hoodMotor.configure(
+        hoodConfig,
+        com.revrobotics.ResetMode.kNoResetSafeParameters,
+        com.revrobotics.PersistMode.kNoPersistParameters);
+    // hoodPID.configure(hoodConfig, com.revrobotics.ResetMode.kNoResetSafeParameters,
+    // com.revrobotics.PersistMode.kNoPersistParameters)
 
-    public void setHoodVoltage(double volts) {
-        this.hoodVolts = MathUtil.clamp(volts, -12.0, 12.0);
-        hoodMotor.setVoltage(this.hoodVolts);
-    }
-
-    @Override
-    public void updateHoodPID(Slot0Configs config) {
-        hoodMotor.getConfigurator().apply(config); // FIX PID IMPLEMENTATION
-    }
-
+    /*configureSpark("", () -> { return hoodMotor.setP(kP); });
+    configureSpark("", () -> { return hoodMotor.setS(kS); });
+    configureSpark("", () -> { return hoodMotor.set(kV); }); //doesn't the set(kV) set a percent output and not feedforward?? */
+  }
 }

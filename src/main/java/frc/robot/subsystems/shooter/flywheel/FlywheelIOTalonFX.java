@@ -18,8 +18,6 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     this.flywheelVolts = flywheelMotor.getMotorVoltage().getValueAsDouble();
   }
 
-  
-
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
     // need to fix implementation

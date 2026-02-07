@@ -18,18 +18,20 @@ public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
 
-  private static final LoggedTunableNumber flywheelkP =
-      new LoggedTunableNumber("Flywheel/flywheelkP");
-  private static final LoggedTunableNumber flywheelkS =
-      new LoggedTunableNumber("Flywheel/flywheelkS");
-  private static final LoggedTunableNumber flywheelkV =
-      new LoggedTunableNumber("Flywheel/flywheelkV");
+  private static final LoggedTunableNumber flywheel_kP =
+      new LoggedTunableNumber("Flywheel/flywheel_kP");
+  private static final LoggedTunableNumber flywheel_kS =
+      new LoggedTunableNumber("Flywheel/flywheel_kS");
+  private static final LoggedTunableNumber flywheel_kV =
+      new LoggedTunableNumber("Flywheel/flywheel_kV");
+
+  final SysIdRoutine flywheelSysId;
 
   public Flywheel(FlywheelIO io) {
     this.io = io;
 
     // Flywheel SysId Routine
-    SysIdRoutine flywheelSysId =
+    flywheelSysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
                 null,
@@ -44,14 +46,13 @@ public class Flywheel extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Flywheel", inputs);
 
-    if (Constants.tuningMode
-        && flywheelkP.hasChanged(hashCode())
-        && flywheelkS.hasChanged(hashCode())
-        && flywheelkV.hasChanged(hashCode())) {
+    if (Constants.tuningMode && flywheel_kP.hasChanged(hashCode())
+        || flywheel_kS.hasChanged(hashCode())
+        || flywheel_kV.hasChanged(hashCode())) {
       var flywheelConfig = new Slot0Configs();
-      flywheelConfig.kP = flywheelkP.get();
-      flywheelConfig.kS = flywheelkS.get();
-      flywheelConfig.kV = flywheelkV.get();
+      flywheelConfig.kP = flywheel_kP.get();
+      flywheelConfig.kS = flywheel_kS.get();
+      flywheelConfig.kV = flywheel_kV.get();
       io.updateFlywheelPID(flywheelConfig);
     }
   }
