@@ -42,7 +42,7 @@ public class HoodIOSparkMax implements HoodIO {
     hoodMotor.setVoltage(this.hoodVolts);
   }
 
-  //Make method for hood position
+  // Make method for hood position
 
   public void updateHoodPID(SparkMaxConfig hoodMaxConfig, double kS, double kV) {
     this.hoodConfig = hoodMaxConfig;

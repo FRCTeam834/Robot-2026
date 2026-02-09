@@ -13,7 +13,8 @@ import edu.wpi.first.math.util.Units;
 public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX flywheelMotor;
   private double flywheelVolts;
-  // Velocity setpoint in Rotations per Second (RotationPS) using closed-loop slot 0 (like the one in slot0Configs)
+  // Velocity setpoint in Rotations per Second (RotationPS) using closed-loop slot 0 (like the one
+  // in slot0Configs)
   private final VelocityVoltage velocitySetPoint = new VelocityVoltage(0.0).withSlot(0);
 
   public FlywheelIOTalonFX(int canId, String canBus) {
@@ -46,7 +47,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     this.flywheelVolts = MathUtil.clamp(volts, -12.0, 12.0);
     flywheelMotor.setVoltage(this.flywheelVolts);
   }
-  
+
   @Override
   public void updateFlywheelPID(Slot0Configs config) {
     flywheelMotor.getConfigurator().apply(config);
