@@ -13,7 +13,8 @@ import edu.wpi.first.math.util.Units;
 public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX flywheelMotor;
   private double flywheelVolts;
-  private final VelocityVoltage velocitySetPoint = new VelocityVoltage(0.0).withSlot(0).withEnableFOC(true);
+  // Velocity setpoint in Rotations per Second (RotationPS) using closed-loop slot 0 (like the one in slot0Configs)
+  private final VelocityVoltage velocitySetPoint = new VelocityVoltage(0.0).withSlot(0);
 
   public FlywheelIOTalonFX(int canId, String canBus) {
     flywheelMotor = new TalonFX(9, canBus);
@@ -30,8 +31,13 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
   @Override
   public void setFlywheelVelo(double targetRadsPerSec, double ffVolts) {
-    double targetRotatiosnPerSec = targetRadsPerSec / (2.0 * Math.PI);
-    velocitySetPoint.withVelocity(targetRotatiosnPerSec).withFeedForward(ffVolts);
+    // Divide by 2pi to get rotations
+    double targetRotationsPerSec = targetRadsPerSec / (2.0 * Math.PI);
+    // Made kV feedforward gain
+    double kV = Flywheel.flywheel_kV.get();
+    // Gain * Value
+    ffVolts = kV * targetRadsPerSec;
+    velocitySetPoint.withVelocity(targetRotationsPerSec).withFeedForward(ffVolts);
     flywheelMotor.setControl(velocitySetPoint);
   }
 

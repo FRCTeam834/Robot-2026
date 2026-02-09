@@ -18,11 +18,11 @@ public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
 
-  private static final LoggedTunableNumber flywheel_kP =
+  public static final LoggedTunableNumber flywheel_kP =
       new LoggedTunableNumber("Flywheel/flywheel_kP");
-  private static final LoggedTunableNumber flywheel_kS =
+  public static final LoggedTunableNumber flywheel_kS =
       new LoggedTunableNumber("Flywheel/flywheel_kS");
-  private static final LoggedTunableNumber flywheel_kV =
+  public static final LoggedTunableNumber flywheel_kV =
       new LoggedTunableNumber("Flywheel/flywheel_kV");
 
   final SysIdRoutine flywheelSysId;
