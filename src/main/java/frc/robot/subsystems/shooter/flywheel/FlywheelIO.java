@@ -4,7 +4,6 @@
 package frc.robot.subsystems.shooter.flywheel;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
-import edu.wpi.first.units.VoltageUnit;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface FlywheelIO {
@@ -18,8 +17,8 @@ public interface FlywheelIO {
 
   public default void updateInputs(FlywheelIOInputs inputs) {}
 
-  public default void setFlywheelVelocity(
-      double velocityRadsPerSec, VoltageUnit feedforwardVolts) {}
+  public default void setFlywheelVelo(
+      double targetRadsPerSec, double feedforwardVolts) {}
 
   public default void setFlywheelVoltage(double volts) {}
 
