@@ -9,7 +9,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.shooter.ShotCalculator;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX flywheelMotor;
@@ -35,23 +34,9 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   public void setFlywheelVelocity(double targetRadsPerSec, double ffVolts) {
     // Divide by 2pi to get rotations
     double targetRotationsPerSec = targetRadsPerSec / (2.0 * Math.PI);
-    // Made kV feedforward gain
-    double kV = Flywheel.flywheel_kV.get();
-    // Gain * Value
-    ffVolts = kV * targetRadsPerSec;
+    ffVolts = Flywheel.flywheel_kV.get() * targetRotationsPerSec;
     velocitySetPoint.withVelocity(targetRotationsPerSec).withFeedForward(ffVolts);
     flywheelMotor.setControl(velocitySetPoint);
-  }
-
-  public double setFlywheelVelocityForDist(double targetDist) {
-    double targetrpm = shotSpeedTable.get(targetDist);
-    double kV = Flywheel.flywheel_kV.get();
-    targetrpm = flywheelMotor.setControl(targetrpm);
-    return targetrpm;
-    // double distFromTarget = shotSpeedTable.get();
-    // double kV = Flywheel.flywheel_kV.get();
-    // targetrpm = flywheelMotor.setFlywheelVelo(shotSpeedTable.rpmForDist(), kV * targetrpm);
-    // velocitySetPoint.withVelocity(targetrpm);
   }
 
   @Override
@@ -64,4 +49,15 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   public void updateFlywheelPID(Slot0Configs config) {
     flywheelMotor.getConfigurator().apply(config);
   }
+
+  // public double setFlywheelVelocityForDist(double targetDist) {
+  //   double targetrpm = shotSpeedTable.get(targetDist);
+  //   double kV = Flywheel.flywheel_kV.get();
+  //   targetrpm = flywheelMotor.setControl(targetrpm);
+  //   return targetrpm;
+  //   // double distFromTarget = shotSpeedTable.get();
+  //   // double kV = Flywheel.flywheel_kV.get();
+  //   // targetrpm = flywheelMotor.setFlywheelVelo(shotSpeedTable.rpmForDist(), kV * targetrpm);
+  //   // velocitySetPoint.withVelocity(targetrpm);
+  // }
 }

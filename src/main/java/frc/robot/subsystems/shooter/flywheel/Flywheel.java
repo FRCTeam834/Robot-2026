@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.subsystems.shooter.ShotCalculator;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -72,5 +73,14 @@ public class Flywheel extends SubsystemBase {
 
   public Command sysIdFlywheelDynamicReverse(SysIdRoutine flywheelSysId) {
     return flywheelSysId.dynamic(SysIdRoutine.Direction.kReverse);
+  }
+
+  // In subsystem class to mimic Robot 2024 -> will research why later
+  // Probably has something to do with distanceMeters not being a hardware-recognized physical unit for the flywheels. 
+  // IO controls hardware using physical units, while distance is higher logic that must be translated into a velocity by the subsystem before touching hardware.
+  // Found info on AdvantageKit Website
+  public void setFlywheelVelocityForDistance(double distanceMeters) {
+    final double targetRadsPerSec = ShotCalculator.flywheelVelocityRadsPerSecForDistance(distanceMeters);
+    io.setFlywheelVelocity(targetRadsPerSec, 0.0);
   }
 }

@@ -23,7 +23,7 @@ public class ShotCalculator {
     // shotAngleTable.put(3.976, 0.523);
     // shotAngleTable.put(100.0, 0.523);
 
-    /** key: <horizontal distance m>, value: <rpm> */
+    /** key: <horizontal distance meters>, value: <RadPerSec> */
     shotSpeedTable.put(0.0, 4000.0);
     shotSpeedTable.put(1.998, 4000.0);
     shotSpeedTable.put(2.235, 4000.0);
@@ -36,8 +36,8 @@ public class ShotCalculator {
   //   return shotAngleTable.get(dist);
   // }
 
-  public static double rpmForDist(double dist) {
-    return shotSpeedTable.get(dist);
+  public static double flywheelVelocityRadsPerSecForDistance(double meters) {
+    return shotSpeedTable.get(meters);
   }
 
   /*  public boolean atSetpoint(double distance) {

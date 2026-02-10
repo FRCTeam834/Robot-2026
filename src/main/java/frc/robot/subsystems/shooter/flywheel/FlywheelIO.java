@@ -19,8 +19,6 @@ public interface FlywheelIO {
 
   public default void setFlywheelVelocity(double targetRadsPerSec, double feedforwardVolts) {}
 
-  public 
-
   public default void setFlywheelVoltage(double volts) {}
 
   public default void updateFlywheelPID(Slot0Configs configs) {}
