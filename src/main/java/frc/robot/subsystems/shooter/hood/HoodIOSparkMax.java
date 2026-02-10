@@ -22,7 +22,7 @@ public class HoodIOSparkMax implements HoodIO {
   private double velocity = absEncoder.getVelocity();
   private double positionRads = absEncoder.getPosition();
 
-  public HoodIOSparkMax(int canId, String canBus) {
+  public HoodIOSparkMax() {
     hoodMotor = new SparkMax(10, null);
     // hoodPID = hoodMotor.getClosedLoopController();
     absEncoder = hoodMotor.getAbsoluteEncoder();

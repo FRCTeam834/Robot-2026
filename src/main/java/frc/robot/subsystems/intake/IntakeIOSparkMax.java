@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import frc.robot.subsystems.intake.IntakeIO.IntakeIOInputs;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -11,7 +12,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   // Roller
   private SparkMax rollerMotor;
   private SparkAbsoluteEncoder rollerEncoder;
-  private SparkMaxConfig rollerConfig;
+  // private SparkMaxConfig rollerConfig;
   private double rollerVolts;
   private double rollerVelocity = rollerEncoder.getVelocity();
 
@@ -20,20 +21,19 @@ public class IntakeIOSparkMax implements IntakeIO {
   private SparkAbsoluteEncoder pivotEncoder;
   private SparkMaxConfig pivotConfig;
   private double pivotVolts;
-  private double pivotVelocity;
+  // private double pivotVelocity;
 
   public IntakeIOSparkMax() {
     // Roller
     rollerMotor = new SparkMax(11, MotorType.kBrushless);
     rollerEncoder = rollerMotor.getAbsoluteEncoder();
     rollerVolts = rollerMotor.getBusVoltage();
-    rollerVelocity
 
-        // Pivot
-        pivotMotor = new SparkMax(12, MotorType.kBrushless);
+    // Pivot
+    pivotMotor = new SparkMax(12, MotorType.kBrushless);
     pivotEncoder = pivotMotor.getAbsoluteEncoder();
     pivotVolts = pivotMotor.getBusVoltage();
-    pivotVelocity = pivotEncoder.getVelocity();
+    // pivotVelocity = pivotEncoder.getVelocity();
   }
 
   @Override
@@ -43,9 +43,10 @@ public class IntakeIOSparkMax implements IntakeIO {
     inputs.rollerAppliedVoltage = rollerVolts;
 
     inputs.pivotConnected = true;
-    inputs.pivotVelocityRadsPerSec = Units.rotationsPerMinuteToRadiansPerSecond(pivotVelocity);
+    // inputs.pivotVelocityRadsPerSec = Units.rotationsPerMinuteToRadiansPerSecond(pivotVelocity);
     inputs.pivotPositionRads = pivotEncoder.getPosition();
-    inputs.pivotAppliedVoltage = pivotVolts;
+    // inputs.pivotAppliedVoltage = pivotVolts;
+    inputs.pivotAppliedVelocity = pivotEncoder.getVelocity();
   }
   // Roller Methods
   public void setRollerVoltage(double volts) {
@@ -59,19 +60,19 @@ public class IntakeIOSparkMax implements IntakeIO {
     pivotMotor.setPivotVoltage(this.pivotVolts);
   }
 
-  public void updateRollerPID(SparkMaxConfig rollerConfig, double kS, double kV) {
-    this.rollerConfig = rollerConfig;
-    rollerConfig.configure(
-        rollerConfig,
-        com.revrobotics.ResetMode.kNoResetSafeParameters,
-        com.revrobotics.ResetMode.kNoPersistParameters);
-  }
-
-  public void updatePivotPID(SparkMaxConfig pivotConfig, double kS, double kV) {
+  public void updatePivotPID(SparkMaxConfig pivotConfig, double kS, double kG) {
     this.pivotConfig = pivotConfig;
     pivotConfig.configure(
         pivotConfig,
         com.revrobotics.ResetMode.kNoResetSafeParameters,
-        com.revrobotics.ResetMode.kNoPersistParameters);
+        com.revrobotics.PersistMode.kNoPersistParameters);
   }
 }
+
+//  public void updateRollerPID(SparkMaxConfig rollerConfig, double kS, double kV) {
+    // this.rollerConfig = rollerConfig;
+    // rollerConfig.configure(
+        // rollerConfig,
+        // com.revrobotics.ResetMode.kNoResetSafeParameters,
+        // com.revrobotics.ResetMode.kNoPersistParameters);
+  // }
