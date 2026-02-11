@@ -62,7 +62,7 @@ public class Flywheel extends SubsystemBase {
   public Command flywheelQuasistaticForward(SysIdRoutine flywheelSysId) {
     return flywheelSysId.quasistatic(SysIdRoutine.Direction.kForward);
   }
-
+    
   public Command flywheelQuasistaticReverse(SysIdRoutine flywheelSysId) {
     return flywheelSysId.quasistatic(SysIdRoutine.Direction.kReverse);
   }

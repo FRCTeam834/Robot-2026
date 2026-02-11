@@ -8,7 +8,6 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.util.Units;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX flywheelMotor;
@@ -25,20 +24,19 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
     inputs.flywheelConnected = flywheelMotor.isConnected();
-    inputs.flywheelVelocityRadsPerSec =
-        Units.rotationsToRadians(flywheelMotor.getVelocity().getValueAsDouble());
+    inputs.flywheelVelocityRPM =
+        flywheelMotor.getVelocity().getValueAsDouble() * 60;
     inputs.flywheelAppliedVoltage = flywheelMotor.getMotorVoltage().getValueAsDouble();
   }
 
   @Override
-  public void setFlywheelVelocity(double targetRadsPerSec, double ffVolts) {
-    // Divide by 2pi to get rotations
-    double targetRotationsPerSec = targetRadsPerSec / (2.0 * Math.PI);
+  public void setFlywheelVelocity(double targetRPM, double ffVolts) {
+    double targetRotationsPerSec = targetRPM / 60;
     ffVolts = Flywheel.flywheel_kV.get() * targetRotationsPerSec;
     velocitySetPoint.withVelocity(targetRotationsPerSec).withFeedForward(ffVolts);
     flywheelMotor.setControl(velocitySetPoint);
   }
-
+  
   @Override
   public void setFlywheelVoltage(double volts) {
     this.flywheelVolts = MathUtil.clamp(volts, -12.0, 12.0);

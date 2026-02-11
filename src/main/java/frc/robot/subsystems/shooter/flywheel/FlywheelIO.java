@@ -10,7 +10,7 @@ public interface FlywheelIO {
   @AutoLog
   public static class FlywheelIOInputs {
     public boolean flywheelConnected = false;
-    public double flywheelVelocityRadsPerSec = 0.0;
+    public double flywheelVelocityRPM = 0.0;
     public double flywheelAppliedVoltage = 0.0;
     // public double flywheelTorqueCurrentAmps = 0.0;
   }
