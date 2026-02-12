@@ -6,15 +6,13 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.config.SparkMaxConfig;
-
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.units.measure.Voltage;
-
 
 public class Intake extends SubsystemBase {
   private final IntakeIO io;
@@ -29,15 +27,15 @@ public class Intake extends SubsystemBase {
   public Intake(IntakeIO io) {
     this.io = io;
 
-    intakeSysId = 
-      new SysIdRoutine(
-        new SysIdRoutine.Config(
-          null,
-          null,
-          null,
-          (state) -> Logger.recordOutput("RollerSysIdTestState", state.toString())),
-        new SysIdRoutine.Mechanism(
-          (Voltage voltage) -> io.setRollerVoltage(voltage.in(Units.Volts)), null, this));
+    intakeSysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput("RollerSysIdTestState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (Voltage voltage) -> io.setRollerVoltage(voltage.in(Units.Volts)), null, this));
   }
 
   @Override

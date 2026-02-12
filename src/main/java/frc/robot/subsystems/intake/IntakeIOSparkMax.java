@@ -1,12 +1,10 @@
 package frc.robot.subsystems.intake;
 
-import frc.robot.subsystems.intake.IntakeIO.IntakeIOInputs;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.util.Units;
 
 public class IntakeIOSparkMax implements IntakeIO {
   // Roller
@@ -38,31 +36,34 @@ public class IntakeIOSparkMax implements IntakeIO {
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
+    // Roller
     inputs.rollerConnected = true;
-    inputs.rollerVelocityRadsPerSec = Units.rotationsPerMinuteToRadiansPerSecond(rollerVelocity);
+    inputs.rollerRPM = rollerVelocity;
     inputs.rollerAppliedVoltage = rollerVolts;
 
+    // Pivot
     inputs.pivotConnected = true;
-    // inputs.pivotVelocityRadsPerSec = Units.rotationsPerMinuteToRadiansPerSecond(pivotVelocity);
     inputs.pivotPositionRads = pivotEncoder.getPosition();
-    // inputs.pivotAppliedVoltage = pivotVolts;
-    inputs.pivotAppliedVelocity = pivotEncoder.getVelocity();
+    inputs.pivotAppliedVoltage = pivotVolts;
+    // inputs.pivotAppliedVelocity = pivotEncoder.getVelocity();
+    // inputs.pivotVelocityRadsPerSec = Units.rotationsPerMinuteToRadiansPerSecond(pivotVelocity);
   }
+
   // Roller Methods
   public void setRollerVoltage(double volts) {
     this.rollerVolts = MathUtil.clamp(volts, -12.0, 12.0);
-    rollerMotor.setRollerVoltage(this.rollerVolts);
+    rollerMotor.setVoltage(this.rollerVolts);
   }
 
   // Pivot Methods
   public void setPivotVoltage(double volts) {
     this.pivotVolts = MathUtil.clamp(volts, -12.0, 12.0);
-    pivotMotor.setPivotVoltage(this.pivotVolts);
+    pivotMotor.setVoltage(this.pivotVolts);
   }
 
-  public void updatePivotPID(SparkMaxConfig pivotConfig, double kS, double kG) {
-    this.pivotConfig = pivotConfig;
-    pivotConfig.configure(
+  public void updatePivotPID(SparkMaxConfig pivotMaxConfig, double kS, double kG) {
+    this.pivotConfig = pivotMaxConfig;
+    pivotMotor.configure(
         pivotConfig,
         com.revrobotics.ResetMode.kNoResetSafeParameters,
         com.revrobotics.PersistMode.kNoPersistParameters);
