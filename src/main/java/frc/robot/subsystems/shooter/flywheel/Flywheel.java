@@ -55,6 +55,7 @@ public class Flywheel extends SubsystemBase {
       flywheelConfig.kS = flywheel_kS.get();
       flywheelConfig.kV = flywheel_kV.get();
       io.updateFlywheelPID(flywheelConfig);
+      io.setFlywheelFeedforward(flywheel_kS.get(), flywheel_kV.get());
     }
   }
 
@@ -81,8 +82,23 @@ public class Flywheel extends SubsystemBase {
   // IO controls hardware using physical units, while distance is higher logic that must be
   // translated into a velocity by the subsystem before touching hardware.
   // Found info on AdvantageKit Website
-  public void setFlywheelVelocityForDistance(double distanceMeters) {
+  
+  public void FlywheelVelocityForDistance(double distanceMeters) {
     final double targetRPM = ShotCalculator.flywheelRPMForDistance(distanceMeters);
     io.setFlywheelVelocity(targetRPM, 0.0);
   }
+
+  public void getCurrentFlywheelVelocity(){
+    return inputs.flywheelVelocityRPM;
+  }
+
+  public boolean atSetpoint(double dist){
+    if () {}
+
+    double toleranceRPM = 50; //PLACEHOLDER FOR NOW
+    double targetRPM = shotSpeedTable.get(dist);
+    return
+      Math.abs(targetRPM - getCurrentFlywheelVelocity()) <= toleranceRPM;
+  }
+
 }
