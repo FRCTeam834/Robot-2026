@@ -4,14 +4,13 @@
 
 package frc.robot.subsystems.shooter.kicker;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Kicker extends SubsystemBase {
   private final KickerIO io;
-  private final KickerIOInputsAutoLogged kicker = new KickerIOInputsAutoLogged();
-  
+  private final KickerIOInputsAutoLogged inputs = new KickerIOInputsAutoLogged();
+
   public Kicker(KickerIO io) {
     this.io = io;
   }

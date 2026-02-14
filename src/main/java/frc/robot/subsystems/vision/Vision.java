@@ -44,7 +44,8 @@ public class Vision extends SubsystemBase {
       if (inputs[i].hasTarget && inputs[i].tagCount > 0) {
         Logger.recordOutput("Vision/PoseEstimate/CameraPose" + i, inputs[i].pose);
         Logger.recordOutput("Vision/PoseEstimate/CameraTagCount" + i, inputs[i].tagCount);
-        Logger.recordOutput("Vision/PoseEstimate/CameraTimestampSeconds", inputs[i].timestampSeconds);
+        Logger.recordOutput(
+            "Vision/PoseEstimate/CameraTimestampSeconds", inputs[i].timestampSeconds);
         Logger.recordOutput("Vision/PoseEstimate/CameraHasTarget", inputs[i].hasTarget);
       }
     }

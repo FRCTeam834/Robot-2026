@@ -21,8 +21,7 @@ public interface IntakeIO {
 
   public default void setRollerVoltage(double volts) {}
 
-  public default void setRollerVelocity(
-      double targetRPM, double ffVolts) {} // need to fix
+  public default void setRollerVelocity(double targetRPM, double ffVolts) {} // need to fix
 
   public default void setPivotVoltage(double volts) {}
 

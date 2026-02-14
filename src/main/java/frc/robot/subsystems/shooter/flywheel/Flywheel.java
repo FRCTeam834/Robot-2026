@@ -18,6 +18,7 @@ import org.littletonrobotics.junction.Logger;
 public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
+  private double targetRPMSetpoint = 0.0;
 
   public static final LoggedTunableNumber flywheel_kP =
       new LoggedTunableNumber("Flywheel/flywheel_kP");
@@ -82,23 +83,20 @@ public class Flywheel extends SubsystemBase {
   // IO controls hardware using physical units, while distance is higher logic that must be
   // translated into a velocity by the subsystem before touching hardware.
   // Found info on AdvantageKit Website
-  
+
   public void FlywheelVelocityForDistance(double distanceMeters) {
-    final double targetRPM = ShotCalculator.flywheelRPMForDistance(distanceMeters);
-    io.setFlywheelVelocity(targetRPM, 0.0);
+    targetRPMSetpoint = ShotCalculator.flywheelRPMForDistance(distanceMeters);
+    io.setFlywheelVelocity(targetRPMSetpoint, 0.0);
   }
 
-  public void getCurrentFlywheelVelocity(){
-    return inputs.flywheelVelocityRPM;
+  // checks if flywheel is at desired speed
+  public boolean flywheelrpmAtSetpoint() {
+
+    // error window
+    final double toleranceRPM = 50.0;
+
+    // target - current = error
+    // return whether error <= tolerance
+    return Math.abs(targetRPMSetpoint - inputs.flywheelVelocityRPM) <= toleranceRPM;
   }
-
-  public boolean atSetpoint(double dist){
-    if () {}
-
-    double toleranceRPM = 50; //PLACEHOLDER FOR NOW
-    double targetRPM = shotSpeedTable.get(dist);
-    return
-      Math.abs(targetRPM - getCurrentFlywheelVelocity()) <= toleranceRPM;
-  }
-
 }

@@ -12,16 +12,15 @@ public interface FlywheelIO {
     public boolean flywheelConnected = false;
     public double flywheelVelocityRPM = 0.0;
     public double flywheelAppliedVoltage = 0.0;
-    // public double flywheelTorqueCurrentAmps = 0.0;
   }
 
   public default void updateInputs(FlywheelIOInputs inputs) {}
 
   public default void setFlywheelVelocity(double targetRPM, double feedforwardVolts) {}
 
-  public default void setFlywheelVoltage(double volts) {}   
+  public default void setFlywheelVoltage(double volts) {}
 
   public default void updateFlywheelPID(Slot0Configs configs) {}
 
-  public default void setFlywheelFeedforward(double kS, double kV){}
+  public default void setFlywheelFeedforward(double kS, double kV) {}
 }

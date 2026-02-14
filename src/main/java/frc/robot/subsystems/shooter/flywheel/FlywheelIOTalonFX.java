@@ -13,7 +13,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX flywheelMotor;
   private double flywheelVolts;
-  private SimpleMotorFeedforward flywheelFeedforward = new SimpleMotorFeedforward(0,0);
+  public SimpleMotorFeedforward flywheelFeedforward = new SimpleMotorFeedforward(0, 0);
   // Velocity setpoint in Rotations per Second (RotationPS) using closed-loop slot 0 (like the one
   // in slot0Configs)
   private final VelocityVoltage velocitySetPoint = new VelocityVoltage(0.0).withSlot(0);
@@ -49,13 +49,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     flywheelMotor.getConfigurator().apply(config);
   }
 
-  public void setFlywheelFeedforward (double kS, double kV){
+  @Override
+  public void setFlywheelFeedforward(double kS, double kV) {
     this.flywheelFeedforward = new SimpleMotorFeedforward(kS, kV);
-  }
-
-  public boolean atSetpoint(double dist){
-    if (flywheelMotor.FlywheelVelocityForDistance(dist)) {
-      
-    }
   }
 }
