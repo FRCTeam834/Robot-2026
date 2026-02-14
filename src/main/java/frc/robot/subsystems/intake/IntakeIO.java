@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -21,11 +22,17 @@ public interface IntakeIO {
 
   public default void setRollerVoltage(double volts) {}
 
-  public default void setRollerVelocity(double targetRPM, double ffVolts) {} // need to fix
+  public default void setRollerRPM(double targetRPM) {} 
+
+  public default void updateRollerPID(SparkFlexConfig rollerMaxConfig) {}
+
+  public default void updateRollerFeedforward(double kS, double kV) {}
 
   public default void setPivotVoltage(double volts) {}
 
   public default void setPivotPosition(double pivotPositionRads) {}
 
-  public default void updatePivotPID(SparkMaxConfig pivotMaxConfig, double kS, double kG) {}
+  public default void updatePivotPID(SparkMaxConfig pivotConfig) {}
+
+  public default void updatePivotFeedForward(double kS, double kV) {}
 }

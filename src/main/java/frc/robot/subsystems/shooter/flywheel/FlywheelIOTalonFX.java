@@ -7,20 +7,22 @@ package frc.robot.subsystems.shooter.flywheel;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.MathUtil;
+// import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX flywheelMotor;
-  private double flywheelVolts;
-  public SimpleMotorFeedforward flywheelFeedforward = new SimpleMotorFeedforward(0, 0);
+  public SimpleMotorFeedforward flywheelFeedforward;
+  private final VelocityVoltage velocitySetPoint;
   // Velocity setpoint in Rotations per Second (RotationPS) using closed-loop slot 0 (like the one
   // in slot0Configs)
-  private final VelocityVoltage velocitySetPoint = new VelocityVoltage(0.0).withSlot(0);
+  // private double flywheelVolts;
 
   public FlywheelIOTalonFX(int canId, String canBus) {
-    flywheelMotor = new TalonFX(9, canBus);
-    this.flywheelVolts = flywheelMotor.getMotorVoltage().getValueAsDouble();
+    flywheelMotor = new TalonFX(9, canBus); // Change Later
+    flywheelFeedforward = new SimpleMotorFeedforward(0,0);
+    velocitySetPoint = new VelocityVoltage(0.0).withSlot(0);
+    // this.flywheelVolts = flywheelMotor.getMotorVoltage().getValueAsDouble();
   }
 
   @Override
@@ -31,17 +33,12 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   }
 
   @Override
-  public void setFlywheelVelocity(double targetRPM, double ffVolts) {
+  public void setFlywheelVelocity(double targetRPM) {
     double targetRotationsPerSec = targetRPM / 60;
-    ffVolts = Flywheel.flywheel_kV.get() * targetRotationsPerSec;
-    velocitySetPoint.withVelocity(targetRotationsPerSec).withFeedForward(ffVolts);
-    flywheelMotor.setControl(velocitySetPoint);
-  }
+    double ffVolts = flywheelFeedforward.calculate(targetRotationsPerSec);
 
-  @Override
-  public void setFlywheelVoltage(double volts) {
-    this.flywheelVolts = MathUtil.clamp(volts, -12.0, 12.0);
-    flywheelMotor.setVoltage(this.flywheelVolts);
+    flywheelMotor.setControl(
+      velocitySetPoint.withVelocity(targetRotationsPerSec).withFeedForward(ffVolts));
   }
 
   @Override
@@ -50,7 +47,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   }
 
   @Override
-  public void setFlywheelFeedforward(double kS, double kV) {
+  public void updateFlywheelFeedforward(double kS, double kV) {
     this.flywheelFeedforward = new SimpleMotorFeedforward(kS, kV);
   }
 }

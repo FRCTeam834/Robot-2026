@@ -18,16 +18,20 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
+  public static final LoggedTunableNumber roller_kP = new LoggedTunableNumber("Pivot/roller_kP");
+  public static final LoggedTunableNumber roller_kS = new LoggedTunableNumber("Pivot/roller_kS");
+  public static final LoggedTunableNumber roller_kV = new LoggedTunableNumber("Pivot/roller_kV");
+
   public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Pivot/pivot_kP");
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Pivot/pivot_kS");
-  public static final LoggedTunableNumber pivot_kG = new LoggedTunableNumber("Pivot/pivot_kG");
+  public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Pivot/pivot_kV");
 
-  final SysIdRoutine intakeSysId;
+  final SysIdRoutine rollerSysId;
 
   public Intake(IntakeIO io) {
     this.io = io;
 
-    intakeSysId =
+    rollerSysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
                 null,
@@ -42,13 +46,16 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Roller", inputs);
+    Logger.processInputs("Pivot", inputs);
 
     if (Constants.tuningMode && pivot_kP.hasChanged(hashCode())
         || pivot_kS.hasChanged(hashCode())
-        || pivot_kG.hasChanged(hashCode())) {
+        || pivot_kV.hasChanged(hashCode())) {
       var pivotConfig = new SparkMaxConfig();
       pivotConfig.closedLoop.p(pivot_kP.get());
-      io.updatePivotPID(pivotConfig, pivot_kS.get(), pivot_kG.get());
+      io.updatePivotPID(pivotConfig);
+      io.updatePivotFeedForward(pivot_kV.get(), pivot_kS.get());
     }
+
   }
 }

@@ -48,32 +48,30 @@ public class Flywheel extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Flywheel", inputs);
 
-    if (Constants.tuningMode && flywheel_kP.hasChanged(hashCode())
-        || flywheel_kS.hasChanged(hashCode())
-        || flywheel_kV.hasChanged(hashCode())) {
+    if (Constants.tuningMode
+        && (flywheel_kP.hasChanged(hashCode())
+            || flywheel_kS.hasChanged(hashCode())
+            || flywheel_kV.hasChanged(hashCode()))) {
       var flywheelConfig = new Slot0Configs();
       flywheelConfig.kP = flywheel_kP.get();
       flywheelConfig.kS = flywheel_kS.get();
       flywheelConfig.kV = flywheel_kV.get();
       io.updateFlywheelPID(flywheelConfig);
-      io.setFlywheelFeedforward(flywheel_kS.get(), flywheel_kV.get());
+      io.updateFlywheelFeedforward(flywheel_kS.get(), flywheel_kV.get());
     }
   }
 
   // Flywheel SysId Commands
-  public Command flywheelQuasistaticForward(SysIdRoutine flywheelSysId) {
+  public Command flywheelQuasistaticForward() {
     return flywheelSysId.quasistatic(SysIdRoutine.Direction.kForward);
   }
-
-  public Command flywheelQuasistaticReverse(SysIdRoutine flywheelSysId) {
+  public Command flywheezlQuasistaticReverse() {
     return flywheelSysId.quasistatic(SysIdRoutine.Direction.kReverse);
   }
-
-  public Command sysIdFlywheelDynamicForward(SysIdRoutine flywheelSysId) {
+  public Command sysIdFlywheelDynamicForward() {
     return flywheelSysId.dynamic(SysIdRoutine.Direction.kForward);
   }
-
-  public Command sysIdFlywheelDynamicReverse(SysIdRoutine flywheelSysId) {
+  public Command sysIdFlywheelDynamicReverse() {
     return flywheelSysId.dynamic(SysIdRoutine.Direction.kReverse);
   }
 
@@ -84,9 +82,9 @@ public class Flywheel extends SubsystemBase {
   // translated into a velocity by the subsystem before touching hardware.
   // Found info on AdvantageKit Website
 
-  public void FlywheelVelocityForDistance(double distanceMeters) {
+  public void setFlywheelVelocityForDistance(double distanceMeters) {
     targetRPMSetpoint = ShotCalculator.flywheelRPMForDistance(distanceMeters);
-    io.setFlywheelVelocity(targetRPMSetpoint, 0.0);
+    io.setFlywheelVelocity(targetRPMSetpoint);
   }
 
   // checks if flywheel is at desired speed
