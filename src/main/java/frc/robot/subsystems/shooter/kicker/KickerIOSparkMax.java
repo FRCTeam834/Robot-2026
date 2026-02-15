@@ -7,8 +7,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
-
-public class KickerIOSparkMax implements KickerIO{
+public class KickerIOSparkMax implements KickerIO {
   private SparkFlex kickerMotor;
   private SparkFlexConfig kickerConfig;
   private SparkAbsoluteEncoder absEncoder;
@@ -19,7 +18,7 @@ public class KickerIOSparkMax implements KickerIO{
     kickerMotor = new SparkFlex(10, null);
     absEncoder = kickerMotor.getAbsoluteEncoder();
     kickerConfig = new SparkFlexConfig();
-    kickerFeedforward = new SimpleMotorFeedforward(0,0);    
+    kickerFeedforward = new SimpleMotorFeedforward(0, 0);
     kickerController = kickerMotor.getClosedLoopController();
   }
 
@@ -27,12 +26,13 @@ public class KickerIOSparkMax implements KickerIO{
   public void updateInputs(KickerIOInputs inputs) {
     inputs.kickerConnected = true;
     inputs.kickerRPM = absEncoder.getVelocity();
-   }
+  }
 
   public void setKickerVelocity(double targetRPM) {
     double targetRotationsPerSec = targetRPM / 60;
     double ffVolts = kickerFeedforward.calculate(targetRotationsPerSec);
-    kickerController.setSetpoint(targetRPM, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0, ffVolts);
+    kickerController.setSetpoint(
+        targetRPM, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0, ffVolts);
   }
 
   public void updateKickerPID(SparkFlexConfig config) {
@@ -44,8 +44,7 @@ public class KickerIOSparkMax implements KickerIO{
   }
 
   @Override
-  public void updateKickerFeedforward(double kS, double kV){
+  public void updateKickerFeedforward(double kS, double kV) {
     this.kickerFeedforward = new SimpleMotorFeedforward(kS, kV);
   }
-
 }

@@ -18,7 +18,7 @@ public class IntakeIOSpark implements IntakeIO {
   private double rollerVolts;
   private SparkFlexConfig rollerConfig;
   private SimpleMotorFeedforward rollerFeedforward;
-  private SparkClosedLoopController rollerController; 
+  private SparkClosedLoopController rollerController;
 
   // Pivot
   private SparkMax pivotMotor;
@@ -33,14 +33,14 @@ public class IntakeIOSpark implements IntakeIO {
     rollerEncoder = rollerMotor.getAbsoluteEncoder();
     rollerVolts = rollerMotor.getBusVoltage();
     rollerConfig = new SparkFlexConfig();
-    rollerFeedforward = new SimpleMotorFeedforward(0,0);
+    rollerFeedforward = new SimpleMotorFeedforward(0, 0);
     rollerController = rollerMotor.getClosedLoopController();
 
     // Pivot
     pivotMotor = new SparkMax(12, MotorType.kBrushless);
     pivotEncoder = pivotMotor.getAbsoluteEncoder();
     pivotVolts = pivotMotor.getBusVoltage();
-    pivotFeedforward = new SimpleMotorFeedforward(0,0);
+    pivotFeedforward = new SimpleMotorFeedforward(0, 0);
   }
 
   @Override
@@ -67,17 +67,21 @@ public class IntakeIOSpark implements IntakeIO {
   public void setRollerRPM(double targetRPM) {
     double targetRotationsPerSec = targetRPM / 60;
     double ffVolts = rollerFeedforward.calculate(targetRotationsPerSec);
-    rollerController.setSetpoint(targetRPM, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0, ffVolts);  
+    rollerController.setSetpoint(
+        targetRPM, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0, ffVolts);
   }
 
   @Override
   public void updateRollerPID(SparkFlexConfig config) {
     this.rollerConfig = config;
-    rollerMotor.configure(rollerConfig, com.revrobotics.ResetMode.kNoResetSafeParameters, com.revrobotics.PersistMode.kNoPersistParameters);
+    rollerMotor.configure(
+        rollerConfig,
+        com.revrobotics.ResetMode.kNoResetSafeParameters,
+        com.revrobotics.PersistMode.kNoPersistParameters);
   }
 
   @Override
-  public void updateRollerFeedforward(double kS, double kV){
+  public void updateRollerFeedforward(double kS, double kV) {
     this.rollerFeedforward = new SimpleMotorFeedforward(kS, kV);
   }
 
@@ -91,7 +95,10 @@ public class IntakeIOSpark implements IntakeIO {
   @Override
   public void updatePivotPID(SparkMaxConfig config) {
     this.pivotConfig = config;
-    pivotMotor.configure(pivotConfig, com.revrobotics.ResetMode.kNoResetSafeParameters, com.revrobotics.PersistMode.kNoPersistParameters);
+    pivotMotor.configure(
+        pivotConfig,
+        com.revrobotics.ResetMode.kNoResetSafeParameters,
+        com.revrobotics.PersistMode.kNoPersistParameters);
   }
 
   @Override

@@ -20,5 +20,4 @@ public interface KickerIO {
   public default void updateKickerPID(SparkFlexConfig kickerConfig) {}
 
   public default void updateKickerFeedforward(double kS, double kV) {}
-
 }

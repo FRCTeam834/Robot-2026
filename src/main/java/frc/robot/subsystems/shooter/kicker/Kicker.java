@@ -4,12 +4,11 @@
 
 package frc.robot.subsystems.shooter.kicker;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.Logger;
-import frc.robot.util.LoggedTunableNumber;
-import frc.robot.Constants;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.Logger;
 
 public class Kicker extends SubsystemBase {
   private final KickerIO io;
@@ -18,7 +17,6 @@ public class Kicker extends SubsystemBase {
   public static final LoggedTunableNumber kicker_kP = new LoggedTunableNumber("Kicker/kicker_kP");
   public static final LoggedTunableNumber kicker_kS = new LoggedTunableNumber("Kicker/kicker_kS");
   public static final LoggedTunableNumber kicker_kV = new LoggedTunableNumber("Kicker/kicker_kV");
-
 
   public Kicker(KickerIO io) {
     this.io = io;
@@ -38,4 +36,4 @@ public class Kicker extends SubsystemBase {
       io.updateKickerFeedforward(kicker_kS.get(), kicker_kV.get());
     }
   }
-  }
+}

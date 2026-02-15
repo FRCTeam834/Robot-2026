@@ -56,6 +56,5 @@ public class Intake extends SubsystemBase {
       io.updatePivotPID(pivotConfig);
       io.updatePivotFeedforward(pivot_kV.get(), pivot_kS.get());
     }
-
   }
 }

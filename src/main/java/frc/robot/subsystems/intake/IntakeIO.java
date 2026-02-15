@@ -22,7 +22,7 @@ public interface IntakeIO {
 
   public default void setRollerVoltage(double volts) {}
 
-  public default void setRollerRPM(double targetRPM) {} 
+  public default void setRollerRPM(double targetRPM) {}
 
   public default void updateRollerPID(SparkFlexConfig rollerMaxConfig) {}
 

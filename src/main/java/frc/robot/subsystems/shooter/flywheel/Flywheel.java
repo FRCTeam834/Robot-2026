@@ -65,12 +65,15 @@ public class Flywheel extends SubsystemBase {
   public Command flywheelQuasistaticForward() {
     return flywheelSysId.quasistatic(SysIdRoutine.Direction.kForward);
   }
+
   public Command flywheezlQuasistaticReverse() {
     return flywheelSysId.quasistatic(SysIdRoutine.Direction.kReverse);
   }
+
   public Command sysIdFlywheelDynamicForward() {
     return flywheelSysId.dynamic(SysIdRoutine.Direction.kForward);
   }
+
   public Command sysIdFlywheelDynamicReverse() {
     return flywheelSysId.dynamic(SysIdRoutine.Direction.kReverse);
   }

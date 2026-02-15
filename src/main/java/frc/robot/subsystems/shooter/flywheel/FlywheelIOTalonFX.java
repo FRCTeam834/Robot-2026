@@ -20,7 +20,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
   public FlywheelIOTalonFX(int canId, String canBus) {
     flywheelMotor = new TalonFX(9, canBus); // Change Later
-    flywheelFeedforward = new SimpleMotorFeedforward(0,0);
+    flywheelFeedforward = new SimpleMotorFeedforward(0, 0);
     velocitySetPoint = new VelocityVoltage(0.0).withSlot(0);
     // this.flywheelVolts = flywheelMotor.getMotorVoltage().getValueAsDouble();
   }
@@ -38,7 +38,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     double ffVolts = flywheelFeedforward.calculate(targetRotationsPerSec);
 
     flywheelMotor.setControl(
-      velocitySetPoint.withVelocity(targetRotationsPerSec).withFeedForward(ffVolts));
+        velocitySetPoint.withVelocity(targetRotationsPerSec).withFeedForward(ffVolts));
   }
 
   @Override

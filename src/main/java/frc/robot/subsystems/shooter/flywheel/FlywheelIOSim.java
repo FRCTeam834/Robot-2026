@@ -22,14 +22,15 @@ public class FlywheelIOSim implements FlywheelIO {
   private final PIDController velocityPID;
 
   public FlywheelIOSim() {
-  flywheelVolts = 0.0;
-  kS = 0.0;
-  kV = 0.0;
-  flywheelFeedforward = new SimpleMotorFeedforward(kS,kV);
-  velocityPID = new PIDController(0,0,0); 
+    flywheelVolts = 0.0;
+    kS = 0.0;
+    kV = 0.0;
+    flywheelFeedforward = new SimpleMotorFeedforward(kS, kV);
+    velocityPID = new PIDController(0, 0, 0);
   }
 
-  private static final FlywheelSim flywheelSim = new FlywheelSim(
+  private static final FlywheelSim flywheelSim =
+      new FlywheelSim(
           LinearSystemId.createFlywheelSystem(flywheelMotorModel, .025, 1), flywheelMotorModel);
 
   @Override
@@ -44,14 +45,12 @@ public class FlywheelIOSim implements FlywheelIO {
     velocityPID.setP(config.kP);
   }
 
-  
   @Override
   public void updateFlywheelFeedforward(double kS, double kV) {
     this.kS = kS;
     this.kV = kV;
     flywheelFeedforward = new SimpleMotorFeedforward(this.kS, this.kV);
   }
-
 
   public void setFlywheelVoltage(double volts) {
     this.flywheelVolts = MathUtil.clamp(volts, -12.0, 12.0);
