@@ -1,44 +1,42 @@
 package frc.robot.subsystems.shooter.kicker;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.util.Units;
 
 
 public class KickerIOSparkMax implements KickerIO{
   private SparkFlex kickerMotor;
   private SparkFlexConfig kickerConfig;
   private SparkAbsoluteEncoder absEncoder;
-  public SimpleMotorFeedforward kickerFeedforward;
-  // private final VelocityVoltage velocitySetPoint; // CHANGE TO NEO Language; currently in phoenix
-
-//   private double kickerVolts = kickerMotor.getBusVoltage();
-  private double currentRotationsPerMinute = absEncoder.getVelocity();
+  private SimpleMotorFeedforward kickerFeedforward;
+  private SparkClosedLoopController kickerController;
 
   public KickerIOSparkMax() {
     kickerMotor = new SparkFlex(10, null);
     absEncoder = kickerMotor.getAbsoluteEncoder();
     kickerConfig = new SparkFlexConfig();
     kickerFeedforward = new SimpleMotorFeedforward(0,0);    
+    kickerController = kickerMotor.getClosedLoopController();
   }
 
   @Override
   public void updateInputs(KickerIOInputs inputs) {
     inputs.kickerConnected = true;
-    inputs.kickerRPM = currentRotationsPerMinute;
+    inputs.kickerRPM = absEncoder.getVelocity();
    }
 
   public void setKickerVelocity(double targetRPM) {
     double targetRotationsPerSec = targetRPM / 60;
     double ffVolts = kickerFeedforward.calculate(targetRotationsPerSec);
+    kickerController.setSetpoint(targetRPM, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0, ffVolts);
+  }
 
-    }
-
-  public void updateKickerPID(SparkFlexConfig kickerFlexConfig) {
-    this.kickerConfig = kickerFlexConfig;
+  public void updateKickerPID(SparkFlexConfig config) {
+    this.kickerConfig = config;
     kickerMotor.configure(
         kickerConfig,
         com.revrobotics.ResetMode.kNoResetSafeParameters,

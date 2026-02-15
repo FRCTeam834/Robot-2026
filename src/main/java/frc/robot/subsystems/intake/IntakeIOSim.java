@@ -66,9 +66,9 @@ public class IntakeIOSim implements IntakeIO {
     rollerPID.setSetpoint(targetRPM, null);
   }
 
-  public void updateRollerPID(SparkFlexConfig rollerConfig, double kS, double kV) {
-    this.rollerConfig = rollerConfig;
-    rollerConfig.apply(rollerConfig);
+  public void updateRollerPID(SparkFlexConfig config) {
+    this.rollerConfig = config;
+    rollerMotor.configure(rollerConfig, com.revrobotics.ResetMode.kNoResetSafeParameters, com.revrobotics.PersistMode.kNoPersistParameters);
   }
 
   // Pivot Methods

@@ -34,5 +34,5 @@ public interface IntakeIO {
 
   public default void updatePivotPID(SparkMaxConfig pivotConfig) {}
 
-  public default void updatePivotFeedForward(double kS, double kV) {}
+  public default void updatePivotFeedforward(double kS, double kV) {}
 }

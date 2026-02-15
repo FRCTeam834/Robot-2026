@@ -54,7 +54,7 @@ public class Intake extends SubsystemBase {
       var pivotConfig = new SparkMaxConfig();
       pivotConfig.closedLoop.p(pivot_kP.get());
       io.updatePivotPID(pivotConfig);
-      io.updatePivotFeedForward(pivot_kV.get(), pivot_kS.get());
+      io.updatePivotFeedforward(pivot_kV.get(), pivot_kS.get());
     }
 
   }
