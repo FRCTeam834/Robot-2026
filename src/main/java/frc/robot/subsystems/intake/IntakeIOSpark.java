@@ -26,6 +26,7 @@ public class IntakeIOSpark implements IntakeIO {
   private SparkMaxConfig pivotConfig;
   private double pivotVolts;
   private SimpleMotorFeedforward pivotFeedforward;
+  private SparkClosedLoopController pivotController;
 
   public IntakeIOSpark() {
     // Roller
@@ -41,6 +42,7 @@ public class IntakeIOSpark implements IntakeIO {
     pivotEncoder = pivotMotor.getAbsoluteEncoder();
     pivotVolts = pivotMotor.getBusVoltage();
     pivotFeedforward = new SimpleMotorFeedforward(0, 0);
+    pivotController = pivotMotor.getClosedLoopController();
   }
 
   @Override
@@ -92,6 +94,11 @@ public class IntakeIOSpark implements IntakeIO {
     pivotMotor.setVoltage(this.pivotVolts);
   }
 
+  public void setPivotPosition(double targetPositionRads){
+    double ffVolts = pivotFeedforward.calculate(targetPositionRads);
+    pivotController.setSetpoint(targetPositionRads, SparkFlex.ControlType.kPosition, ClosedLoopSlot.kSlot0, ffVolts);
+  }
+
   @Override
   public void updatePivotPID(SparkMaxConfig config) {
     this.pivotConfig = config;
@@ -105,4 +112,5 @@ public class IntakeIOSpark implements IntakeIO {
   public void updatePivotFeedforward(double kS, double kV) {
     this.pivotFeedforward = new SimpleMotorFeedforward(kS, kV);
   }
+
 }

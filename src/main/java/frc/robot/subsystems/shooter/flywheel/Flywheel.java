@@ -78,13 +78,6 @@ public class Flywheel extends SubsystemBase {
     return flywheelSysId.dynamic(SysIdRoutine.Direction.kReverse);
   }
 
-  // In subsystem class to mimic Robot 2024 -> will research why later
-  // Probably has something to do with distanceMeters not being a hardware-recognized physical unit
-  // for the flywheels.
-  // IO controls hardware using physical units, while distance is higher logic that must be
-  // translated into a velocity by the subsystem before touching hardware.
-  // Found info on AdvantageKit Website
-
   public void setFlywheelVelocityForDistance(double distanceMeters) {
     targetRPMSetpoint = ShotCalculator.flywheelRPMForDistance(distanceMeters);
     io.setFlywheelVelocity(targetRPMSetpoint);
@@ -92,10 +85,8 @@ public class Flywheel extends SubsystemBase {
 
   // checks if flywheel is at desired speed
   public boolean flywheelrpmAtSetpoint() {
-
     // error window
     final double toleranceRPM = 50.0;
-
     // target - current = error
     // return whether error <= tolerance
     return Math.abs(targetRPMSetpoint - inputs.flywheelVelocityRPM) <= toleranceRPM;

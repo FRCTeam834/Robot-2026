@@ -24,13 +24,13 @@ public interface IntakeIO {
 
   public default void setRollerRPM(double targetRPM) {}
 
-  public default void updateRollerPID(SparkFlexConfig rollerMaxConfig) {}
+  public default void updateRollerPID(SparkFlexConfig rollerConfig) {}
 
   public default void updateRollerFeedforward(double kS, double kV) {}
 
   public default void setPivotVoltage(double volts) {}
 
-  public default void setPivotPosition(double pivotPositionRads) {}
+  public default void setPivotPosition(double targetPositionRads) {}
 
   public default void updatePivotPID(SparkMaxConfig pivotConfig) {}
 

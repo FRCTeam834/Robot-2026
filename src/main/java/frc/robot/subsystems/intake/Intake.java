@@ -6,6 +6,7 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,13 +19,13 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-  public static final LoggedTunableNumber roller_kP = new LoggedTunableNumber("Pivot/roller_kP");
-  public static final LoggedTunableNumber roller_kS = new LoggedTunableNumber("Pivot/roller_kS");
-  public static final LoggedTunableNumber roller_kV = new LoggedTunableNumber("Pivot/roller_kV");
+  public static final LoggedTunableNumber roller_kP = new LoggedTunableNumber("Intake/roller_kP");
+  public static final LoggedTunableNumber roller_kS = new LoggedTunableNumber("Intake/roller_kS");
+  public static final LoggedTunableNumber roller_kV = new LoggedTunableNumber("Intake/roller_kV");
 
-  public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Pivot/pivot_kP");
-  public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Pivot/pivot_kS");
-  public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Pivot/pivot_kV");
+  public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Intake/pivot_kP");
+  public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
+  public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Intake/pivot_kV");
 
   final SysIdRoutine rollerSysId;
 
@@ -48,6 +49,8 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Roller", inputs);
     Logger.processInputs("Pivot", inputs);
 
+
+    // Pivot
     if (Constants.tuningMode && pivot_kP.hasChanged(hashCode())
         || pivot_kS.hasChanged(hashCode())
         || pivot_kV.hasChanged(hashCode())) {
@@ -55,6 +58,16 @@ public class Intake extends SubsystemBase {
       pivotConfig.closedLoop.p(pivot_kP.get());
       io.updatePivotPID(pivotConfig);
       io.updatePivotFeedforward(pivot_kV.get(), pivot_kS.get());
+    }
+
+    // Roller
+    if (Constants.tuningMode && roller_kP.hasChanged(hashCode())
+        || roller_kS.hasChanged(hashCode())
+        || roller_kV.hasChanged(hashCode())) {
+      var rollerConfig = new SparkFlexConfig();
+      rollerConfig.closedLoop.p(roller_kP.get());
+      io.updateRollerPID(rollerConfig);
+      io.updateRollerFeedforward(roller_kV.get(), roller_kS.get());
     }
   }
 }

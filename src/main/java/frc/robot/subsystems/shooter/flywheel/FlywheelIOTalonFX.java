@@ -7,22 +7,18 @@ package frc.robot.subsystems.shooter.flywheel;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-// import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX flywheelMotor;
   public SimpleMotorFeedforward flywheelFeedforward;
   private final VelocityVoltage velocitySetPoint;
-  // Velocity setpoint in Rotations per Second (RotationPS) using closed-loop slot 0 (like the one
-  // in slot0Configs)
-  // private double flywheelVolts;
+  
 
   public FlywheelIOTalonFX(int canId, String canBus) {
     flywheelMotor = new TalonFX(9, canBus); // Change Later
     flywheelFeedforward = new SimpleMotorFeedforward(0, 0);
     velocitySetPoint = new VelocityVoltage(0.0).withSlot(0);
-    // this.flywheelVolts = flywheelMotor.getMotorVoltage().getValueAsDouble();
   }
 
   @Override
