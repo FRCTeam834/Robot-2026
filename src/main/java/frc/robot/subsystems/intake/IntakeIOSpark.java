@@ -94,9 +94,10 @@ public class IntakeIOSpark implements IntakeIO {
     pivotMotor.setVoltage(this.pivotVolts);
   }
 
-  public void setPivotPosition(double targetPositionRads){
+  public void setPivotPosition(double targetPositionRads) {
     double ffVolts = pivotFeedforward.calculate(targetPositionRads);
-    pivotController.setSetpoint(targetPositionRads, SparkFlex.ControlType.kPosition, ClosedLoopSlot.kSlot0, ffVolts);
+    pivotController.setSetpoint(
+        targetPositionRads, SparkFlex.ControlType.kPosition, ClosedLoopSlot.kSlot0, ffVolts);
   }
 
   @Override
@@ -112,5 +113,4 @@ public class IntakeIOSpark implements IntakeIO {
   public void updatePivotFeedforward(double kS, double kV) {
     this.pivotFeedforward = new SimpleMotorFeedforward(kS, kV);
   }
-
 }

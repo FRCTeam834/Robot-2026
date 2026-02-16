@@ -8,7 +8,7 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
 public class ShotCalculator {
   public static InterpolatingDoubleTreeMap shotSpeedTable = new InterpolatingDoubleTreeMap();
-  
+
   static {
     // key: <horizontal distance meters>, value: <RPM>
     shotSpeedTable.put(0.0, 4000.0);

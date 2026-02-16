@@ -13,7 +13,6 @@
 
 // import com.revrobotics.sim.SparkFlexSim;
 
-
 // public class IntakeIOSim implements IntakeIO {
 //   // Roller
 //   private SparkFlexSim rollerSim;

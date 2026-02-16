@@ -5,8 +5,8 @@
 
 package frc.robot.subsystems.intake;
 
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -48,7 +48,6 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Roller", inputs);
     Logger.processInputs("Pivot", inputs);
-
 
     // Pivot
     if (Constants.tuningMode && pivot_kP.hasChanged(hashCode())

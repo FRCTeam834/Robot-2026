@@ -13,7 +13,6 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX flywheelMotor;
   public SimpleMotorFeedforward flywheelFeedforward;
   private final VelocityVoltage velocitySetPoint;
-  
 
   public FlywheelIOTalonFX(int canId, String canBus) {
     flywheelMotor = new TalonFX(9, canBus); // Change Later
