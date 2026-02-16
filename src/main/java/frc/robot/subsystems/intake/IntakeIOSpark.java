@@ -10,6 +10,8 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.controller.ArmFeedforward;
+
 
 public class IntakeIOSpark implements IntakeIO {
   // Roller
@@ -24,8 +26,7 @@ public class IntakeIOSpark implements IntakeIO {
   public SparkAbsoluteEncoder pivotEncoder;
   private SparkMaxConfig pivotConfig;
   private double pivotVolts;
-  // Make it an armfeedforward
-  private SimpleMotorFeedforward pivotFeedforward;
+  private ArmFeedforward pivotFeedforward;
   private SparkClosedLoopController pivotController;
 
   public IntakeIOSpark() {
@@ -40,7 +41,7 @@ public class IntakeIOSpark implements IntakeIO {
     pivotMotor = new SparkMax(12, MotorType.kBrushless);
     pivotEncoder = pivotMotor.getAbsoluteEncoder();
     pivotConfig = new SparkMaxConfig();
-    pivotFeedforward = new SimpleMotorFeedforward(0, 0, 0);
+    pivotFeedforward = new ArmFeedforward(0, 0, 0);
     pivotController = pivotMotor.getClosedLoopController();
   }
 
@@ -55,6 +56,8 @@ public class IntakeIOSpark implements IntakeIO {
     inputs.pivotConnected = true;
     inputs.pivotPositionRads = pivotEncoder.getPosition() * 2 * Math.PI; //see if right
     inputs.pivotAppliedVoltage = pivotMotor.getBusVoltage();
+    inputs.pivotRPM = pivotEncoder.getVelocity();
+
   }
 
   // Roller Methods
@@ -93,10 +96,12 @@ public class IntakeIOSpark implements IntakeIO {
   }
   
   @Override
-  public void setPivotPosition(double targetPositionRads) {
-    double targetPositionRotations = targetPositionRads / (2.0 * Math.PI);
+  public void setPivotPosition(double targetPositionRads, double pivotRPM, double pivotPositionRadsOffset) {
+      double targetPositionRotations = targetPositionRads / (2.0 * Math.PI);
+      double targetPositionRadsWithOffset = targetPositionRads + pivotPositionRadsOffset;
+    double ffVolts = pivotFeedforward.calculate(targetPositionRadsWithOffset, pivotRPM); //factor in offset for targetPostionRads with a variable
     pivotController.setSetpoint(
-        targetPositionRotations, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        targetPositionRotations, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0, ffVolts);
   }
 
   @Override
@@ -110,7 +115,7 @@ public class IntakeIOSpark implements IntakeIO {
 
   // Make it an armfeedforward
   @Override
-  public void updatePivotFeedforward(double kS, double kV, double kG) {
-    this.pivotFeedforward = new SimpleMotorFeedforward(kS, kV, kG);
+  public void updatePivotFeedforward(double kS, double kG, double kV) {
+    this.pivotFeedforward = new ArmFeedforward(kS, kG, kV);
   }
 }

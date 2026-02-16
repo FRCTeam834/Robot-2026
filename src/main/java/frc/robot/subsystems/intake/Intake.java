@@ -25,8 +25,8 @@ public class Intake extends SubsystemBase {
 
   public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Intake/pivot_kP");
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
-  public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Intake/pivot_kV");
   public static final LoggedTunableNumber pivot_kG = new LoggedTunableNumber("Intake/pivot_kG");
+  public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Intake/pivot_kV");
 
   final SysIdRoutine rollerSysId;
 
@@ -58,7 +58,7 @@ public class Intake extends SubsystemBase {
       var pivotConfig = new SparkMaxConfig();
       pivotConfig.closedLoop.p(pivot_kP.get());
       io.updatePivotPID(pivotConfig);
-      io.updatePivotFeedforward(pivot_kV.get(), pivot_kS.get(), pivot_kG.get());
+      io.updatePivotFeedforward(pivot_kS.get(), pivot_kG.get(), pivot_kV.get());
     }
 
     // Roller

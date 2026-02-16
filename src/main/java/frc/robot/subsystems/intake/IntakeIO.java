@@ -15,7 +15,9 @@ public interface IntakeIO {
     // Pivot
     public boolean pivotConnected = false;
     public double pivotPositionRads = 0.0;
+    public double pivotPositionRadsOffset = 0.0; //might have to be in terms of pi
     public double pivotAppliedVoltage = 0.0;
+    public double pivotRPM = 0.0;
   }
 
   public default void updateInputs(IntakeIOInputs inputs) {}
@@ -30,9 +32,9 @@ public interface IntakeIO {
 
   public default void setPivotVoltage(double volts) {}
 
-  public default void setPivotPosition(double targetPositionRads) {}
+  public default void setPivotPosition(double targetPositionRads, double targetRPM, double pivotPositionRadsOffset) {}
 
   public default void updatePivotPID(SparkMaxConfig pivotConfig) {}
 
-  public default void updatePivotFeedforward(double kS, double kV, double kG) {}
+  public default void updatePivotFeedforward(double kS, double kG, double kV) {}
 }
