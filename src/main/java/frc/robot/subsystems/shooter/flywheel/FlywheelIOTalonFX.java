@@ -7,6 +7,7 @@ package frc.robot.subsystems.shooter.flywheel;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
@@ -25,6 +26,11 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     inputs.flywheelConnected = flywheelMotor.isConnected();
     inputs.flywheelVelocityRPM = flywheelMotor.getVelocity().getValueAsDouble() * 60;
     inputs.flywheelAppliedVoltage = flywheelMotor.getMotorVoltage().getValueAsDouble();
+  }
+
+  @Override
+  public void setFlywheelVoltage(double targetVolts) {
+    flywheelMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
   }
 
   @Override

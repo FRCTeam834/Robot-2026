@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 public class KickerIOSparkMax implements KickerIO {
@@ -26,8 +27,15 @@ public class KickerIOSparkMax implements KickerIO {
   public void updateInputs(KickerIOInputs inputs) {
     inputs.kickerConnected = true;
     inputs.kickerRPM = absEncoder.getVelocity();
+    inputs.kickerAppliedVoltage = kickerMotor.getBusVoltage();
   }
 
+  @Override
+  public void setKickerVoltage(double targetVolts) {
+    kickerMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
+  }
+
+  @Override
   public void setKickerVelocity(double targetRPM) {
     double targetRotationsPerSec = targetRPM / 60;
     double ffVolts = kickerFeedforward.calculate(targetRotationsPerSec);
@@ -35,6 +43,7 @@ public class KickerIOSparkMax implements KickerIO {
         targetRPM, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0, ffVolts);
   }
 
+  @Override
   public void updateKickerPID(SparkFlexConfig config) {
     this.kickerConfig = config;
     kickerMotor.configure(

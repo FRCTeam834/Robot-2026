@@ -16,9 +16,9 @@ public interface FlywheelIO {
 
   public default void updateInputs(FlywheelIOInputs inputs) {}
 
-  public default void setFlywheelVelocity(double targetRPM) {}
+  public default void setFlywheelVoltage(double targetVolts) {}
 
-  public default void setFlywheelVoltage(double volts) {}
+  public default void setFlywheelVelocity(double targetRPM) {}
 
   public default void updateFlywheelPID(Slot0Configs configs) {}
 

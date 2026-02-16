@@ -15,7 +15,6 @@ public class IntakeIOSpark implements IntakeIO {
   // Roller
   private SparkFlex rollerMotor;
   private SparkAbsoluteEncoder rollerEncoder;
-  private double rollerVolts;
   private SparkFlexConfig rollerConfig;
   private SimpleMotorFeedforward rollerFeedforward;
   private SparkClosedLoopController rollerController;
@@ -25,6 +24,7 @@ public class IntakeIOSpark implements IntakeIO {
   public SparkAbsoluteEncoder pivotEncoder;
   private SparkMaxConfig pivotConfig;
   private double pivotVolts;
+  // Make it an armfeedforward
   private SimpleMotorFeedforward pivotFeedforward;
   private SparkClosedLoopController pivotController;
 
@@ -32,7 +32,6 @@ public class IntakeIOSpark implements IntakeIO {
     // Roller
     rollerMotor = new SparkFlex(11, MotorType.kBrushless);
     rollerEncoder = rollerMotor.getAbsoluteEncoder();
-    rollerVolts = rollerMotor.getBusVoltage();
     rollerConfig = new SparkFlexConfig();
     rollerFeedforward = new SimpleMotorFeedforward(0, 0);
     rollerController = rollerMotor.getClosedLoopController();
@@ -40,8 +39,8 @@ public class IntakeIOSpark implements IntakeIO {
     // Pivot
     pivotMotor = new SparkMax(12, MotorType.kBrushless);
     pivotEncoder = pivotMotor.getAbsoluteEncoder();
-    pivotVolts = pivotMotor.getBusVoltage();
-    pivotFeedforward = new SimpleMotorFeedforward(0, 0);
+    pivotConfig = new SparkMaxConfig();
+    pivotFeedforward = new SimpleMotorFeedforward(0, 0, 0);
     pivotController = pivotMotor.getClosedLoopController();
   }
 
@@ -50,19 +49,18 @@ public class IntakeIOSpark implements IntakeIO {
     // Roller
     inputs.rollerConnected = true;
     inputs.rollerRPM = rollerEncoder.getVelocity();
-    inputs.rollerAppliedVoltage = rollerVolts;
+    inputs.rollerAppliedVoltage = rollerMotor.getBusVoltage();
 
     // Pivot
     inputs.pivotConnected = true;
-    inputs.pivotPositionRads = pivotEncoder.getPosition();
-    inputs.pivotAppliedVoltage = pivotVolts;
+    inputs.pivotPositionRads = pivotEncoder.getPosition() * 2 * Math.PI; //see if right
+    inputs.pivotAppliedVoltage = pivotMotor.getBusVoltage();
   }
 
   // Roller Methods
   @Override
-  public void setRollerVoltage(double volts) {
-    this.rollerVolts = MathUtil.clamp(volts, -12.0, 12.0);
-    rollerMotor.setVoltage(this.rollerVolts);
+  public void setRollerVoltage(double targetVolts) {
+    rollerMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
   }
 
   @Override
@@ -93,11 +91,12 @@ public class IntakeIOSpark implements IntakeIO {
     this.pivotVolts = MathUtil.clamp(volts, -12.0, 12.0);
     pivotMotor.setVoltage(this.pivotVolts);
   }
-
+  
+  @Override
   public void setPivotPosition(double targetPositionRads) {
-    double ffVolts = pivotFeedforward.calculate(targetPositionRads);
+    double targetPositionRotations = targetPositionRads / (2.0 * Math.PI);
     pivotController.setSetpoint(
-        targetPositionRads, SparkFlex.ControlType.kPosition, ClosedLoopSlot.kSlot0, ffVolts);
+        targetPositionRotations, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
   @Override
@@ -109,8 +108,9 @@ public class IntakeIOSpark implements IntakeIO {
         com.revrobotics.PersistMode.kNoPersistParameters);
   }
 
+  // Make it an armfeedforward
   @Override
-  public void updatePivotFeedforward(double kS, double kV) {
-    this.pivotFeedforward = new SimpleMotorFeedforward(kS, kV);
+  public void updatePivotFeedforward(double kS, double kV, double kG) {
+    this.pivotFeedforward = new SimpleMotorFeedforward(kS, kV, kG);
   }
 }

@@ -20,7 +20,7 @@ public interface IntakeIO {
 
   public default void updateInputs(IntakeIOInputs inputs) {}
 
-  public default void setRollerVoltage(double volts) {}
+  public default void setRollerVoltage(double targetVolts) {}
 
   public default void setRollerRPM(double targetRPM) {}
 
@@ -34,5 +34,5 @@ public interface IntakeIO {
 
   public default void updatePivotPID(SparkMaxConfig pivotConfig) {}
 
-  public default void updatePivotFeedforward(double kS, double kV) {}
+  public default void updatePivotFeedforward(double kS, double kV, double kG) {}
 }
