@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.controller.ArmFeedforward;
 
 
+
 public class IntakeIOSpark implements IntakeIO {
   // Roller
   private SparkFlex rollerMotor;
@@ -44,6 +45,7 @@ public class IntakeIOSpark implements IntakeIO {
     pivotFeedforward = new ArmFeedforward(0, 0, 0);
     pivotController = pivotMotor.getClosedLoopController();
   }
+
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
@@ -96,12 +98,14 @@ public class IntakeIOSpark implements IntakeIO {
   }
   
   @Override
-  public void setPivotPosition(double targetPositionRads, double pivotRPM, double pivotPositionRadsOffset) {
-      double targetPositionRotations = targetPositionRads / (2.0 * Math.PI);
-      double targetPositionRadsWithOffset = targetPositionRads + pivotPositionRadsOffset;
-    double ffVolts = pivotFeedforward.calculate(targetPositionRadsWithOffset, pivotRPM); //factor in offset for targetPostionRads with a variable
+  public void setPivotPosition(double targetPositionRads, double pivotRPM, double pivotRadsOffset) {
+    double adjustedPositionRads = targetPositionRads + pivotRadsOffset;
+    double adjustedPositionRotations = adjustedPositionRads / (2.0 * Math.PI);
+    double pivotRadsPerSec = pivotRPM * (2.0 * Math.PI) / 60.0; 
+    double ffVolts = pivotFeedforward.calculate(adjustedPositionRads, pivotRadsPerSec);
+
     pivotController.setSetpoint(
-        targetPositionRotations, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0, ffVolts);
+        adjustedPositionRotations, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0, ffVolts);
   }
 
   @Override

@@ -10,8 +10,12 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
+
 
 public class IndexerIOSparkFlex implements IndexerIO {
   private SparkFlex indexerMotor;
@@ -26,6 +30,19 @@ public class IndexerIOSparkFlex implements IndexerIO {
     indexerConfig = new SparkFlexConfig();
     indexerController = indexerMotor.getClosedLoopController();
     indexerFeedforward = new SimpleMotorFeedforward(0, 0);
+
+    indexerConfig
+    .idleMode(IdleMode.kCoast)
+    .smartCurrentLimit(0)
+    .voltageCompensation(0.);
+
+    indexerMotor.configure(
+        indexerConfig,
+        com.revrobotics.ResetMode.kNoResetSafeParameters,
+        com.revrobotics.PersistMode.kNoPersistParameters);
+
+    
+
   }
 
   @Override
