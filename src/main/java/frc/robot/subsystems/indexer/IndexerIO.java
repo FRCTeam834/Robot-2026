@@ -13,7 +13,7 @@ public interface IndexerIO {
 
   public default void updateInputs(IndexerIOInputs inputs) {}
 
-  public default void setIndexerRPM(double targetRPM) {}
+  // public default void setIndexerRPM(double targetRPM) {}
 
   public default void setIndexerVoltage(double targetVolts) {}
 

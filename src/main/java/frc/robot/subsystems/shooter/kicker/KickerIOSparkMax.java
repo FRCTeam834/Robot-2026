@@ -4,6 +4,7 @@ import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -21,6 +22,20 @@ public class KickerIOSparkMax implements KickerIO {
     kickerConfig = new SparkFlexConfig();
     kickerFeedforward = new SimpleMotorFeedforward(0, 0);
     kickerController = kickerMotor.getClosedLoopController();
+
+
+     //Kicker Config
+    kickerConfig.closedLoop.p(0.01);
+    kickerConfig.closedLoop.i(0.01);
+    kickerConfig.closedLoop.d(0.01);
+    kickerConfig.closedLoop.feedForward.kS(0.001);
+    kickerConfig.closedLoop.feedForward.kV(0.001);
+    kickerConfig.closedLoop.feedForward.kA(0);
+
+    kickerConfig
+    .idleMode(IdleMode.kCoast)
+    .smartCurrentLimit(0)
+    .voltageCompensation(0);
   }
 
   @Override

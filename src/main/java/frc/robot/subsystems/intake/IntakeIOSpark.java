@@ -6,6 +6,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
@@ -44,6 +45,35 @@ public class IntakeIOSpark implements IntakeIO {
     pivotConfig = new SparkMaxConfig();
     pivotFeedforward = new ArmFeedforward(0, 0, 0);
     pivotController = pivotMotor.getClosedLoopController();
+
+
+
+    //Roller Config
+    rollerConfig.closedLoop.p(0.01);
+    rollerConfig.closedLoop.i(0.01);
+    rollerConfig.closedLoop.d(0.01);
+    rollerConfig.closedLoop.feedForward.kS(0.001);
+    rollerConfig.closedLoop.feedForward.kV(0.001);
+    rollerConfig.closedLoop.feedForward.kA(0);
+
+    rollerConfig
+    .idleMode(IdleMode.kCoast)
+    .smartCurrentLimit(0)
+    .voltageCompensation(0);
+    
+    //Pivot Config
+    pivotConfig.closedLoop.p(0.01);
+    pivotConfig.closedLoop.i(0.01);
+    pivotConfig.closedLoop.d(0.01);
+    pivotConfig.closedLoop.feedForward.kS(0.001);
+    pivotConfig.closedLoop.feedForward.kV(0.001);
+    pivotConfig.closedLoop.feedForward.kA(0);
+
+    pivotConfig
+    .idleMode(IdleMode.kCoast)
+    .smartCurrentLimit(0)
+    .voltageCompensation(0);
+
   }
 
 

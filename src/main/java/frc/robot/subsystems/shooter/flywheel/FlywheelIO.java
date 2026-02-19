@@ -4,6 +4,7 @@
 package frc.robot.subsystems.shooter.flywheel;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+
 import org.littletonrobotics.junction.AutoLog;
 
 public interface FlywheelIO {
