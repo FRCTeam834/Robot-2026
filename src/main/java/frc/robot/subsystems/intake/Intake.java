@@ -5,15 +5,17 @@
 
 package frc.robot.subsystems.intake;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
-import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
   private final IntakeIO io;
@@ -42,6 +44,26 @@ public class Intake extends SubsystemBase {
                 (state) -> Logger.recordOutput("RollerSysIdTestState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (Voltage voltage) -> io.setRollerVoltage(voltage.in(Units.Volts)), null, this));
+  }
+
+  private double targetRPMSetpoint = 0.0;
+
+  public void setRollerRPM(double rpm) {
+    targetRPMSetpoint = rpm;
+    io.setRollerRPM(rpm); 
+  }
+
+  public boolean rollerAtSetpoint() {
+    final double toleranceRPM = 50.0;
+    return Math.abs(targetRPMSetpoint - inputs.rollerRPM) <= toleranceRPM;
+  }
+
+  public void setPivotVoltage(double volts) {
+    io.setPivotVoltage(volts);
+  }
+
+  public void setPivotPosition(double targetPositionRads, double targetRPM, double pivotPositionRadsOffset) {
+    io.setPivotPosition(targetPositionRads, targetRPM, pivotPositionRadsOffset);
   }
 
   @Override

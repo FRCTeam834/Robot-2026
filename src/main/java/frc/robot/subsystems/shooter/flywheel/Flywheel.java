@@ -43,7 +43,7 @@ public class Flywheel extends SubsystemBase {
             new SysIdRoutine.Mechanism(
                 (Voltage voltage) -> io.setFlywheelVoltage(voltage.in(Units.Volts)), null, this));
   }
-
+  
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Flywheel", inputs);

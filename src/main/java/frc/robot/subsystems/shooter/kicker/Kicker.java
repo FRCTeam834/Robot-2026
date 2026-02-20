@@ -22,6 +22,22 @@ public class Kicker extends SubsystemBase {
     this.io = io;
   }
 
+  private double targetRPMSetpoint = 0.0;
+
+  public void setKickerVoltage(double volts) {
+    io.setKickerVoltage(volts);
+  }
+
+  public void setKickerVelocity(double rpm) {
+    targetRPMSetpoint = rpm;
+    io.setKickerVelocity(rpm);
+  }
+
+  public boolean kickerAtSetpoint() {
+    final double toleranceRPM = 50.0;
+    return Math.abs(targetRPMSetpoint - inputs.kickerRPM) <= toleranceRPM;
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
