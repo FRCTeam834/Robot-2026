@@ -27,9 +27,10 @@ public class Kicker extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Kicker", inputs);
 
-    if (Constants.tuningMode && kicker_kP.hasChanged(hashCode())
+    if (Constants.tuningMode && 
+        (kicker_kP.hasChanged(hashCode())
         || kicker_kS.hasChanged(hashCode())
-        || kicker_kV.hasChanged(hashCode())) {
+        || kicker_kV.hasChanged(hashCode()))) {
       var kickerConfig = new SparkFlexConfig();
       kickerConfig.closedLoop.p(kicker_kP.get());
       io.updateKickerPID(kickerConfig);

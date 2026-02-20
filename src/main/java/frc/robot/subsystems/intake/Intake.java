@@ -51,10 +51,11 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Pivot", inputs);
 
     // Pivot
-    if (Constants.tuningMode && pivot_kP.hasChanged(hashCode())
+    if (Constants.tuningMode && 
+        (pivot_kP.hasChanged(hashCode())
         || pivot_kS.hasChanged(hashCode())
         || pivot_kV.hasChanged(hashCode())
-        || pivot_kG.hasChanged(hashCode())) {
+        || pivot_kG.hasChanged(hashCode()))) {
       var pivotConfig = new SparkMaxConfig();
       pivotConfig.closedLoop.p(pivot_kP.get());
       io.updatePivotPID(pivotConfig);
@@ -62,9 +63,10 @@ public class Intake extends SubsystemBase {
     }
 
     // Roller
-    if (Constants.tuningMode && roller_kP.hasChanged(hashCode())
+    if (Constants.tuningMode && 
+        (roller_kP.hasChanged(hashCode())
         || roller_kS.hasChanged(hashCode())
-        || roller_kV.hasChanged(hashCode())) {
+        || roller_kV.hasChanged(hashCode()))) {
       var rollerConfig = new SparkFlexConfig();
       rollerConfig.closedLoop.p(roller_kP.get());
       io.updateRollerPID(rollerConfig);

@@ -4,51 +4,34 @@
 
 package frc.robot.subsystems.indexer;
 
-import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
-import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
   private final IndexerIO io;
   private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 
-  private LoggedTunableNumber indexer_kP = new LoggedTunableNumber("Indexer/indexer_kP");
-  private LoggedTunableNumber indexer_kS = new LoggedTunableNumber("Indexer/indexer_kS");
-  private LoggedTunableNumber indexer_kV = new LoggedTunableNumber("Indexer/indexer_kV");
+  public static enum IndexerState{
+    FAST(8.0),
+    SLOW(3.0),
+    REVERSE (-3.0),
+    STOP(0.0);
 
-  final SysIdRoutine indexerSysId;
+    public final double voltage;
 
-  public Indexer(IndexerIO io) {
+    private IndexerState (double voltage){
+      this.voltage = voltage;
+    }
+  };
+
+  public Indexer (IndexerIO io) {
     this.io = io;
-
-    indexerSysId =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                null,
-                null,
-                null,
-                (state) -> Logger.recordOutput("IndexerRollerSysIdTestState", state.toString())),
-            new SysIdRoutine.Mechanism(
-                (Voltage voltage) -> io.setIndexerVoltage(voltage.in(Units.Volts)), null, this));
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Indexer", inputs);
-
-    if (Constants.tuningMode && indexer_kP.hasChanged(hashCode())
-        || indexer_kS.hasChanged(hashCode())
-        || indexer_kV.hasChanged(hashCode())) {
-      var indexerConfig = new SparkFlexConfig();
-      indexerConfig.closedLoop.p(indexer_kP.get());
-      io.updateIndexerPID(indexerConfig);
-      io.updateIndexerFeedforward(indexer_kV.get(), indexer_kS.get());
-    }
   }
+  
 }

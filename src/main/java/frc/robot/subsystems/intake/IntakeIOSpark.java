@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
@@ -46,34 +47,26 @@ public class IntakeIOSpark implements IntakeIO {
     pivotFeedforward = new ArmFeedforward(0, 0, 0);
     pivotController = pivotMotor.getClosedLoopController();
 
-
-
     //Roller Config
-    rollerConfig.closedLoop.p(0.01);
-    rollerConfig.closedLoop.i(0.01);
-    rollerConfig.closedLoop.d(0.01);
-    rollerConfig.closedLoop.feedForward.kS(0.001);
-    rollerConfig.closedLoop.feedForward.kV(0.001);
-    rollerConfig.closedLoop.feedForward.kA(0);
+    rollerConfig.closedLoop
+    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    .pid(0, 0, 0);
 
     rollerConfig
     .idleMode(IdleMode.kCoast)
-    .smartCurrentLimit(0)
-    .voltageCompensation(0);
+    .smartCurrentLimit(40)
+    .voltageCompensation(12.0);
     
     //Pivot Config
-    pivotConfig.closedLoop.p(0.01);
-    pivotConfig.closedLoop.i(0.01);
-    pivotConfig.closedLoop.d(0.01);
-    pivotConfig.closedLoop.feedForward.kS(0.001);
-    pivotConfig.closedLoop.feedForward.kV(0.001);
-    pivotConfig.closedLoop.feedForward.kA(0);
+    
+    pivotConfig.closedLoop
+    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    .pid(0, 0, 0);
 
     pivotConfig
-    .idleMode(IdleMode.kCoast)
-    .smartCurrentLimit(0)
-    .voltageCompensation(0);
-
+    .idleMode(IdleMode.kBrake)
+    .smartCurrentLimit(40)
+    .voltageCompensation(12.0);
   }
 
 

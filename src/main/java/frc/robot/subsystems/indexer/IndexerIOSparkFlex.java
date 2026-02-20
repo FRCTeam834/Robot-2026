@@ -4,89 +4,37 @@
 
 package frc.robot.subsystems.indexer;
 
-// import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
-// import com.revrobotics.spark.config.SparkFlexConfig;
-
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-// import com.revrobotics.spark.config.AbsoluteEncoderConfig;
-
 
 public class IndexerIOSparkFlex implements IndexerIO {
   private SparkFlex indexerMotor;
-  private SparkAbsoluteEncoder indexerEncoder;
-  private SparkFlexConfig indexerConfig;
-  private SparkClosedLoopController indexerController;
-  private SimpleMotorFeedforward indexerFeedforward;
+  public SparkFlexConfig indexerConfig;
 
   public IndexerIOSparkFlex() {
     indexerMotor = new SparkFlex(13, MotorType.kBrushless);
-    indexerEncoder = indexerMotor.getAbsoluteEncoder();
     indexerConfig = new SparkFlexConfig();
-    indexerController = indexerMotor.getClosedLoopController();
-    indexerFeedforward = new SimpleMotorFeedforward(0, 0);
-
-
-    indexerConfig.closedLoop.p(0.01);
-    indexerConfig.closedLoop.i(0.01);
-    indexerConfig.closedLoop.d(0.01);
-    indexerConfig.closedLoop.feedForward.kS(0.001);
-    indexerConfig.closedLoop.feedForward.kV(0.001);
-    indexerConfig.closedLoop.feedForward.kA(0);
 
     indexerConfig
-    .idleMode(IdleMode.kCoast)
-    .smartCurrentLimit(0)
-    .voltageCompensation(0.);
-
-    //
-    indexerMotor.configure(
-        indexerConfig,
-        com.revrobotics.ResetMode.kNoResetSafeParameters,
-        com.revrobotics.PersistMode.kNoPersistParameters);
-
+    .idleMode(IdleMode.kBrake)
+    .smartCurrentLimit(40)
+    .voltageCompensation(12);
   }
 
   @Override
   public void updateInputs(IndexerIOInputs inputs) {
     inputs.indexerConnected = true;
-    inputs.indexerRPM = indexerEncoder.getVelocity();
-    inputs.indexerAppliedVoltage = indexerMotor.getBusVoltage();
+    inputs.indexerAppliedVoltage = indexerMotor.getAppliedOutput()*indexerMotor.getBusVoltage();
   }
-
-  // @Override
-  // public void setIndexerRPM(double targetRPM) {
-  //   double targetRPS = targetRPM / 60;
-  //   double ffVolts = indexerFeedforward.calculate(targetRPS);
-  //   indexerController.setSetpoint(
-  //       targetRPM, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0, ffVolts);
-  // }
 
   @Override
   public void setIndexerVoltage(double targetVolts) {
     indexerMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
   }
 
-  @Override
-  public void updateIndexerPID(SparkFlexConfig config) {
-    this.indexerConfig = config;
-    indexerMotor.configure(
-        indexerConfig,
-        com.revrobotics.ResetMode.kNoResetSafeParameters,
-        com.revrobotics.PersistMode.kNoPersistParameters);
-  }
 
 
-  
-  @Override
-  public void updateIndexerFeedforward(double kS, double kV) {
-    this.indexerFeedforward = new SimpleMotorFeedforward(kS, kV);
-  }
 }

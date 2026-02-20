@@ -1,6 +1,7 @@
 package frc.robot.subsystems.shooter.kicker;
 
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
@@ -25,17 +26,14 @@ public class KickerIOSparkMax implements KickerIO {
 
 
      //Kicker Config
-    kickerConfig.closedLoop.p(0.01);
-    kickerConfig.closedLoop.i(0.01);
-    kickerConfig.closedLoop.d(0.01);
-    kickerConfig.closedLoop.feedForward.kS(0.001);
-    kickerConfig.closedLoop.feedForward.kV(0.001);
-    kickerConfig.closedLoop.feedForward.kA(0);
+    kickerConfig.closedLoop
+    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    .pid(0, 0, 0);
 
     kickerConfig
-    .idleMode(IdleMode.kCoast)
-    .smartCurrentLimit(0)
-    .voltageCompensation(0);
+    .idleMode(IdleMode.kBrake)
+    .smartCurrentLimit(40)
+    .voltageCompensation(12.0);
   }
 
   @Override
