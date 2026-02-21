@@ -20,6 +20,7 @@ public class Flywheel extends SubsystemBase {
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
   private double targetRPMSetpoint = 0.0;
 
+
   public static final LoggedTunableNumber flywheel_kP =
       new LoggedTunableNumber("Flywheel/flywheel_kP");
   public static final LoggedTunableNumber flywheel_kS =
@@ -44,10 +45,12 @@ public class Flywheel extends SubsystemBase {
                 (Voltage voltage) -> io.setFlywheelVoltage(voltage.in(Units.Volts)), null, this));
   }
   
+  @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Flywheel", inputs);
 
+    
     if (Constants.tuningMode
         && (flywheel_kP.hasChanged(hashCode())
             || flywheel_kS.hasChanged(hashCode())
@@ -78,17 +81,37 @@ public class Flywheel extends SubsystemBase {
     return flywheelSysId.dynamic(SysIdRoutine.Direction.kReverse);
   }
 
+  // Flywheel Getter Methods
+  public double getFlywheelVoltage(){
+    return inputs.flywheelAppliedVoltage;
+  }
+  
+  public double getFlywheelRPM(){
+    return inputs.flywheelVelocityRPM;
+  }
+
+  // Flywheel Setter Methods
+  public void setFlywheelVoltage(double targetVolts){
+    io.setFlywheelVoltage(targetVolts);
+  }
+
+  public void setFlywheelRPM(double targetRPM){  
+    io.setFlywheelVelocity(targetRPM);
+  }
+
   public void setFlywheelVelocityForDistance(double distanceMeters) {
     targetRPMSetpoint = ShotCalculator.flywheelRPMForDistance(distanceMeters);
     io.setFlywheelVelocity(targetRPMSetpoint);
   }
 
-  // checks if flywheel is at desired speed
-  public boolean flywheelrpmAtSetpoint() {
-    // error window
+  // Miscellaneous Methods
+  public boolean flywheelrpmAtSetpoint(double targetRPM ) {    
     final double toleranceRPM = 50.0;
-    // target - current = error
-    // return whether error <= tolerance
-    return Math.abs(targetRPMSetpoint - inputs.flywheelVelocityRPM) <= toleranceRPM;
+    return Math.abs(targetRPM - inputs.flywheelVelocityRPM) <= toleranceRPM;
   }
+
+  public void stopMotor() {
+    io.stopMotor();
+  }
+
 }

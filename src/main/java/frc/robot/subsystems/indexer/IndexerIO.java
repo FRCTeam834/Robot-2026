@@ -13,4 +13,5 @@ public interface IndexerIO {
 
   public default void setIndexerVoltage(double targetVolts) {}
 
+  public default void stopMotor() {}
 }

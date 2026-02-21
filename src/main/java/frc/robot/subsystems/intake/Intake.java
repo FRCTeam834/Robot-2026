@@ -21,6 +21,19 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
+  public static enum RollerState{
+    FAST(8.0),
+    SLOW(3.0),
+    REVERSE (-3.0),
+    STOP(0.0);
+
+    public final double voltage;
+
+    private RollerState (double voltage){
+      this.voltage = voltage;
+    }
+  };
+
   public static final LoggedTunableNumber roller_kP = new LoggedTunableNumber("Intake/roller_kP");
   public static final LoggedTunableNumber roller_kS = new LoggedTunableNumber("Intake/roller_kS");
   public static final LoggedTunableNumber roller_kV = new LoggedTunableNumber("Intake/roller_kV");
@@ -46,25 +59,6 @@ public class Intake extends SubsystemBase {
                 (Voltage voltage) -> io.setRollerVoltage(voltage.in(Units.Volts)), null, this));
   }
 
-  private double targetRPMSetpoint = 0.0;
-
-  public void setRollerRPM(double rpm) {
-    targetRPMSetpoint = rpm;
-    io.setRollerRPM(rpm); 
-  }
-
-  public boolean rollerAtSetpoint() {
-    final double toleranceRPM = 50.0;
-    return Math.abs(targetRPMSetpoint - inputs.rollerRPM) <= toleranceRPM;
-  }
-
-  public void setPivotVoltage(double volts) {
-    io.setPivotVoltage(volts);
-  }
-
-  public void setPivotPosition(double targetPositionRads, double targetRPM, double pivotPositionRadsOffset) {
-    io.setPivotPosition(targetPositionRads, targetRPM, pivotPositionRadsOffset);
-  }
 
   @Override
   public void periodic() {
@@ -95,4 +89,49 @@ public class Intake extends SubsystemBase {
       io.updateRollerFeedforward(roller_kV.get(), roller_kS.get());
     }
   }
+
+ // Roller Setter Methods
+  public void setRollerState(RollerState intakeState){
+    setRollerVoltage(intakeState.voltage);
+  }
+  public void setRollerRPM(double targetRPM) {    
+    io.setRollerRPM(targetRPM); 
+  }
+   public void setRollerVoltage(double targetVolts) {
+    io.setRollerVoltage(targetVolts); 
+  }
+
+  // Pivot Setter Methods
+  public void setPivotVoltage(double targetVolts) {
+    io.setPivotVoltage(targetVolts);
+  }
+  public void setPivotPosition(double targetPosition) {
+    io.setPivotPosition(targetPosition);
+  }
+
+  // Roller Getter Methods
+  public double getCurrentRollerVelocity(){
+    return inputs.rollerRPM;
+  }
+  public double getCurrentRollerVoltage(){
+    return inputs.rollerAppliedVoltage;    
+  }
+
+  // Pivot Getter Methods
+  public double getCurrentPivotPosition(){
+    return inputs.pivotPositionRads;
+  }
+  public double getCurrentPivotVoltage(){
+    return inputs.pivotAppliedVoltage;    
+  }
+
+  // Roller Miscellaneous Methods
+  public boolean rollerAtSetpoint(double targetRPM) {       
+    final double toleranceRPM = 50.0;
+    return Math.abs(targetRPM - inputs.rollerRPM) <= toleranceRPM;
+  }
+  public void stopMotors() {
+    io.stopMotors();
+  }
+
 }

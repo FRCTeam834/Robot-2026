@@ -32,9 +32,11 @@ public interface IntakeIO {
 
   public default void setPivotVoltage(double volts) {}
 
-  public default void setPivotPosition(double targetPositionRads, double targetRPM, double pivotPositionRadsOffset) {}
+  public default void setPivotPosition(double targetPosition) {}
 
   public default void updatePivotPID(SparkMaxConfig pivotConfig) {}
 
   public default void updatePivotFeedforward(double kS, double kG, double kV) {}
+
+  public default void stopMotors() {}
 }

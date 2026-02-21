@@ -34,4 +34,21 @@ public class Indexer extends SubsystemBase {
     Logger.processInputs("Indexer", inputs);
   }
   
+  // Setter Methods
+  public void setIndexerVoltage(double targetVolts) {
+    io.setIndexerVoltage(targetVolts);
+  }
+  public void setIndexerState(IndexerState indexerState){
+    setIndexerVoltage(indexerState.voltage);
+  }
+
+  // Getter Methods
+  public double getIndexerVoltage(){
+    return inputs.indexerAppliedVoltage;
+  }
+
+  // Miscellaneous Method
+  public void stopMotor() {
+    io.stopMotor();
+  }
 }

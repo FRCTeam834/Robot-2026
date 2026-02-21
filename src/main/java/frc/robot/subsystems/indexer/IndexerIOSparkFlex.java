@@ -35,6 +35,9 @@ public class IndexerIOSparkFlex implements IndexerIO {
     indexerMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
   }
 
-
+  @Override
+  public void stopMotor() {
+    indexerMotor.stopMotor();
+  }
 
 }
