@@ -77,7 +77,7 @@ public class IntakeIOSpark implements IntakeIO {
     .velocityConversionFactor(2 * Math.PI / 60);
 
     pivotEncoderConfig
-    .zeroOffset(0)
+    .zeroOffset(0) 
     .positionConversionFactor(2 * Math.PI)
     .velocityConversionFactor(2 * Math.PI / 60);
 
