@@ -11,20 +11,20 @@ public class Indexer extends SubsystemBase {
   private final IndexerIO io;
   private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 
-  public static enum IndexerState{
+  public static enum IndexerState {
     FAST(8.0),
     SLOW(3.0),
-    REVERSE (-3.0),
+    REVERSE(-3.0),
     STOP(0.0);
 
     public final double voltage;
 
-    private IndexerState (double voltage){
+    private IndexerState(double voltage) {
       this.voltage = voltage;
     }
   };
 
-  public Indexer (IndexerIO io) {
+  public Indexer(IndexerIO io) {
     this.io = io;
   }
 
@@ -33,17 +33,18 @@ public class Indexer extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Indexer", inputs);
   }
-  
+
   // Setter Methods
   public void setIndexerVoltage(double targetVolts) {
     io.setIndexerVoltage(targetVolts);
   }
-  public void setIndexerState(IndexerState indexerState){
+
+  public void setIndexerState(IndexerState indexerState) {
     setIndexerVoltage(indexerState.voltage);
   }
 
   // Getter Methods
-  public double getIndexerVoltage(){
+  public double getIndexerVoltage() {
     return inputs.indexerAppliedVoltage;
   }
 

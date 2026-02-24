@@ -7,14 +7,14 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.controller.ArmFeedforward;
 
 public class IntakeIOSpark implements IntakeIO {
   // Roller
@@ -53,47 +53,38 @@ public class IntakeIOSpark implements IntakeIO {
     pivotProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 10));
     pivotSetpoint = new TrapezoidProfile.State();
     pivotController = pivotMotor.getClosedLoopController();
- 
-    rollerConfig.closedLoop
-    .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-    .pid(0, 0, 0);
 
-    pivotConfig.closedLoop
-    .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-    .pid(0, 0, 0);
+    rollerConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder).pid(0, 0, 0);
 
-    rollerConfig
-    .idleMode(IdleMode.kCoast)
-    .smartCurrentLimit(40)
-    .voltageCompensation(12.0);
+    pivotConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder).pid(0, 0, 0);
 
-    pivotConfig
-    .idleMode(IdleMode.kBrake)
-    .smartCurrentLimit(40)
-    .voltageCompensation(12.0);
+    rollerConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(40).voltageCompensation(12.0);
+
+    pivotConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12.0);
 
     rollerEncoderConfig
-    .positionConversionFactor(2 * Math.PI)
-    .velocityConversionFactor(2 * Math.PI / 60);
+        .positionConversionFactor(2 * Math.PI)
+        .velocityConversionFactor(2 * Math.PI / 60);
 
     pivotEncoderConfig
-    .zeroOffset(0) 
-    .positionConversionFactor(2 * Math.PI)
-    .velocityConversionFactor(2 * Math.PI / 60);
+        .zeroOffset(0)
+        .positionConversionFactor(2 * Math.PI)
+        .velocityConversionFactor(2 * Math.PI / 60);
 
     rollerConfig.apply(rollerEncoderConfig);
 
     pivotConfig.apply(pivotEncoderConfig);
 
-    rollerMotor.configure(rollerConfig, 
-      com.revrobotics.ResetMode.kNoResetSafeParameters,
-      com.revrobotics.PersistMode.kNoPersistParameters);
+    rollerMotor.configure(
+        rollerConfig,
+        com.revrobotics.ResetMode.kNoResetSafeParameters,
+        com.revrobotics.PersistMode.kNoPersistParameters);
 
-    pivotMotor.configure(pivotConfig, 
-      com.revrobotics.ResetMode.kNoResetSafeParameters,
-      com.revrobotics.PersistMode.kNoPersistParameters);
+    pivotMotor.configure(
+        pivotConfig,
+        com.revrobotics.ResetMode.kNoResetSafeParameters,
+        com.revrobotics.PersistMode.kNoPersistParameters);
   }
-
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
@@ -104,10 +95,9 @@ public class IntakeIOSpark implements IntakeIO {
 
     // Pivot
     inputs.pivotConnected = true;
-    inputs.pivotPositionRads = pivotEncoder.getPosition(); 
+    inputs.pivotPositionRads = pivotEncoder.getPosition();
     inputs.pivotAppliedVoltage = pivotMotor.getBusVoltage();
     inputs.pivotRPM = pivotEncoder.getVelocity();
-
   }
 
   // Roller Methods
@@ -143,12 +133,15 @@ public class IntakeIOSpark implements IntakeIO {
     this.pivotVolts = MathUtil.clamp(volts, -12.0, 12.0);
     pivotMotor.setVoltage(this.pivotVolts);
   }
-  
+
   @Override
   public void setPivotPosition(double targetPositionRads) {
-    pivotSetpoint = pivotProfile.calculate(0.020, pivotSetpoint, new TrapezoidProfile.State(targetPositionRads, 0));
+    pivotSetpoint =
+        pivotProfile.calculate(
+            0.020, pivotSetpoint, new TrapezoidProfile.State(targetPositionRads, 0));
     double ffVolts = pivotFeedforward.calculate(pivotSetpoint.position, pivotSetpoint.velocity);
-    pivotController.setSetpoint(pivotSetpoint.position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0, ffVolts);
+    pivotController.setSetpoint(
+        pivotSetpoint.position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0, ffVolts);
   }
 
   @Override
@@ -170,5 +163,4 @@ public class IntakeIOSpark implements IntakeIO {
     pivotMotor.stopMotor();
     rollerMotor.stopMotor();
   }
-  
 }

@@ -5,8 +5,8 @@ import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -27,20 +27,14 @@ public class KickerIOSparkMax implements KickerIO {
     kickerController = kickerMotor.getClosedLoopController();
     kickerEncoderConfig = new AbsoluteEncoderConfig();
 
+    // Kicker Config
+    kickerConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(0, 0, 0);
 
-     //Kicker Config
-    kickerConfig.closedLoop
-    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-    .pid(0, 0, 0);
+    kickerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12.0);
 
-    kickerConfig
-    .idleMode(IdleMode.kBrake)
-    .smartCurrentLimit(40)
-    .voltageCompensation(12.0);
-    
     kickerEncoderConfig
-    .positionConversionFactor(2 * Math.PI)
-    .velocityConversionFactor(2 * Math.PI / 60);
+        .positionConversionFactor(2 * Math.PI)
+        .velocityConversionFactor(2 * Math.PI / 60);
 
     kickerConfig.apply(kickerEncoderConfig);
   }

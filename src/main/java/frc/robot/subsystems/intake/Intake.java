@@ -5,31 +5,29 @@
 
 package frc.robot.subsystems.intake;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-  public static enum RollerState{
+  public static enum RollerState {
     FAST(8.0),
     SLOW(3.0),
-    REVERSE (-3.0),
+    REVERSE(-3.0),
     STOP(0.0);
 
     public final double voltage;
 
-    private RollerState (double voltage){
+    private RollerState(double voltage) {
       this.voltage = voltage;
     }
   };
@@ -59,7 +57,6 @@ public class Intake extends SubsystemBase {
                 (Voltage voltage) -> io.setRollerVoltage(voltage.in(Units.Volts)), null, this));
   }
 
-
   @Override
   public void periodic() {
     io.updateInputs(inputs);
@@ -67,11 +64,11 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Pivot", inputs);
 
     // Pivot
-    if (Constants.tuningMode && 
-        (pivot_kP.hasChanged(hashCode())
-        || pivot_kS.hasChanged(hashCode())
-        || pivot_kV.hasChanged(hashCode())
-        || pivot_kG.hasChanged(hashCode()))) {
+    if (Constants.tuningMode
+        && (pivot_kP.hasChanged(hashCode())
+            || pivot_kS.hasChanged(hashCode())
+            || pivot_kV.hasChanged(hashCode())
+            || pivot_kG.hasChanged(hashCode()))) {
       var pivotConfig = new SparkMaxConfig();
       pivotConfig.closedLoop.p(pivot_kP.get());
       io.updatePivotPID(pivotConfig);
@@ -79,10 +76,10 @@ public class Intake extends SubsystemBase {
     }
 
     // Roller
-    if (Constants.tuningMode && 
-        (roller_kP.hasChanged(hashCode())
-        || roller_kS.hasChanged(hashCode())
-        || roller_kV.hasChanged(hashCode()))) {
+    if (Constants.tuningMode
+        && (roller_kP.hasChanged(hashCode())
+            || roller_kS.hasChanged(hashCode())
+            || roller_kV.hasChanged(hashCode()))) {
       var rollerConfig = new SparkFlexConfig();
       rollerConfig.closedLoop.p(roller_kP.get());
       io.updateRollerPID(rollerConfig);
@@ -90,48 +87,53 @@ public class Intake extends SubsystemBase {
     }
   }
 
- // Roller Setter Methods
-  public void setRollerState(RollerState intakeState){
+  // Roller Setter Methods
+  public void setRollerState(RollerState intakeState) {
     setRollerVoltage(intakeState.voltage);
   }
-  public void setRollerRPM(double targetRPM) {    
-    io.setRollerRPM(targetRPM); 
+
+  public void setRollerRPM(double targetRPM) {
+    io.setRollerRPM(targetRPM);
   }
-   public void setRollerVoltage(double targetVolts) {
-    io.setRollerVoltage(targetVolts); 
+
+  public void setRollerVoltage(double targetVolts) {
+    io.setRollerVoltage(targetVolts);
   }
 
   // Pivot Setter Methods
   public void setPivotVoltage(double targetVolts) {
     io.setPivotVoltage(targetVolts);
   }
+
   public void setPivotPosition(double targetPosition) {
     io.setPivotPosition(targetPosition);
   }
 
   // Roller Getter Methods
-  public double getCurrentRollerVelocity(){
+  public double getCurrentRollerVelocity() {
     return inputs.rollerRPM;
   }
-  public double getCurrentRollerVoltage(){
-    return inputs.rollerAppliedVoltage;    
+
+  public double getCurrentRollerVoltage() {
+    return inputs.rollerAppliedVoltage;
   }
 
   // Pivot Getter Methods
-  public double getCurrentPivotPosition(){
+  public double getCurrentPivotPosition() {
     return inputs.pivotPositionRads;
   }
-  public double getCurrentPivotVoltage(){
-    return inputs.pivotAppliedVoltage;    
+
+  public double getCurrentPivotVoltage() {
+    return inputs.pivotAppliedVoltage;
   }
 
   // Roller Miscellaneous Methods
-  public boolean rollerAtSetpoint(double targetRPM) {       
+  public boolean rollerAtSetpoint(double targetRPM) {
     final double toleranceRPM = 50.0;
     return Math.abs(targetRPM - inputs.rollerRPM) <= toleranceRPM;
   }
+
   public void stopMotors() {
     io.stopMotors();
   }
-
 }

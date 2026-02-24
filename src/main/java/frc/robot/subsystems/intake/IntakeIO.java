@@ -15,7 +15,7 @@ public interface IntakeIO {
     // Pivot
     public boolean pivotConnected = false;
     public double pivotPositionRads = 0.0;
-    public double pivotPositionRadsOffset = 0.0; //might have to be in terms of pi
+    public double pivotPositionRadsOffset = 0.0; // might have to be in terms of pi
     public double pivotAppliedVoltage = 0.0;
     public double pivotRPM = 0.0;
   }

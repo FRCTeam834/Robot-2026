@@ -29,7 +29,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     inputs.flywheelVelocityRPM = flywheelMotor.getVelocity().getValueAsDouble() * 60;
     inputs.flywheelAppliedVoltage = flywheelMotor.getMotorVoltage().getValueAsDouble();
   }
-  
+
   @Override
   public void setFlywheelVoltage(double targetVolts) {
     flywheelMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
