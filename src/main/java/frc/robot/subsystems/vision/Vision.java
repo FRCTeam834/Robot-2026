@@ -86,7 +86,7 @@ public class Vision extends SubsystemBase {
     }
     if (bestIndex >= 0) {
       return Optional.of(inputs[bestIndex].pose);
-    }
+    } 
     return Optional.empty();
   }
 
