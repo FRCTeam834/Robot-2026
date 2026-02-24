@@ -115,7 +115,7 @@ public class Vision extends SubsystemBase {
   }
 
   // # of cameras
-  public int getCameraCount() {
+  public int getCameraCount() { 
     return io.length;
   }
 
