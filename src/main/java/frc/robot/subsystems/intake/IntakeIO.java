@@ -24,8 +24,6 @@ public interface IntakeIO {
 
   public default void setRollerVoltage(double targetVolts) {}
 
-  public default void setRollerRPM(double targetRPM) {}
-
   public default void updateRollerPID(SparkFlexConfig rollerConfig) {}
 
   public default void updateRollerFeedforward(double kS, double kV) {}

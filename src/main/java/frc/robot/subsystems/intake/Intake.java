@@ -32,9 +32,19 @@ public class Intake extends SubsystemBase {
     }
   };
 
-  public static final LoggedTunableNumber roller_kP = new LoggedTunableNumber("Intake/roller_kP");
-  public static final LoggedTunableNumber roller_kS = new LoggedTunableNumber("Intake/roller_kS");
-  public static final LoggedTunableNumber roller_kV = new LoggedTunableNumber("Intake/roller_kV");
+  public static enum PivotState {
+        
+    STOW(0.0),              
+    OUT(Math.toRadians(90));  // GOING TO CHANGE LATER
+
+    public final double position;
+
+    private PivotState(double position) {
+      this.position = position;
+    }
+    
+    
+  };
 
   public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Intake/pivot_kP");
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
@@ -74,17 +84,6 @@ public class Intake extends SubsystemBase {
       io.updatePivotPID(pivotConfig);
       io.updatePivotFeedforward(pivot_kS.get(), pivot_kG.get(), pivot_kV.get());
     }
-
-    // Roller
-    if (Constants.tuningMode
-        && (roller_kP.hasChanged(hashCode())
-            || roller_kS.hasChanged(hashCode())
-            || roller_kV.hasChanged(hashCode()))) {
-      var rollerConfig = new SparkFlexConfig();
-      rollerConfig.closedLoop.p(roller_kP.get());
-      io.updateRollerPID(rollerConfig);
-      io.updateRollerFeedforward(roller_kV.get(), roller_kS.get());
-    }
   }
 
   // Roller Setter Methods
@@ -92,15 +91,15 @@ public class Intake extends SubsystemBase {
     setRollerVoltage(intakeState.voltage);
   }
 
-  public void setRollerRPM(double targetRPM) {
-    io.setRollerRPM(targetRPM);
-  }
-
   public void setRollerVoltage(double targetVolts) {
     io.setRollerVoltage(targetVolts);
   }
 
   // Pivot Setter Methods
+  public void setPivotState(PivotState pivotState) {
+    setPivotPosition(pivotState.position);
+  }
+
   public void setPivotVoltage(double targetVolts) {
     io.setPivotVoltage(targetVolts);
   }
