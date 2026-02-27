@@ -22,7 +22,16 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIOSparkFlex;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOSpark;
+import frc.robot.subsystems.shooter.flywheel.Flywheel;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
+import frc.robot.subsystems.shooter.kicker.Kicker;
+import frc.robot.subsystems.shooter.kicker.KickerIOSparkMax;
 
+  
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -37,6 +46,11 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final CommandXboxController simJoystick = new CommandXboxController(3);
+  
+  public static final Indexer indexer = new Indexer(new IndexerIOSparkFlex());
+  public static final Intake intake = new Intake(new IntakeIOSpark());
+
+  // public static final Flywheel flywheel = new Flywheel(new FlywheelIOTalonFX());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

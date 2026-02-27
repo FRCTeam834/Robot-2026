@@ -28,7 +28,7 @@ public class KickerIOSparkMax implements KickerIO {
     kickerEncoderConfig = new AbsoluteEncoderConfig();
 
     // Kicker Config
-    kickerConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(0, 0, 0);
+    kickerConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder).pid(0, 0, 0);
 
     kickerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12.0);
 

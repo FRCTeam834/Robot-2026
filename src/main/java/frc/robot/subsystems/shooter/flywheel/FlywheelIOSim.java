@@ -20,7 +20,6 @@ public class FlywheelIOSim implements FlywheelIO {
   public double flywheelVolts;
   public SimpleMotorFeedforward flywheelFeedforward;
   private final PIDController velocityPID;
-  private double idleSpeed = 300; //RPM
 
   public FlywheelIOSim() {
     flywheelVolts = 0.0;

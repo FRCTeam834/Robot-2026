@@ -18,6 +18,8 @@ public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
   private double targetRPMSetpoint = 0.0;
+  private double idleSpeed = 300; //RPM
+
 
   public static final LoggedTunableNumber flywheel_kP =
       new LoggedTunableNumber("Flywheel/flywheel_kP");
@@ -105,6 +107,10 @@ public class Flywheel extends SubsystemBase {
   public boolean flywheelrpmAtSetpoint(double targetRPM) {
     final double toleranceRPM = 50.0;
     return Math.abs(targetRPM - inputs.flywheelVelocityRPM) <= toleranceRPM;
+  }
+
+  public void setIdleSpeed() {
+    io.setFlywheelVelocity(idleSpeed);
   }
 
   public void stopMotor() {
