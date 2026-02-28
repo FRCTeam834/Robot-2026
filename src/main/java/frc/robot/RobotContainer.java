@@ -22,17 +22,16 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIOSparkFlex;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
-import frc.robot.subsystems.shooter.kicker.Kicker;
-import frc.robot.subsystems.shooter.kicker.KickerIOSparkMax;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-  
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -41,17 +40,17 @@ import frc.robot.subsystems.shooter.kicker.KickerIOSparkMax;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive drive;
+  public static Drive drive;
+  public static Vision vision;
+  public static final Indexer indexer = new Indexer(new IndexerIOSparkFlex());
+  public static final Intake intake = new Intake(new IntakeIOSpark());
+  public static final Flywheel flywheel = new Flywheel(new FlywheelIOTalonFX());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final CommandXboxController operatorController = new CommandXboxController(1);
   private final CommandXboxController simJoystick = new CommandXboxController(3);
-  
-  public static final Indexer indexer = new Indexer(new IndexerIOSparkFlex());
-  public static final Intake intake = new Intake(new IntakeIOSpark());
-  public static final Flywheel flywheel = new Flywheel(new FlywheelIOTalonFX());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -64,6 +63,13 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight("limelight-front", drive::getRotation),
+                new VisionIOLimelight("limelight-right", drive::getRotation));
+
         break;
 
       case SIM:
@@ -87,7 +93,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         break;
-
     }
 
     // Set up auto routines
@@ -109,8 +114,10 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    autoChooser.addOption("Flywheel SysId Quasistatic Forward", flywheel.flywheelQuasistaticForward());
-    autoChooser.addOption("Flywheel SysId Quasistatic Reverse", flywheel.flywheezlQuasistaticReverse());
+    autoChooser.addOption(
+        "Flywheel SysId Quasistatic Forward", flywheel.flywheelQuasistaticForward());
+    autoChooser.addOption(
+        "Flywheel SysId Quasistatic Reverse", flywheel.flywheezlQuasistaticReverse());
     autoChooser.addOption("Flywheel SysId Dynamic Forward", flywheel.sysIdFlywheelDynamicForward());
     autoChooser.addOption("Flywheel SysId Dynamic Reverse", flywheel.sysIdFlywheelDynamicReverse());
 
@@ -141,11 +148,7 @@ public class RobotContainer {
               () -> -OI.getLeftJoystickX()));
     }
 
-    flywheel.setDefaultCommand(
-      new SpinFlywheel(flywheel, () -> 300.0)
-    );
-
-    
+    flywheel.setDefaultCommand(new SpinFlywheel(flywheel, () -> 300.0));
 
     /*
 
