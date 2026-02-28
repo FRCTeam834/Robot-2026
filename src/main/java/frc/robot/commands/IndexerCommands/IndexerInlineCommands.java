@@ -13,25 +13,23 @@ import frc.robot.subsystems.indexer.Indexer.IndexerState;
 /** Add your docs here. */
 public class IndexerInlineCommands {
     
-    public static Command startBelt = 
-        Commands.startEnd(
+    public static Command fastBelt = 
+        Commands.runOnce(
         () -> RobotContainer.indexer.setIndexerState(IndexerState.FAST), 
-        () -> RobotContainer.indexer.setIndexerState(IndexerState.STOP),
         RobotContainer.indexer);
 
-//   public static Command startBelt() {
-//     return Commands.startEnd(() -> {
-//       RobotContainer.indexer.setIndexerState(IndexerState.FAST);
-//     }, () -> {
-//       RobotContainer.indexer.setIndexerState(IndexerState.STOP);
-//     });
-//   }
+    public static Command slowBelt = 
+        Commands.runOnce(
+        () -> RobotContainer.indexer.setIndexerState(IndexerState.SLOW), 
+        RobotContainer.indexer);
 
+    public static Command reverseBelt = 
+        Commands.runOnce(
+        () -> RobotContainer.indexer.setIndexerState(IndexerState.REVERSE), 
+        RobotContainer.indexer);
 
-  
-
-  
-
-  
-    
+    public static Command stopBelt = 
+        Commands.runOnce(
+        () -> RobotContainer.indexer.setIndexerState(IndexerState.STOP), 
+        RobotContainer.indexer);
 }

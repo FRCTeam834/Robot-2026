@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ShooterCommands.SpinFlywheel;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -45,12 +46,12 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
+  private final CommandXboxController operatorController = new CommandXboxController(1);
   private final CommandXboxController simJoystick = new CommandXboxController(3);
   
   public static final Indexer indexer = new Indexer(new IndexerIOSparkFlex());
   public static final Intake intake = new Intake(new IntakeIOSpark());
-
-  // public static final Flywheel flywheel = new Flywheel(new FlywheelIOTalonFX());
+  public static final Flywheel flywheel = new Flywheel(new FlywheelIOTalonFX());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -86,6 +87,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         break;
+
     }
 
     // Set up auto routines
@@ -106,6 +108,11 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption("Flywheel SysId Quasistatic Forward", flywheel.flywheelQuasistaticForward());
+    autoChooser.addOption("Flywheel SysId Quasistatic Reverse", flywheel.flywheezlQuasistaticReverse());
+    autoChooser.addOption("Flywheel SysId Dynamic Forward", flywheel.sysIdFlywheelDynamicForward());
+    autoChooser.addOption("Flywheel SysId Dynamic Reverse", flywheel.sysIdFlywheelDynamicReverse());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -133,6 +140,12 @@ public class RobotContainer {
               () -> -OI.getRightJoystickX(),
               () -> -OI.getLeftJoystickX()));
     }
+
+    flywheel.setDefaultCommand(
+      new SpinFlywheel(flywheel, () -> 300.0)
+    );
+
+    
 
     /*
 
