@@ -28,5 +28,6 @@ public interface IntakeIO {
 
   public default void updateClosedLoopConfig(ClosedLoopConfig config) {}
 
-  public default void stopMotors() {}
+  public default void stopPivot() {}
+  public default void stopRollers() {}
 }

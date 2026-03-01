@@ -35,7 +35,7 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
 
-    // Pivot
+    // Pivot Tuning
     if (Constants.tuningMode
         && (pivot_kP.hasChanged(hashCode())
             || pivot_kS.hasChanged(hashCode())
@@ -47,6 +47,14 @@ public class Intake extends SubsystemBase {
       pivotConfig.feedForward.kS(pivot_kS.get()).kV(pivot_kV.get()).kG(pivot_kG.get());
 
       io.updateClosedLoopConfig(pivotConfig);
+    }
+
+    // handle the transition from deploying to deployed
+    if(pivotState == PivotState.DEPLOYING 
+      && pivotAtSetpoint(PivotState.DEPLOYED, IntakeConstants.pivotTolerance)
+    ) {
+      stopPivot();
+      pivotState = PivotState.DEPLOYED;
     }
   }
 
@@ -84,7 +92,7 @@ public class Intake extends SubsystemBase {
   }
 
   // Pivot Getter Methods
-  public double getCurrentPivotPosition() {
+  public double getCurrentPivotAngle() {
     return inputs.pivotPositionRads;
   }
 
@@ -96,7 +104,23 @@ public class Intake extends SubsystemBase {
     return inputs.pivotRPM;
   }
 
-  public void stopMotors() {
-    io.stopMotors();
+  public PivotState getPivotState() {
+    return pivotState;
+  }
+
+  public RollerState getRollersState() {
+    return rollerState;
+  }
+
+  public boolean pivotAtSetpoint(PivotState state, double toleranceRads) {
+    return Math.abs(getCurrentPivotAngle() - state.position) <= toleranceRads;
+  }
+
+  public void stopPivot() {
+    io.stopPivot();
+  }
+
+  public void stopRollers() {
+    io.stopRollers();
   }
 }

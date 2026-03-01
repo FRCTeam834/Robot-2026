@@ -11,6 +11,8 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import edu.wpi.first.math.MathUtil;
 
 public class IntakeIOSpark implements IntakeIO {
@@ -35,7 +37,11 @@ public class IntakeIOSpark implements IntakeIO {
     pivotController = pivotMotor.getClosedLoopController();
     pivotEncoder = pivotMotor.getEncoder();
 
-    pivotConfig.inverted(false).voltageCompensation(12.0).smartCurrentLimit(40);
+    pivotConfig
+    .inverted(false)
+    .idleMode(IdleMode.kBrake)
+    .voltageCompensation(12.0)
+    .smartCurrentLimit(40);
 
     // pivot config
     pivotConfig
@@ -55,12 +61,16 @@ public class IntakeIOSpark implements IntakeIO {
         .feedForward
         .kS(0)
         .kV(0)
-        .kG(0);
+        .kCos(0)
+        .kCosRatio(1 / (2 * Math.PI));
 
-    pivotConfig.closedLoop.maxMotion.cruiseVelocity(0).maxAcceleration(0).allowedProfileError(1);
+    pivotConfig.closedLoop
+      .maxMotion
+        .cruiseVelocity(0)
+        .maxAcceleration(0)
+        .allowedProfileError(1);
 
-    pivotMotor.configure(
-        pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    pivotMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     pivotEncoder.setPosition(0);
   }
 
@@ -91,13 +101,11 @@ public class IntakeIOSpark implements IntakeIO {
   }
 
   /*
-   * Straight up = 0 degrees
-   * Deployed = ~90 degrees
-   * Stowed = ~-10 degrees
+   * 0 radians = parallel with horizontal 
+   * it's what rev wants
    */
   @Override
   public void setPivotAngle(double angle) {
-    angle = MathUtil.angleModulus(angle);
     pivotController.setSetpoint(
         angle, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
   }
@@ -110,8 +118,12 @@ public class IntakeIOSpark implements IntakeIO {
   }
 
   @Override
-  public void stopMotors() {
+  public void stopPivot() {
     pivotMotor.stopMotor();
+  }
+
+  @Override
+  public void stopRollers() {
     rollerMotor.stopMotor();
   }
 }
