@@ -32,10 +32,10 @@ public class IntakeCommands {
     public static Command deployIntake = 
         Commands.run(
             () -> RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYING), 
-                RobotContainer.intake);
+                RobotContainer.intake).alongWith(fastRollers);
 
     public static Command retractIntake = 
         Commands.run(
             () -> RobotContainer.intake.setDesiredPivotState(PivotState.UP), 
-            RobotContainer.intake);
+            RobotContainer.intake).alongWith(stopRollers);
 }

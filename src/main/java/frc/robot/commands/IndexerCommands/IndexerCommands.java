@@ -10,7 +10,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.indexer.IndexerConstants.IndexerState;
 
 /** Add your docs here. */
-public class IndexerInlineCommands {
+public class IndexerCommands {
 
   public static Command fastBelt =
       Commands.runOnce(

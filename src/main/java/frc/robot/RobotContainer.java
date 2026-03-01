@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ShooterCommands.SpinFlywheel;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -140,9 +139,6 @@ public class RobotContainer {
               () -> -OI.getRightJoystickX(),
               () -> -OI.getLeftJoystickX()));
     }
-
-    flywheel.setDefaultCommand(new SpinFlywheel(flywheel, () -> 300.0));
-
     /*
 
         // Lock to 0° when A button is held
