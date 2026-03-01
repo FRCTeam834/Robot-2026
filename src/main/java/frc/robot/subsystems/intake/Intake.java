@@ -18,8 +18,11 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-  @AutoLogOutput(key = "SubsystemStates/rollerState") private RollerState rollerState = RollerState.STOP;
-  @AutoLogOutput(key = "SubsystemStates/pivotState") private PivotState pivotState = PivotState.STOW;
+  @AutoLogOutput(key = "SubsystemStates/rollerState")
+  private RollerState rollerState = RollerState.STOP;
+
+  @AutoLogOutput(key = "SubsystemStates/pivotState")
+  private PivotState pivotState = PivotState.STOW;
 
   public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Intake/pivot_kP");
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
@@ -50,9 +53,8 @@ public class Intake extends SubsystemBase {
     }
 
     // handle the transition from deploying to deployed
-    if(pivotState == PivotState.DEPLOYING 
-      && pivotAtSetpoint(PivotState.DEPLOYED, IntakeConstants.pivotTolerance)
-    ) {
+    if (pivotState == PivotState.DEPLOYING
+        && pivotAtSetpoint(PivotState.DEPLOYED, IntakeConstants.pivotTolerance)) {
       stopPivot();
       pivotState = PivotState.DEPLOYED;
     }
@@ -69,7 +71,7 @@ public class Intake extends SubsystemBase {
   }
 
   // Pivot Setter Methods
-  public void setPivotState(PivotState pivotState) {
+  public void setDesiredPivotState(PivotState pivotState) {
     this.pivotState = pivotState;
     setPivotAngle(pivotState.position);
   }
@@ -80,6 +82,10 @@ public class Intake extends SubsystemBase {
 
   public void setPivotAngle(double angle) {
     io.setPivotAngle(angle);
+  }
+
+  public void setEncoderAngle(double angle) {
+    io.setEncoderAngle(angle);
   }
 
   // Roller Getter Methods
@@ -102,6 +108,10 @@ public class Intake extends SubsystemBase {
 
   public double getPivotVelocity() {
     return inputs.pivotRPM;
+  }
+
+  public double getPivotCurrent() {
+    return inputs.pivotCurrent;
   }
 
   public PivotState getPivotState() {

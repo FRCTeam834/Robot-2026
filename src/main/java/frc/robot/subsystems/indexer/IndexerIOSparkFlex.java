@@ -18,10 +18,10 @@ public class IndexerIOSparkFlex implements IndexerIO {
     indexerConfig = new SparkFlexConfig();
 
     indexerConfig
-    .idleMode(IdleMode.kBrake)
-    .inverted(true)
-    .smartCurrentLimit(40)
-    .voltageCompensation(12);
+        .idleMode(IdleMode.kBrake)
+        .inverted(true)
+        .smartCurrentLimit(40)
+        .voltageCompensation(12);
   }
 
   @Override

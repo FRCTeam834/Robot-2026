@@ -4,19 +4,11 @@
 
 package frc.robot.subsystems.shooter.flywheel;
 
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.util.LoggedTunableNumber;
-
-import static edu.wpi.first.units.Units.Volts;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -31,8 +23,8 @@ public class Flywheel extends SubsystemBase {
   public static final LoggedTunableNumber flywheel_kV =
       new LoggedTunableNumber("Flywheel/flywheel_kV");
 
-
-  @AutoLogOutput(key = "SubsystemStates/FlywheelState") private FlywheelState flywheelState = FlywheelState.STOPPED;
+  @AutoLogOutput(key = "SubsystemStates/FlywheelState")
+  private FlywheelState flywheelState = FlywheelState.STOPPED;
 
   public Flywheel(FlywheelIO io) {
     this.io = io;

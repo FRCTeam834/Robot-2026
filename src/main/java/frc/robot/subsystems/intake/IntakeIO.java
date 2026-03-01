@@ -26,8 +26,11 @@ public interface IntakeIO {
 
   public default void setPivotAngle(double angle) {}
 
+  public default void setEncoderAngle(double angle) {}
+
   public default void updateClosedLoopConfig(ClosedLoopConfig config) {}
 
   public default void stopPivot() {}
+
   public default void stopRollers() {}
 }

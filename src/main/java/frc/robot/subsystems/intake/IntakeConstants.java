@@ -33,4 +33,5 @@ public class IntakeConstants {
   }
 
   public static double pivotTolerance = Math.toRadians(5);
+  public static double intakeZeroAngle = 1;
 }

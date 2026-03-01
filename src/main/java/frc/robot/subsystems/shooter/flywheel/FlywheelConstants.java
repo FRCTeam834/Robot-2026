@@ -8,14 +8,14 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 
 /** Add your docs here. */
 public class FlywheelConstants {
-    public static enum FlywheelState {
-        STOPPED,
-        IDLE,
-        ACTIVE
-    }
+  public static enum FlywheelState {
+    STOPPED,
+    IDLE,
+    ACTIVE
+  }
 
-    public static Slot0Configs flywheelConfig = new Slot0Configs().withKP(0).withKS(0).withKV(0);
+  public static Slot0Configs flywheelConfig = new Slot0Configs().withKP(0).withKS(0).withKV(0);
 
-    public static double idleRPM = 500.0;
-    public static double toleranceRPM = 10.0;
+  public static double idleRPM = 500.0;
+  public static double toleranceRPM = 10.0;
 }
