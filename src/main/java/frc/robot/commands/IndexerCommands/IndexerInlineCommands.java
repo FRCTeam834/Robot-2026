@@ -7,7 +7,7 @@ package frc.robot.commands.IndexerCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.indexer.Indexer.IndexerState;
+import frc.robot.subsystems.indexer.IndexerConstants.IndexerState;
 
 /** Add your docs here. */
 public class IndexerInlineCommands {

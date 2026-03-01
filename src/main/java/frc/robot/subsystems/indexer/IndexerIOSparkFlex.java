@@ -8,7 +8,6 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.math.MathUtil;
 
 public class IndexerIOSparkFlex implements IndexerIO {
   private SparkFlex indexerMotor;
@@ -18,7 +17,11 @@ public class IndexerIOSparkFlex implements IndexerIO {
     indexerMotor = new SparkFlex(13, MotorType.kBrushless);
     indexerConfig = new SparkFlexConfig();
 
-    indexerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12);
+    indexerConfig
+    .idleMode(IdleMode.kBrake)
+    .inverted(true)
+    .smartCurrentLimit(40)
+    .voltageCompensation(12);
   }
 
   @Override
@@ -28,8 +31,8 @@ public class IndexerIOSparkFlex implements IndexerIO {
   }
 
   @Override
-  public void setIndexerVoltage(double targetVolts) {
-    indexerMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
+  public void setIndexerVoltage(double volts) {
+    indexerMotor.setVoltage(volts);
   }
 
   @Override

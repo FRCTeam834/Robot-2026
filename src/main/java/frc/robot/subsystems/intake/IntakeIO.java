@@ -7,16 +7,15 @@ public interface IntakeIO {
   @AutoLog
   public static class IntakeIOInputs {
     // Rollers
-    public boolean rollerConnected = false;
     public double rollerRPM = 0.0;
     public double rollerAppliedVoltage = 0.0;
+    public double rollerCurrent = 0.0;
 
     // Pivot
-    public boolean pivotConnected = false;
     public double pivotPositionRads = 0.0;
-    public double pivotPositionRadsOffset = 0.0; // might have to be in terms of pi
     public double pivotAppliedVoltage = 0.0;
     public double pivotRPM = 0.0;
+    public double pivotCurrent = 0.0;
   }
 
   public default void updateInputs(IntakeIOInputs inputs) {}

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.shooter.flywheel;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
@@ -11,14 +12,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.util.LoggedTunableNumber;
+
+import static edu.wpi.first.units.Units.Volts;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
-  private double targetRPMSetpoint = 0.0;
-  private double idleSpeed = 300; // RPM
 
   public static final LoggedTunableNumber flywheel_kP =
       new LoggedTunableNumber("Flywheel/flywheel_kP");
@@ -27,21 +31,11 @@ public class Flywheel extends SubsystemBase {
   public static final LoggedTunableNumber flywheel_kV =
       new LoggedTunableNumber("Flywheel/flywheel_kV");
 
-  final SysIdRoutine flywheelSysId;
+
+  @AutoLogOutput(key = "SubsystemStates/FlywheelState") private FlywheelState flywheelState = FlywheelState.STOPPED;
 
   public Flywheel(FlywheelIO io) {
     this.io = io;
-
-    // Flywheel SysId Routine
-    flywheelSysId =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                null,
-                null,
-                null,
-                (state) -> Logger.recordOutput("FlywheelSysIdTestState", state.toString())),
-            new SysIdRoutine.Mechanism(
-                (Voltage voltage) -> io.setFlywheelVoltage(voltage.in(Units.Volts)), null, this));
   }
 
   @Override
@@ -57,40 +51,12 @@ public class Flywheel extends SubsystemBase {
       flywheelConfig.kP = flywheel_kP.get();
       flywheelConfig.kS = flywheel_kS.get();
       flywheelConfig.kV = flywheel_kV.get();
-      io.updateFlywheelPID(flywheelConfig);
-      io.updateFlywheelFeedforward(flywheel_kS.get(), flywheel_kV.get());
+      io.updateClosedLoopConfig(flywheelConfig);
     }
-  }
-
-  // Flywheel SysId Commands
-  public Command flywheelQuasistaticForward() {
-    return flywheelSysId.quasistatic(SysIdRoutine.Direction.kForward);
-  }
-
-  public Command flywheezlQuasistaticReverse() {
-    return flywheelSysId.quasistatic(SysIdRoutine.Direction.kReverse);
-  }
-
-  public Command sysIdFlywheelDynamicForward() {
-    return flywheelSysId.dynamic(SysIdRoutine.Direction.kForward);
-  }
-
-  public Command sysIdFlywheelDynamicReverse() {
-    return flywheelSysId.dynamic(SysIdRoutine.Direction.kReverse);
-  }
-
-  // Flywheel Getter Methods
-  public double getFlywheelVoltage() {
-    return inputs.flywheelAppliedVoltage;
   }
 
   public double getFlywheelRPM() {
     return inputs.flywheelVelocityRPM;
-  }
-
-  // Flywheel Setter Methods
-  public void setFlywheelVoltage(double targetVolts) {
-    io.setFlywheelVoltage(targetVolts);
   }
 
   public void setFlywheelRPM(double targetRPM) {
@@ -98,21 +64,27 @@ public class Flywheel extends SubsystemBase {
   }
 
   public void setFlywheelVelocityForDistance(double distanceMeters) {
-    targetRPMSetpoint = ShotCalculator.flywheelRPMForDistance(distanceMeters);
-    io.setFlywheelVelocity(targetRPMSetpoint);
+    double setpointVelocity = ShotCalculator.flywheelRPMForDistance(distanceMeters);
+    io.setFlywheelVelocity(setpointVelocity);
+    flywheelState = FlywheelState.ACTIVE;
   }
 
   // Miscellaneous Methods
-  public boolean flywheelrpmAtSetpoint(double targetRPM) {
-    final double toleranceRPM = 50.0;
-    return Math.abs(targetRPM - inputs.flywheelVelocityRPM) <= toleranceRPM;
+  public boolean isAtSetpointRPM(double targetRPM) {
+    return Math.abs(targetRPM - inputs.flywheelVelocityRPM) <= FlywheelConstants.toleranceRPM;
   }
 
   public void setIdleSpeed() {
-    io.setFlywheelVelocity(idleSpeed);
+    io.setFlywheelVelocity(FlywheelConstants.idleRPM);
+    flywheelState = FlywheelState.IDLE;
   }
 
   public void stopMotor() {
     io.stopMotor();
+    flywheelState = FlywheelState.STOPPED;
+  }
+
+  public FlywheelState getState() {
+    return flywheelState;
   }
 }

@@ -67,27 +67,26 @@ public class IntakeIOSpark implements IntakeIO {
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     // Roller
-    inputs.rollerConnected = true;
     inputs.rollerRPM = rollerEncoder.getVelocity();
-    inputs.rollerAppliedVoltage = rollerMotor.getBusVoltage();
+    inputs.rollerAppliedVoltage = rollerMotor.getAppliedOutput() * rollerMotor.getBusVoltage();
+    inputs.rollerCurrent = rollerMotor.getOutputCurrent();
 
     // Pivot
-    inputs.pivotConnected = true;
     inputs.pivotPositionRads = pivotEncoder.getPosition();
-    inputs.pivotAppliedVoltage = pivotMotor.getBusVoltage();
+    inputs.pivotAppliedVoltage = pivotMotor.getAppliedOutput() * pivotMotor.getBusVoltage();
     inputs.pivotRPM = pivotEncoder.getVelocity();
+    inputs.pivotCurrent = pivotMotor.getOutputCurrent();
   }
 
   // Roller Methods
   @Override
-  public void setRollerVoltage(double targetVolts) {
-    rollerMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
+  public void setRollerVoltage(double volts) {
+    rollerMotor.setVoltage(volts);
   }
 
   // Pivot Methods
   @Override
   public void setPivotVoltage(double volts) {
-    volts = MathUtil.clamp(volts, -12.0, 12.0);
     pivotMotor.setVoltage(volts);
   }
 

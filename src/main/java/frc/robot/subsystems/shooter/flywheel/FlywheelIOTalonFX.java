@@ -5,71 +5,53 @@
 package frc.robot.subsystems.shooter.flywheel;
 
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.util.Units;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX flywheelMotor;
-  public SimpleMotorFeedforward flywheelFeedforward;
-  private final VelocityVoltage velocitySetPoint;
-  private final TalonFXConfiguration flywheelConfig;
+  private final VelocityTorqueCurrentFOC velocitySetpoint;
 
   public FlywheelIOTalonFX() {
-    flywheelMotor = new TalonFX(9, "canBus"); // Change Later
-    flywheelFeedforward = new SimpleMotorFeedforward(0, 0);
-    velocitySetPoint = new VelocityVoltage(0.0).withSlot(0);
-    flywheelConfig = new TalonFXConfiguration();
+    flywheelMotor = new TalonFX(9);
+    velocitySetpoint = new VelocityTorqueCurrentFOC(0.0).withSlot(0);
 
-    flywheelConfig.Slot0.kP = 0.1;
-    flywheelConfig.Slot0.kI = 0.0;
-    flywheelConfig.Slot0.kD = 0.0;
-    flywheelConfig.Slot0.kS = 0.01;
-    flywheelConfig.Slot0.kV = 0.01;
-    flywheelConfig.Slot0.kA = 0.0;
+    var flywheelConfig = new TalonFXConfiguration();
+    flywheelConfig.withSlot0(FlywheelConstants.flywheelConfig);
     flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    flywheelConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
-
-    flywheelConfig.Voltage.PeakForwardVoltage = 12.0;
-    flywheelConfig.Voltage.PeakReverseVoltage = -12.0;
-
     flywheelMotor.getConfigurator().apply(flywheelConfig);
   }
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
     inputs.flywheelConnected = flywheelMotor.isConnected();
-    inputs.flywheelVelocityRPM = flywheelMotor.getVelocity().getValueAsDouble() * 60;
-    inputs.flywheelAppliedVoltage = flywheelMotor.getMotorVoltage().getValueAsDouble();
+    inputs.flywheelVelocityRPM = flywheelMotor.getVelocity().getValueAsDouble();
+    inputs.flywheelCurrent = flywheelMotor.getTorqueCurrent().getValueAsDouble();
+    inputs.flywheelDutyCycle = flywheelMotor.getDutyCycle().getValueAsDouble();
   }
 
+  /*
+   * -1 to 1
+   */
   @Override
-  public void setFlywheelVoltage(double targetVolts) {
-    flywheelMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
+  public void setFlywheelDutyCycle(double dutyCycle) {
+    flywheelMotor.setControl(new DutyCycleOut(dutyCycle));
   }
 
   @Override
   public void setFlywheelVelocity(double targetRPM) {
-    var velocity = RPM.of(targetRPM);
-    double rps = Units.rotationsPerMinuteToRadiansPerSecond(targetRPM);
-    double ffVolts = flywheelFeedforward.calculate(rps);
-    flywheelMotor.setControl(velocitySetPoint.withVelocity(velocity).withFeedForward(ffVolts));
+    flywheelMotor.setControl(velocitySetpoint.withVelocity(RPM.of(targetRPM)));
   }
 
   @Override
-  public void updateFlywheelPID(Slot0Configs config) {
+  public void updateClosedLoopConfig(Slot0Configs config) {
     flywheelMotor.getConfigurator().apply(config);
-  }
-
-  @Override
-  public void updateFlywheelFeedforward(double kS, double kV) {
-    this.flywheelFeedforward = new SimpleMotorFeedforward(kS, kV);
   }
 
   @Override

@@ -29,4 +29,6 @@ public class IntakeConstants {
       this.position = position;
     }
   }
+
+  public static double pivotOffset;
 }

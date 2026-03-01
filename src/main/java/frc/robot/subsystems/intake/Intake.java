@@ -18,8 +18,8 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-  @AutoLogOutput public static RollerState rollerState = RollerState.STOP;
-  @AutoLogOutput public static PivotState pivotState = PivotState.STOW;
+  @AutoLogOutput(key = "SubsystemStates/rollerState") private RollerState rollerState = RollerState.STOP;
+  @AutoLogOutput(key = "SubsystemStates/pivotState") private PivotState pivotState = PivotState.STOW;
 
   public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Intake/pivot_kP");
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
@@ -51,8 +51,9 @@ public class Intake extends SubsystemBase {
   }
 
   // Roller Setter Methods
-  public void setRollerState(RollerState intakeState) {
-    setRollerVoltage(intakeState.voltage);
+  public void setRollerState(RollerState rollerState) {
+    this.rollerState = rollerState;
+    setRollerVoltage(rollerState.voltage);
   }
 
   public void setRollerVoltage(double targetVolts) {
@@ -61,6 +62,7 @@ public class Intake extends SubsystemBase {
 
   // Pivot Setter Methods
   public void setPivotState(PivotState pivotState) {
+    this.pivotState = pivotState;
     setPivotAngle(pivotState.position);
   }
 
@@ -88,6 +90,10 @@ public class Intake extends SubsystemBase {
 
   public double getCurrentPivotVoltage() {
     return inputs.pivotAppliedVoltage;
+  }
+
+  public double getPivotVelocity() {
+    return inputs.pivotRPM;
   }
 
   public void stopMotors() {
