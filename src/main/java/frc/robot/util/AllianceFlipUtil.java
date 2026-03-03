@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 
-
 public class AllianceFlipUtil {
   public static double applyX(double x) {
     return shouldFlip() ? FieldConstants.fieldLength - x : x;

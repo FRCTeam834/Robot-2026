@@ -10,8 +10,7 @@ import frc.robot.RobotContainer;
 
 /** Add your docs here. */
 public class ShooterCommands {
-    public static Command idleShooter() {
-        return Commands.run(
-            () -> RobotContainer.flywheel.setIdleSpeed(), RobotContainer.flywheel);
-    }
+  public static Command idleShooter() {
+    return Commands.run(() -> RobotContainer.flywheel.setIdleSpeed(), RobotContainer.flywheel);
+  }
 }

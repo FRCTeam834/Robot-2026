@@ -27,9 +27,7 @@ public class ZeroIntake extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -41,10 +39,7 @@ public class ZeroIntake extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (
-      (Math.abs(intake.getPivotVelocity()) < 0.01)) &&
-      (Math.abs(intake.getPivotCurrent()) > 5
-    );
+    return ((Math.abs(intake.getPivotVelocity()) < 0.01))
+        && (Math.abs(intake.getPivotCurrent()) > 5);
   }
 }
-

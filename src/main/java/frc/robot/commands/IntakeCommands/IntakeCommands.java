@@ -12,30 +12,31 @@ import frc.robot.subsystems.intake.IntakeConstants.RollerState;
 
 /** Add your docs here. */
 public class IntakeCommands {
-    public static Command fastRollers =
-        Commands.run(
-            () -> RobotContainer.intake.setRollerState(RollerState.FAST), RobotContainer.intake);
+  public static Command fastRollers =
+      Commands.run(
+          () -> RobotContainer.intake.setRollerState(RollerState.FAST), RobotContainer.intake);
 
-    public static Command slowRollers =
-        Commands.run(
-            () -> RobotContainer.intake.setRollerState(RollerState.SLOW), RobotContainer.intake);
+  public static Command slowRollers =
+      Commands.run(
+          () -> RobotContainer.intake.setRollerState(RollerState.SLOW), RobotContainer.intake);
 
-    public static Command reverseRollers =
-        Commands.run(
-            () -> RobotContainer.intake.setRollerState(RollerState.REVERSE),
-    RobotContainer.intake);
+  public static Command reverseRollers =
+      Commands.run(
+          () -> RobotContainer.intake.setRollerState(RollerState.REVERSE), RobotContainer.intake);
 
-    public static Command stopRollers =
-        Commands.run(
-            () -> RobotContainer.intake.setRollerState(RollerState.STOP), RobotContainer.intake);
+  public static Command stopRollers =
+      Commands.run(
+          () -> RobotContainer.intake.setRollerState(RollerState.STOP), RobotContainer.intake);
 
-    public static Command deployIntake = 
-        Commands.run(
-            () -> RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYING), 
-                RobotContainer.intake).alongWith(fastRollers);
+  public static Command deployIntake =
+      Commands.run(
+              () -> RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYING),
+              RobotContainer.intake)
+          .alongWith(fastRollers);
 
-    public static Command retractIntake = 
-        Commands.run(
-            () -> RobotContainer.intake.setDesiredPivotState(PivotState.UP), 
-            RobotContainer.intake).alongWith(stopRollers);
+  public static Command retractIntake =
+      Commands.run(
+              () -> RobotContainer.intake.setDesiredPivotState(PivotState.UP),
+              RobotContainer.intake)
+          .alongWith(stopRollers);
 }
