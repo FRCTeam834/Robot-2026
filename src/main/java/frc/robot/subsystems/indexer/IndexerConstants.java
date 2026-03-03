@@ -7,9 +7,9 @@ package frc.robot.subsystems.indexer;
 /** Add your docs here. */
 public class IndexerConstants {
   public static enum IndexerState {
-    FAST(8.0),
-    SLOW(3.0),
-    REVERSE(-3.0),
+    FAST(12.0),
+    SLOW(7.0),
+    REVERSE(-7.0),
     STOP(0.0);
 
     public final double voltage;

@@ -6,8 +6,12 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.config.ClosedLoopConfig;
+
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import frc.robot.commands.IntakeCommands.ZeroIntake;
 import frc.robot.subsystems.intake.IntakeConstants.PivotState;
 import frc.robot.subsystems.intake.IntakeConstants.RollerState;
 import frc.robot.util.LoggedTunableNumber;
@@ -18,19 +22,32 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-  @AutoLogOutput(key = "SubsystemStates/rollerState")
-  private RollerState rollerState = RollerState.STOP;
-
-  @AutoLogOutput(key = "SubsystemStates/pivotState")
-  private PivotState pivotState = PivotState.STOW;
-
   public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Intake/pivot_kP");
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
-  public static final LoggedTunableNumber pivot_kG = new LoggedTunableNumber("Intake/pivot_kG");
+  public static final LoggedTunableNumber pivot_kCos = new LoggedTunableNumber("Intake/pivot_kCos");
   public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Intake/pivot_kV");
+
+  @AutoLogOutput(key = "SubsystemStates/rollerState")
+  private RollerState rollerState;
+
+  @AutoLogOutput(key = "SubsystemStates/pivotState")
+  private PivotState pivotState;
+
+  private boolean isPivotZeroed;
+
+  static {
+    pivot_kP.initDefault(0);
+    pivot_kS.initDefault(0);
+    pivot_kCos.initDefault(0);
+    pivot_kV.initDefault(0);
+
+  } 
 
   public Intake(IntakeIO io) {
     this.io = io;
+    rollerState = RollerState.STOP;
+    pivotState = PivotState.STOW;
+    isPivotZeroed = false;
   }
 
   @Override
@@ -39,15 +56,15 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
 
     // Pivot Tuning
-    if (Constants.tuningMode
+    if (Constants.TUNING_MODE
         && (pivot_kP.hasChanged(hashCode())
             || pivot_kS.hasChanged(hashCode())
             || pivot_kV.hasChanged(hashCode())
-            || pivot_kG.hasChanged(hashCode()))) {
+            || pivot_kCos.hasChanged(hashCode()))) {
 
       var pivotConfig = new ClosedLoopConfig();
       pivotConfig.p(pivot_kP.get());
-      pivotConfig.feedForward.kS(pivot_kS.get()).kV(pivot_kV.get()).kG(pivot_kG.get());
+      pivotConfig.feedForward.kS(pivot_kS.get()).kV(pivot_kV.get()).kG(pivot_kCos.get());
 
       io.updateClosedLoopConfig(pivotConfig);
     }
@@ -73,16 +90,20 @@ public class Intake extends SubsystemBase {
   // Pivot Setter Methods
   public void setDesiredPivotState(PivotState pivotState) {
     this.pivotState = pivotState;
-    setPivotAngle(pivotState.position);
+    io.setPivotAngle(pivotState.position);
   }
 
   public void setPivotVoltage(double targetVolts) {
     io.setPivotVoltage(targetVolts);
   }
 
-  public void setPivotAngle(double angle) {
-    io.setPivotAngle(angle);
+  public boolean isPivotZeroed() {
+    return isPivotZeroed;
   }
+
+  public void establishPivotZero(boolean state) {
+    isPivotZeroed = state;
+  } 
 
   public void setEncoderAngle(double angle) {
     io.setEncoderAngle(angle);

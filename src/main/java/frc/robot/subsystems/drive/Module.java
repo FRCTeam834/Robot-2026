@@ -65,12 +65,12 @@ public class Module {
     io.updateInputs(inputs);
     Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
 
-    if (Constants.tuningMode && drive_kP.hasChanged(hashCode())) {
+    if (Constants.TUNING_MODE && drive_kP.hasChanged(hashCode())) {
       var driveConfig = new Slot0Configs();
       driveConfig.kP = drive_kP.get();
       io.updateDrivePID(driveConfig);
     }
-    if (Constants.tuningMode && turn_kP.hasChanged(hashCode())) {
+    if (Constants.TUNING_MODE && turn_kP.hasChanged(hashCode())) {
       var turnConfig = new Slot0Configs();
       turnConfig.kP = turn_kP.get();
       io.updateTurnPID(turnConfig);

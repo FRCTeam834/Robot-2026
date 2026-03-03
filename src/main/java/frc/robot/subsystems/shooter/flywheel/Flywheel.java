@@ -5,16 +5,22 @@
 package frc.robot.subsystems.shooter.flywheel;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.util.LoggedTunableNumber;
+
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
+  private DoubleSupplier hubDistance;
 
   public static final LoggedTunableNumber flywheel_kP =
       new LoggedTunableNumber("Flywheel/flywheel_kP");
@@ -22,12 +28,23 @@ public class Flywheel extends SubsystemBase {
       new LoggedTunableNumber("Flywheel/flywheel_kS");
   public static final LoggedTunableNumber flywheel_kV =
       new LoggedTunableNumber("Flywheel/flywheel_kV");
+  public static final LoggedTunableNumber manual_flywheel_setpoint =
+      new LoggedTunableNumber("Flywheel/manual_rpm_setpoint");
 
-  @AutoLogOutput(key = "SubsystemStates/FlywheelState")
-  private FlywheelState flywheelState = FlywheelState.STOPPED;
+  static{
+    flywheel_kP.initDefault(0);
+    flywheel_kS.initDefault(0);
+    flywheel_kV.initDefault(0);
+    manual_flywheel_setpoint.initDefault(0);
+  }
 
-  public Flywheel(FlywheelIO io) {
+  @AutoLogOutput(key = "SubsystemStates/FlywheelState") private FlywheelState flywheelState;
+
+  public Flywheel(FlywheelIO io, DoubleSupplier hubDistance) {
     this.io = io;
+    this.hubDistance = hubDistance;
+
+    flywheelState = FlywheelState.STOPPED;
   }
 
   @Override
@@ -35,7 +52,7 @@ public class Flywheel extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Flywheel", inputs);
 
-    if (Constants.tuningMode
+    if (Constants.TUNING_MODE
         && (flywheel_kP.hasChanged(hashCode())
             || flywheel_kS.hasChanged(hashCode())
             || flywheel_kV.hasChanged(hashCode()))) {
@@ -45,35 +62,29 @@ public class Flywheel extends SubsystemBase {
       flywheelConfig.kV = flywheel_kV.get();
       io.updateClosedLoopConfig(flywheelConfig);
     }
+
+    switch(flywheelState) {
+      case ACTIVE -> {
+        double setpointVelocityRPM = ShotCalculator.flywheelRPMForDistance(hubDistance.getAsDouble());
+        io.setFlywheelVelocity(setpointVelocityRPM);
+      }
+      case IDLE -> io.setFlywheelVelocity(FlywheelConstants.idleRPM);
+      case MANUAL_RPM -> io.setFlywheelVelocity(manual_flywheel_setpoint.get());
+      case STOPPED -> io.stopMotor();
+    }
   }
 
   public double getFlywheelRPM() {
     return inputs.flywheelVelocityRPM;
   }
 
-  public void setFlywheelRPM(double targetRPM) {
-    io.setFlywheelVelocity(targetRPM);
-  }
-
-  public void setFlywheelVelocityForDistance(double distanceMeters) {
-    double setpointVelocity = ShotCalculator.flywheelRPMForDistance(distanceMeters);
-    io.setFlywheelVelocity(setpointVelocity);
-    flywheelState = FlywheelState.ACTIVE;
+  public void setDesiredState(FlywheelState state) {
+    flywheelState = state;
   }
 
   // Miscellaneous Methods
   public boolean isAtSetpointRPM(double targetRPM) {
-    return Math.abs(targetRPM - inputs.flywheelVelocityRPM) <= FlywheelConstants.toleranceRPM;
-  }
-
-  public void setIdleSpeed() {
-    io.setFlywheelVelocity(FlywheelConstants.idleRPM);
-    flywheelState = FlywheelState.IDLE;
-  }
-
-  public void stopMotor() {
-    io.stopMotor();
-    flywheelState = FlywheelState.STOPPED;
+    return MathUtil.isNear(targetRPM, getFlywheelRPM(), FlywheelConstants.toleranceRPM);
   }
 
   public FlywheelState getState() {

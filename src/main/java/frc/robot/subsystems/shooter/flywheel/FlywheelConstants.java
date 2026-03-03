@@ -11,7 +11,8 @@ public class FlywheelConstants {
   public static enum FlywheelState {
     STOPPED,
     IDLE,
-    ACTIVE
+    ACTIVE, 
+    MANUAL_RPM,
   }
 
   public static Slot0Configs flywheelConfig = new Slot0Configs().withKP(0).withKS(0).withKV(0);

@@ -7,10 +7,11 @@ package frc.robot.commands.ShooterCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 
 /** Add your docs here. */
 public class ShooterCommands {
   public static Command idleShooter() {
-    return Commands.run(() -> RobotContainer.flywheel.setIdleSpeed(), RobotContainer.flywheel);
+    return Commands.run(() -> RobotContainer.flywheel.setDesiredState(FlywheelState.IDLE), RobotContainer.flywheel);
   }
 }

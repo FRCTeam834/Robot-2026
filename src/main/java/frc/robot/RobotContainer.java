@@ -8,12 +8,20 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DriveCommands.DriveCommands;
+import frc.robot.commands.IntakeCommands.IntakeCommands;
+import frc.robot.commands.IntakeCommands.ZeroIntake;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -43,14 +51,10 @@ public class RobotContainer {
   public static Vision vision;
   public static final Indexer indexer = new Indexer(new IndexerIOSparkFlex());
   public static final Intake intake = new Intake(new IntakeIOSpark());
-  public static final Flywheel flywheel = new Flywheel(new FlywheelIOTalonFX());
+  public static final Flywheel flywheel = new Flywheel(new FlywheelIOTalonFX(), () -> drive.getDistanceToHub());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-
-  private final CommandXboxController operatorController = new CommandXboxController(1);
-  private final CommandXboxController simJoystick = new CommandXboxController(3);
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
@@ -112,7 +116,6 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -124,38 +127,29 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    if (Constants.currentMode == Constants.Mode.SIM) {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> -simJoystick.getLeftY(),
-              () -> -simJoystick.getLeftX(),
-              () -> -simJoystick.getRightX()));
-    } else {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> -OI.getRightJoystickY(),
-              () -> -OI.getRightJoystickX(),
-              () -> -OI.getLeftJoystickX()));
-    }
-    /*
+    //* Default command just a plain drive */
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -OI.getRightJoystickY(),
+            () -> -OI.getRightJoystickX(),
+            () -> -OI.getLeftJoystickX()));
+    
+    /* AUTO ALIGN TO HUB WHEN PRESSING RIGHT BUMPER */
+    /* EVENTUALLY THIS WILL BE CONSOLIDATED INTO A SUPER SHOOTING SEQUENCE */
+    OI.xbox
+        .rightBumper()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -OI.getRightJoystickY(),
+                () -> -OI.getRightJoystickX(),
+                () -> drive.getFieldRelativeHUBAngle()));
 
-        // Lock to 0° when A button is held
-        controller
-            .a()
-            .whileTrue(
-                DriveCommands.joystickDriveAtAngle(
-                    drive,
-                    () -> -controller.getLeftY(),
-                    () -> -controller.getLeftX(),
-                    () -> Rotation2d.kZero));
 
-        // Switch to X pattern when X button is pressed
-        controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
         // Reset gyro to 0° when B button is pressed
-        controller
+        OI.xbox
             .b()
             .onTrue(
                 Commands.runOnce(
@@ -164,8 +158,6 @@ public class RobotContainer {
                                 new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                         drive)
                     .ignoringDisable(true));
-
-    */
 
   }
 

@@ -42,9 +42,13 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.AllianceFlipUtil;
+import frc.robot.util.FieldConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -308,6 +312,21 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
+  }
+
+  @AutoLogOutput(key = "Odometry/DistanceToHub")
+  public double getDistanceToHub() {
+    Translation2d allianceHubTranslation = AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
+    return getPose().getTranslation().getDistance(allianceHubTranslation);
+  }
+
+  public Rotation2d getFieldRelativeHUBAngle() {
+    Translation2d robotLocation = getPose().getTranslation();
+    Translation2d goalPose =
+        AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
+    Translation2d targetVector = goalPose.minus(robotLocation);
+
+    return targetVector.getAngle();
   }
 
   /** Returns the current odometry rotation. */

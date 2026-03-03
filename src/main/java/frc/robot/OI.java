@@ -6,12 +6,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /** Add your docs here. */
 public class OI {
   public static final Joystick leftJoystick = new Joystick(0);
   public static final Joystick rightJoystick = new Joystick(1);
-  public static final XboxController xbox = new XboxController(2);
+  public static final CommandXboxController xbox = new CommandXboxController(2);
 
   public static final double flightJoystickDeadzone = 0;
   public static final double xboxJoystickDeadzone = 0;
