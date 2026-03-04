@@ -4,19 +4,19 @@
 
 package frc.robot.commands.IntakeCommands;
 
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeConstants.PivotState;
+import edu.wpi.first.math.filter.Debouncer;
+
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ZeroIntake extends Command {
-  /** Creates a new ZeroIntake. */
-  private final Intake intake;
 
-  private Debouncer veloDebouncer = new Debouncer(0.5);
-  private boolean isVelocityZero = false;
+  private final Intake intake;
+  private Debouncer pivotDebouncer = new Debouncer(0.5); // i think this would be fine as 0.1
+  private boolean pivotAtZero;
 
   public ZeroIntake(Intake intake) {
     this.intake = intake;
@@ -29,24 +29,24 @@ public class ZeroIntake extends Command {
     intake.setPivotVoltage(-0.5);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  // Called every time the scheduler runs while thes command is scheduled.
   @Override
   public void execute() {
-    isVelocityZero = veloDebouncer.calculate(Math.abs(intake.getPivotVelocity()) < 0.005);
+    pivotAtZero = pivotDebouncer.calculate(intake.getPivotVelocity() < 0.05); //i saw someone else using rawSignal (variable)? helpful or not needed?
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     intake.setEncoderAngle(IntakeConstants.intakeZeroAngle);
-    intake.setPivotVoltage(0);
     intake.setDesiredPivotState(PivotState.STOW);
+    intake.setPivotVoltage(0);
     intake.establishPivotZero(true);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (isVelocityZero && (Math.abs(intake.getPivotCurrent()) > 5));
+    return pivotAtZero;
   }
 }
