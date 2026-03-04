@@ -3,21 +3,16 @@ package frc.robot.subsystems.shooter.kicker;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 public class KickerIOSpark implements KickerIO {
   private SparkFlex kickerMotor;
-  private SparkFlexConfig kickerConfig = new SparkFlexConfig();;
+  private SparkFlexConfig kickerConfig = new SparkFlexConfig();
+  ;
   private RelativeEncoder kickerEncoder;
 
   public KickerIOSpark() {
@@ -26,12 +21,13 @@ public class KickerIOSpark implements KickerIO {
 
     kickerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12.0);
 
-    kickerConfig.encoder
+    kickerConfig
+        .encoder
         .positionConversionFactor(2 * Math.PI)
         .velocityConversionFactor(2 * Math.PI / 60);
 
-
-    kickerMotor.configure(kickerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    kickerMotor.configure(
+        kickerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override

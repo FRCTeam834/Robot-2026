@@ -6,12 +6,8 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.config.ClosedLoopConfig;
-
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.commands.IntakeCommands.ZeroIntake;
 import frc.robot.subsystems.intake.IntakeConstants.PivotState;
 import frc.robot.subsystems.intake.IntakeConstants.RollerState;
 import frc.robot.util.LoggedTunableNumber;
@@ -40,14 +36,13 @@ public class Intake extends SubsystemBase {
     pivot_kS.initDefault(0);
     pivot_kCos.initDefault(0);
     pivot_kV.initDefault(0);
-
-  } 
+  }
 
   public Intake(IntakeIO io) {
     this.io = io;
     rollerState = RollerState.STOP;
     pivotState = PivotState.STOW;
-    isPivotZeroed = false;
+    isPivotZeroed = true;
   }
 
   @Override
@@ -78,7 +73,7 @@ public class Intake extends SubsystemBase {
   }
 
   // Roller Setter Methods
-  public void setRollerState(RollerState rollerState) {
+  public void setDesiredRollerState(RollerState rollerState) {
     this.rollerState = rollerState;
     setRollerVoltage(rollerState.voltage);
   }
@@ -103,7 +98,7 @@ public class Intake extends SubsystemBase {
 
   public void establishPivotZero(boolean state) {
     isPivotZeroed = state;
-  } 
+  }
 
   public void setEncoderAngle(double angle) {
     io.setEncoderAngle(angle);

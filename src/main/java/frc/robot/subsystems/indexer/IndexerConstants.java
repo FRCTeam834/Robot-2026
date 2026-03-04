@@ -7,8 +7,8 @@ package frc.robot.subsystems.indexer;
 /** Add your docs here. */
 public class IndexerConstants {
   public static enum IndexerState {
-    FAST(12.0),
-    SLOW(7.0),
+    FAST(10.0),
+    SLOW(4.0),
     REVERSE(-7.0),
     STOP(0.0);
 

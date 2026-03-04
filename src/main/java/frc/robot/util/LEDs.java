@@ -4,14 +4,14 @@
 
 package frc.robot.util;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDs extends SubsystemBase {
   private Spark blinkin;
   private final int LED_PWM_PORT = 0;
-  
+
   public ledColor defaultColor = ledColor.WHITE;
   private ledColor timedColor = null;
   private final Timer timer = new Timer();
@@ -27,14 +27,12 @@ public class LEDs extends SubsystemBase {
     STROBEGOLD(-0.07),
     WHITE(0.93),
     STROBERED(-0.11);
-    
+
     public final double signal;
-    
+
     private ledColor(double signal) {
       this.signal = signal;
     }
-    
-    
   }
   /** Creates a new LEDs. */
   public LEDs() {
@@ -42,19 +40,19 @@ public class LEDs extends SubsystemBase {
     setLEDColor(defaultColor);
   }
 
-  public void setColorForTime(ledColor color, double seconds){
+  public void setColorForTime(ledColor color, double seconds) {
     timer.reset();
     timer.start();
     timedSeconds = seconds;
     timedColor = color;
     setLEDColor(color);
   }
-  
-  public void cancelColorForTime(){
+
+  public void cancelColorForTime() {
     timedSeconds = 0.0;
   }
 
-  public void setLEDColor(ledColor color){
+  public void setLEDColor(ledColor color) {
     blinkin.set(color.signal);
   }
 

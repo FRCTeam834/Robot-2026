@@ -1,6 +1,5 @@
 package frc.robot.subsystems.shooter.kicker;
 
-import com.revrobotics.spark.config.SparkFlexConfig;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface KickerIO {
