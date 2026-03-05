@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.ShooterCommands;
+package frc.robot.commands.DriveCommands;
 
 
 import edu.wpi.first.math.filter.LinearFilter;
@@ -17,14 +17,12 @@ import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AutoAlign extends Command {
   /** Creates a new AutoAlign. */
-  private final Flywheel flywheel;
   private final Vision vision;
   private final Drive drive;
   private final LinearFilter shooterAngleAverage = LinearFilter.movingAverage(10);
   private final Timer timer = new Timer();
 
   public AutoAlign(Flywheel flywheel, Vision vision, Drive drive){
-    this.flywheel = flywheel;
     this.vision = vision;
     this.drive = drive;
     addRequirements(flywheel, vision, drive);
@@ -33,7 +31,6 @@ public class AutoAlign extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    flywheel.stopMotor();
     timer.reset();
     timer.stop();
   }
