@@ -90,4 +90,8 @@ public class Flywheel extends SubsystemBase {
   public FlywheelState getState() {
     return flywheelState;
   }
+
+  public void stopMotor() {
+    io.stopMotor();
+  }
 }
