@@ -28,11 +28,11 @@ public class IntakeIOSpark implements IntakeIO {
 
   public IntakeIOSpark() {
     // Roller
-    rollerMotor = new SparkFlex(11, MotorType.kBrushless);
+    rollerMotor = new SparkFlex(41, MotorType.kBrushless);
     rollerEncoder = rollerMotor.getEncoder();
 
     // Pivot
-    pivotMotor = new SparkFlex(12, MotorType.kBrushless);
+    pivotMotor = new SparkFlex(40, MotorType.kBrushless);
     pivotController = pivotMotor.getClosedLoopController();
     pivotEncoder = pivotMotor.getEncoder();
 
@@ -58,18 +58,14 @@ public class IntakeIOSpark implements IntakeIO {
         .positionWrappingEnabled(true)
         .positionWrappingInputRange(-Math.PI, Math.PI);
 
-
-    rollerConfig
-    .smartCurrentLimit(40)
-    .voltageCompensation(12)
-    .inverted(true);
-
+    rollerConfig.smartCurrentLimit(40).voltageCompensation(12).inverted(true);
 
     pivotMotor.configure(
         pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     pivotEncoder.setPosition(IntakeConstants.intakeZeroAngle);
 
-    rollerMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    rollerMotor.configure(
+        pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
@@ -97,11 +93,10 @@ public class IntakeIOSpark implements IntakeIO {
   public void setPivotVoltage(double volts) {
     pivotMotor.setVoltage(volts);
   }
-  
+
   @Override
   public void setPivotAngle(double angle) {
-    pivotController.setSetpoint(
-        angle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+    pivotController.setSetpoint(angle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
   @Override

@@ -8,12 +8,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -132,6 +129,8 @@ public class RobotContainer {
 
     /* AUTO ALIGN TO HUB WHEN PRESSING RIGHT BUMPER */
     /* EVENTUALLY THIS WILL BE CONSOLIDATED INTO A SUPER SHOOTING SEQUENCE */
+
+    /*
     OI.xbox
         .rightBumper()
         .whileTrue(
@@ -151,6 +150,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+
+     */
   }
 
   /**

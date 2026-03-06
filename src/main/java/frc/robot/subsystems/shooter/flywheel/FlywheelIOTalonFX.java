@@ -18,7 +18,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final VelocityTorqueCurrentFOC velocitySetpoint;
 
   public FlywheelIOTalonFX() {
-    flywheelMotor = new TalonFX(9);
+    flywheelMotor = new TalonFX(30);
     velocitySetpoint = new VelocityTorqueCurrentFOC(0.0).withSlot(0);
 
     var flywheelConfig = new TalonFXConfiguration();

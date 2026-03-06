@@ -7,7 +7,6 @@ package frc.robot.commands.shooter;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerConstants.IndexerState;
@@ -48,25 +47,28 @@ public class ShooterCommands {
 
             // phase 3, shoot and bring pivot up after there aren't as many balls in the hopper
             Commands.run(
-                () -> {
-                  flywheel.setDesiredState(FlywheelState.ACTIVE);
-                  kicker.setDesiredState(KickerState.FEED);
-                  indexer.setDesiredIndexerState(IndexerState.FAST);
-                  intake.setDesiredRollerState(RollerState.STOP);
-                },
-                flywheel, kicker, intake, indexer).alongWith(
-                  Commands.runOnce(() -> intake.setDesiredPivotState(PivotState.UP), intake)
-                  .onlyIf(() -> intake.getPivotCurrent() < 10))
-                )
-                
-            // when command ends
-            .finallyDo(
-                (interrupted) -> {
-                  kicker.setDesiredState(KickerState.STOP);
-                  indexer.setDesiredIndexerState(IndexerState.STOP);
-                  flywheel.setDesiredState(FlywheelState.IDLE);
-                  intake.setDesiredRollerState(RollerState.STOP);
-                  intake.setDesiredPivotState(PivotState.DEPLOYING);
-                });
+                    () -> {
+                      flywheel.setDesiredState(FlywheelState.ACTIVE);
+                      kicker.setDesiredState(KickerState.FEED);
+                      indexer.setDesiredIndexerState(IndexerState.FAST);
+                      intake.setDesiredRollerState(RollerState.STOP);
+                    },
+                    flywheel,
+                    kicker,
+                    intake,
+                    indexer)
+                .alongWith(
+                    Commands.runOnce(() -> intake.setDesiredPivotState(PivotState.UP), intake)
+                        .onlyIf(() -> intake.getPivotCurrent() < 10)))
+
+        // when command ends
+        .finallyDo(
+            (interrupted) -> {
+              kicker.setDesiredState(KickerState.STOP);
+              indexer.setDesiredIndexerState(IndexerState.STOP);
+              flywheel.setDesiredState(FlywheelState.IDLE);
+              intake.setDesiredRollerState(RollerState.STOP);
+              intake.setDesiredPivotState(PivotState.DEPLOYING);
+            });
   }
 }

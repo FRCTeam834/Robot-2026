@@ -14,7 +14,7 @@ public class IndexerIOSparkFlex implements IndexerIO {
   public SparkFlexConfig indexerConfig;
 
   public IndexerIOSparkFlex() {
-    indexerMotor = new SparkFlex(13, MotorType.kBrushless);
+    indexerMotor = new SparkFlex(50, MotorType.kBrushless);
     indexerConfig = new SparkFlexConfig();
 
     indexerConfig

@@ -16,7 +16,7 @@ public class KickerIOSpark implements KickerIO {
   private RelativeEncoder kickerEncoder;
 
   public KickerIOSpark() {
-    kickerMotor = new SparkFlex(10, MotorType.kBrushless);
+    kickerMotor = new SparkFlex(31, MotorType.kBrushless);
     kickerEncoder = kickerMotor.getEncoder();
 
     kickerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12.0);
