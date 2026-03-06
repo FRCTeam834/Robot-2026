@@ -13,30 +13,34 @@ import frc.robot.subsystems.intake.IntakeConstants.RollerState;
 /** Add your docs here. */
 public class IntakeCommands {
   public static Command fastRollers =
-      Commands.run(
-          () -> RobotContainer.intake.setDesiredRollerState(RollerState.FAST), RobotContainer.intake);
+      Commands.runOnce(
+          () -> RobotContainer.intake.setDesiredRollerState(RollerState.FAST),
+          RobotContainer.intake);
 
   public static Command slowRollers =
-      Commands.run(
-          () -> RobotContainer.intake.setDesiredRollerState(RollerState.SLOW), RobotContainer.intake);
+      Commands.runOnce(
+          () -> RobotContainer.intake.setDesiredRollerState(RollerState.SLOW),
+          RobotContainer.intake);
 
   public static Command reverseRollers =
-      Commands.run(
-          () -> RobotContainer.intake.setDesiredRollerState(RollerState.REVERSE), RobotContainer.intake);
+      Commands.runOnce(
+          () -> RobotContainer.intake.setDesiredRollerState(RollerState.REVERSE),
+          RobotContainer.intake);
 
   public static Command stopRollers =
-      Commands.run(
-          () -> RobotContainer.intake.setDesiredRollerState(RollerState.STOP), RobotContainer.intake);
+      Commands.runOnce(
+          () -> RobotContainer.intake.setDesiredRollerState(RollerState.STOP),
+          RobotContainer.intake);
 
   public static Command deployIntake =
-      Commands.run(
+      Commands.runOnce(
               () -> RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYING),
               RobotContainer.intake)
           .alongWith(fastRollers)
           .onlyIf(RobotContainer.intake::isPivotZeroed);
 
   public static Command retractIntake =
-      Commands.run(
+      Commands.runOnce(
               () -> RobotContainer.intake.setDesiredPivotState(PivotState.UP),
               RobotContainer.intake)
           .alongWith(stopRollers)

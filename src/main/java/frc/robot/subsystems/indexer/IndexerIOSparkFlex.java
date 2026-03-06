@@ -19,14 +19,14 @@ public class IndexerIOSparkFlex implements IndexerIO {
 
     indexerConfig
         .idleMode(IdleMode.kBrake)
-        .inverted(true)
+        .inverted(false)
         .smartCurrentLimit(40)
         .voltageCompensation(12);
   }
 
   @Override
   public void updateInputs(IndexerIOInputs inputs) {
-    inputs.indexerConnected = true;
+    inputs.indexerCurrent = indexerMotor.getOutputCurrent();
     inputs.indexerAppliedVoltage = indexerMotor.getAppliedOutput() * indexerMotor.getBusVoltage();
   }
 

@@ -5,8 +5,8 @@ import org.littletonrobotics.junction.AutoLog;
 public interface IndexerIO {
   @AutoLog
   public static class IndexerIOInputs {
-    public boolean indexerConnected = false;
-    public double indexerAppliedVoltage = 0.0;
+    public double indexerAppliedVoltage;
+    public double indexerCurrent;
   }
 
   public default void updateInputs(IndexerIOInputs inputs) {}

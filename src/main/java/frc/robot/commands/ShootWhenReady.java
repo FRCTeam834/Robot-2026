@@ -5,8 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
@@ -32,7 +30,8 @@ public class ShootWhenReady extends Command {
   private boolean isFlywheelReady;
   private boolean isYawReady;
 
-  public ShootWhenReady(Flywheel flywheel, Kicker kicker, Intake intake, Indexer indexer, Drive drive) {
+  public ShootWhenReady(
+      Flywheel flywheel, Kicker kicker, Intake intake, Indexer indexer, Drive drive) {
     this.flywheel = flywheel;
     this.kicker = kicker;
     this.intake = intake;
@@ -57,10 +56,11 @@ public class ShootWhenReady extends Command {
   @Override
   public void execute() {
     // robot angle error to hub
-    double yawError = drive.getFieldRelativeHUBAngle().minus(drive.getPose().getRotation()).getDegrees();
+    double yawError =
+        drive.getFieldRelativeHUBAngle().minus(drive.getPose().getRotation()).getDegrees();
 
-    isFlywheelReady = !flywheelDebounce.calculate(flywheel.isAtSetpointRPM());
-    isYawReady = !yawDebounce.calculate(Math.abs(yawError) < 5);
+    isFlywheelReady = flywheelDebounce.calculate(flywheel.isAtSetpointRPM());
+    isYawReady = yawDebounce.calculate(Math.abs(yawError) < 5);
   }
 
   // Called once the command ends or is interrupted.

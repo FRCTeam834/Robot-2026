@@ -14,11 +14,13 @@ public class IndexerCommands {
 
   public static Command fastBelt =
       Commands.runOnce(
-          () -> RobotContainer.indexer.setDesiredIndexerState(IndexerState.FAST), RobotContainer.indexer);
+          () -> RobotContainer.indexer.setDesiredIndexerState(IndexerState.FAST),
+          RobotContainer.indexer);
 
   public static Command slowBelt =
       Commands.runOnce(
-          () -> RobotContainer.indexer.setDesiredIndexerState(IndexerState.SLOW), RobotContainer.indexer);
+          () -> RobotContainer.indexer.setDesiredIndexerState(IndexerState.SLOW),
+          RobotContainer.indexer);
 
   public static Command reverseBelt =
       Commands.runOnce(
@@ -27,5 +29,6 @@ public class IndexerCommands {
 
   public static Command stopBelt =
       Commands.runOnce(
-          () -> RobotContainer.indexer.setDesiredIndexerState(IndexerState.STOP), RobotContainer.indexer);
+          () -> RobotContainer.indexer.setDesiredIndexerState(IndexerState.STOP),
+          RobotContainer.indexer);
 }

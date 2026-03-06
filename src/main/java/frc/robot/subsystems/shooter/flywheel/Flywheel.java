@@ -65,8 +65,7 @@ public class Flywheel extends SubsystemBase {
 
     switch (flywheelState) {
       case ACTIVE -> {
-        flywheelSetpointRPM =
-            ShotCalculator.flywheelRPMForDistance(hubDistance.getAsDouble());
+        flywheelSetpointRPM = ShotCalculator.flywheelRPMForDistance(hubDistance.getAsDouble());
         io.setFlywheelVelocity(flywheelSetpointRPM);
       }
       case IDLE -> io.setFlywheelVelocity(FlywheelConstants.idleRPM);

@@ -23,6 +23,7 @@ public class IntakeIOSpark implements IntakeIO {
   private SparkFlex pivotMotor;
   private SparkClosedLoopController pivotController;
   private RelativeEncoder pivotEncoder;
+
   private SparkFlexConfig pivotConfig = new SparkFlexConfig();
 
   public IntakeIOSpark() {
@@ -55,18 +56,20 @@ public class IntakeIOSpark implements IntakeIO {
         .d(0)
         .outputRange(-1, 1)
         .positionWrappingEnabled(true)
-        .positionWrappingInputRange(-Math.PI, Math.PI)
-        .feedForward
-        .kS(0)
-        .kV(0)
-        .kCos(0)
-        .kCosRatio(1 / (2 * Math.PI));
+        .positionWrappingInputRange(-Math.PI, Math.PI);
 
-    pivotConfig.closedLoop.maxMotion.cruiseVelocity(0).maxAcceleration(0).allowedProfileError(1);
+
+    rollerConfig
+    .smartCurrentLimit(40)
+    .voltageCompensation(12)
+    .inverted(true);
+
 
     pivotMotor.configure(
         pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     pivotEncoder.setPosition(IntakeConstants.intakeZeroAngle);
+
+    rollerMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
@@ -94,15 +97,11 @@ public class IntakeIOSpark implements IntakeIO {
   public void setPivotVoltage(double volts) {
     pivotMotor.setVoltage(volts);
   }
-
-  /*
-   * 0 radians = parallel with horizontal
-   * it's what rev wants
-   */
+  
   @Override
   public void setPivotAngle(double angle) {
     pivotController.setSetpoint(
-        angle, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+        angle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
   @Override
