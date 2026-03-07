@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import lombok.Getter;
@@ -37,6 +38,9 @@ public class FieldConstants {
   // Field dimensions
   public static final double fieldLength = AprilTagLayoutType.OFFICIAL.getLayout().getFieldLength();
   public static final double fieldWidth = AprilTagLayoutType.OFFICIAL.getLayout().getFieldWidth();
+
+  // Fuel dimensions
+  public static final double fuelDiameter = Units.inchesToMeters(5.91);
 
   /**
    * Officially defined and relevant vertical lines found on the field (defined by X-axis offset)
@@ -69,12 +73,14 @@ public class FieldConstants {
     // Right of hub
     public static final double rightBumpStart = Hub.nearRightCorner.getY();
     public static final double rightBumpEnd = rightBumpStart - RightBump.width;
+    public static final double rightBumpMiddle = (rightBumpStart + rightBumpEnd) / 2.0;
     public static final double rightTrenchOpenStart = rightBumpEnd - Units.inchesToMeters(12.0);
     public static final double rightTrenchOpenEnd = 0;
 
     // Left of hub
     public static final double leftBumpEnd = Hub.nearLeftCorner.getY();
     public static final double leftBumpStart = leftBumpEnd + LeftBump.width;
+    public static final double leftBumpMiddle = (leftBumpStart + leftBumpEnd) / 2.0;
     public static final double leftTrenchOpenEnd = leftBumpStart + Units.inchesToMeters(12.0);
     public static final double leftTrenchOpenStart = fieldWidth;
   }
@@ -167,6 +173,7 @@ public class FieldConstants {
     public static final double width = Units.inchesToMeters(73.0);
     public static final double height = Units.inchesToMeters(6.513);
     public static final double depth = Units.inchesToMeters(44.4);
+
 
     // Relevant reference points on alliance side
     public static final Translation2d nearLeftCorner =
@@ -308,8 +315,25 @@ public class FieldConstants {
         new Translation2d(0, AprilTagLayoutType.OFFICIAL.getLayout().getTagPose(29).get().getY());
   }
 
+  public static class FuelPool {
+    // Dimensions
+    public static final double width = Units.inchesToMeters(181.9);
+    public static final double depth = Units.inchesToMeters(71.9);
+
+    // Relevant reference points on alliance side
+    public static final Translation2d nearLeftCorner =
+        new Translation2d(fieldLength / 2.0 - depth / 2.0, fieldWidth / 2.0 + width / 2.0);
+    public static final Translation2d nearRightCorner =
+        new Translation2d(fieldLength / 2.0 - depth / 2.0, fieldWidth / 2.0 - width / 2.0);
+    public static final Translation2d leftCenter =
+        new Translation2d(fieldLength / 2.0, fieldWidth / 2.0 + width / 2.0);
+    public static final Translation2d rightCenter =
+        new Translation2d(fieldLength / 2.0, fieldWidth / 2.0 - width / 2.0);
+  }
+
   @RequiredArgsConstructor
   public enum FieldType {
+    HQ("welded"),
     ANDYMARK("andymark"),
     WELDED("welded");
 
@@ -318,7 +342,10 @@ public class FieldConstants {
 
   public enum AprilTagLayoutType {
     OFFICIAL("2026-official"),
-    NONE("2026-none");
+    NONE("2026-none"),
+    HUB("2026-hub"),
+    OUTPOST("2026-outpost"),
+    TOWER("2026-tower");
 
     private final String name;
     private volatile AprilTagFieldLayout layout;

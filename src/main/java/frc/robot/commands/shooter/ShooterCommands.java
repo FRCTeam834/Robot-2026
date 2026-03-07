@@ -59,7 +59,7 @@ public class ShooterCommands {
                     indexer)
                 .alongWith(
                     Commands.runOnce(() -> intake.setDesiredPivotState(PivotState.UP), intake)
-                        .onlyIf(() -> intake.getPivotCurrent() < 10)))
+                        .onlyIf(() -> indexer.getIndexerCurrent() < 10)))
 
         // when command ends
         .finallyDo(

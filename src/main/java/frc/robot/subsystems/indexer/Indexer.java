@@ -42,6 +42,10 @@ public class Indexer extends SubsystemBase {
     return inputs.indexerAppliedVoltage;
   }
 
+  public double getIndexerCurrent() {
+    return inputs.indexerCurrent;
+  }
+
   public IndexerState getState() {
     return indexerState;
   }
