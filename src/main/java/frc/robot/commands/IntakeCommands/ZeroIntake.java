@@ -4,12 +4,11 @@
 
 package frc.robot.commands.IntakeCommands;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeConstants.PivotState;
-import edu.wpi.first.math.filter.Debouncer;
-
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ZeroIntake extends Command {
@@ -32,7 +31,10 @@ public class ZeroIntake extends Command {
   // Called every time the scheduler runs while thes command is scheduled.
   @Override
   public void execute() {
-    pivotAtZero = pivotDebouncer.calculate(intake.getPivotVelocity() < 0.05); //i saw someone else using rawSignal (variable)? helpful or not needed?
+    pivotAtZero =
+        pivotDebouncer.calculate(
+            intake.getPivotVelocity()
+                < 0.05); // i saw someone else using rawSignal (variable)? helpful or not needed?
   }
 
   // Called once the command ends or is interrupted.

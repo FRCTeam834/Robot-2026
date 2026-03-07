@@ -11,7 +11,7 @@ public class FlywheelConstants {
   public static enum FlywheelState {
     STOPPED,
     IDLE,
-    ACTIVE, 
+    ACTIVE,
     MANUAL_RPM,
   }
 

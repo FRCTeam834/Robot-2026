@@ -6,15 +6,15 @@ package frc.robot.subsystems.shooter.kicker;
 
 /** Add your docs here. */
 public class KickerConstants {
-    public static enum KickerState {
-        FAST(12.0),
-        REVERSE(-3.0),
-        STOP(0.0);
+  public static enum KickerState {
+    FAST(12.0),
+    REVERSE(-3.0),
+    STOP(0.0);
 
-        public final double voltage;
+    public final double voltage;
 
-        private KickerState(double voltage) {
-        this.voltage = voltage;
-        }
-    };
+    private KickerState(double voltage) {
+      this.voltage = voltage;
+    }
+  };
 }

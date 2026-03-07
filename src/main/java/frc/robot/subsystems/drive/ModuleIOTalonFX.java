@@ -256,5 +256,4 @@ public class ModuleIOTalonFX implements ModuleIO {
   public void updateTurnPID(Slot0Configs config) {
     turnTalon.getConfigurator().apply(config);
   }
-  ;
 }

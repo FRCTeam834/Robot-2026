@@ -9,6 +9,7 @@ package frc.robot.commands.DriveCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,6 +30,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -286,5 +289,23 @@ public class DriveCommands {
     double[] positions = new double[4];
     Rotation2d lastAngle = Rotation2d.kZero;
     double gyroDelta = 0.0;
+  }
+
+  private static Command autoAlign(Drive drive){
+    ProfiledPIDController headingController = new ProfiledPIDController(ANGLE_KP, 0.0, ANGLE_KD, new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
+    double targetYaw = drive.getFieldRelativeHUBAngle().getRadians();
+    double currentYaw = drive.getRotation().getRadians();
+    double rotationError = targetYaw - currentYaw;
+    Debouncer rotationDebouncer = new Debouncer(0.5);
+    boolean rotationGood = rotationDebouncer.calculate(Math.abs(rotationError) <= 5);
+
+    return Commands.run(
+            () -> {
+              double omega = headingController.calculate(currentYaw, targetYaw);
+              ChassisSpeeds rotateInPlaceSpeed = new ChassisSpeeds(0, 0, omega);
+              drive.runVelocity(rotateInPlaceSpeed);
+            }, drive)
+            .onlyWhile(() -> { return !rotationGood; });
   }
 }

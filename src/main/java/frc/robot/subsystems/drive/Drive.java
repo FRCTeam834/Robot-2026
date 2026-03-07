@@ -47,8 +47,6 @@ import frc.robot.util.FieldConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.DoubleSupplier;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -316,7 +314,8 @@ public class Drive extends SubsystemBase {
 
   @AutoLogOutput(key = "Odometry/DistanceToHub")
   public double getDistanceToHub() {
-    Translation2d allianceHubTranslation = AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
+    Translation2d allianceHubTranslation =
+        AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
     return getPose().getTranslation().getDistance(allianceHubTranslation);
   }
 
@@ -389,4 +388,6 @@ public class Drive extends SubsystemBase {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
   }
+
+  public void setAngularPosition() {}
 }

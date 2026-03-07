@@ -4,12 +4,8 @@
 
 package frc.robot.subsystems.shooter.kicker;
 
-import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.shooter.kicker.KickerConstants.KickerState;
-import frc.robot.util.LoggedTunableNumber;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -19,7 +15,7 @@ public class Kicker extends SubsystemBase {
 
   @AutoLogOutput(key = "SubsystemStates/KickerState")
   private KickerState kickerState;
-  
+
   public Kicker(KickerIO io) {
     this.io = io;
     kickerState = KickerState.STOP;

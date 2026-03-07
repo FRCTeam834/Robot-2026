@@ -32,11 +32,14 @@ public class IntakeCommands {
       Commands.run(
               () -> RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYING),
               RobotContainer.intake)
-          .alongWith(fastRollers).onlyIf(RobotContainer.intake::isPivotZeroed);
+          .alongWith(fastRollers)
+          .onlyIf(RobotContainer.intake::isPivotZeroed);
 
   public static Command retractIntake =
       Commands.run(
               () -> RobotContainer.intake.setDesiredPivotState(PivotState.UP),
               RobotContainer.intake)
-          .alongWith(stopRollers).onlyIf(RobotContainer.intake::isPivotZeroed);;
+          .alongWith(stopRollers)
+          .onlyIf(RobotContainer.intake::isPivotZeroed);
+  ;
 }

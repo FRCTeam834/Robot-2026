@@ -4,24 +4,22 @@
 
 package frc.robot.commands.ShooterCommands;
 
-
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ShooterAlign extends Command {
   /** Creates a new AutoAlign. */
   private final Flywheel flywheel;
+
   private final Vision vision;
   private final LinearFilter shooterAngleAverage = LinearFilter.movingAverage(10);
   private final Timer timer = new Timer();
 
-  public ShooterAlign(Flywheel flywheel, Vision vision){
+  public ShooterAlign(Flywheel flywheel, Vision vision) {
     this.flywheel = flywheel;
     this.vision = vision;
     addRequirements(flywheel, vision);
@@ -37,17 +35,7 @@ public class ShooterAlign extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if(vision.getTargetX(0) != null) {
-      timer.reset();
-      timer.stop();
-    } else {
-      timer.start();
-    }
-
-  if (!timer.hasElapsed(1.0)) {
-    double error = vision.get
-  } 
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

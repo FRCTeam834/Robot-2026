@@ -5,15 +5,12 @@
 package frc.robot.subsystems.shooter.flywheel;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.util.LoggedTunableNumber;
-
 import java.util.function.DoubleSupplier;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -31,14 +28,15 @@ public class Flywheel extends SubsystemBase {
   public static final LoggedTunableNumber manual_flywheel_setpoint =
       new LoggedTunableNumber("Flywheel/manual_rpm_setpoint");
 
-  static{
+  static {
     flywheel_kP.initDefault(0);
     flywheel_kS.initDefault(0);
     flywheel_kV.initDefault(0);
     manual_flywheel_setpoint.initDefault(0);
   }
 
-  @AutoLogOutput(key = "SubsystemStates/FlywheelState") private FlywheelState flywheelState;
+  @AutoLogOutput(key = "SubsystemStates/FlywheelState")
+  private FlywheelState flywheelState;
 
   public Flywheel(FlywheelIO io, DoubleSupplier hubDistance) {
     this.io = io;
@@ -63,9 +61,10 @@ public class Flywheel extends SubsystemBase {
       io.updateClosedLoopConfig(flywheelConfig);
     }
 
-    switch(flywheelState) {
+    switch (flywheelState) {
       case ACTIVE -> {
-        double setpointVelocityRPM = ShotCalculator.flywheelRPMForDistance(hubDistance.getAsDouble());
+        double setpointVelocityRPM =
+            ShotCalculator.flywheelRPMForDistance(hubDistance.getAsDouble());
         io.setFlywheelVelocity(setpointVelocityRPM);
       }
       case IDLE -> io.setFlywheelVelocity(FlywheelConstants.idleRPM);
