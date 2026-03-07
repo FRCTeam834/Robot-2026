@@ -24,7 +24,7 @@ public class KickerIOSpark implements KickerIO {
     kickerConfig
         .encoder
         .positionConversionFactor(2 * Math.PI)
-        .velocityConversionFactor(2 * Math.PI / 60);
+        .velocityConversionFactor(2 * Math.PI);
 
     kickerMotor.configure(
         kickerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

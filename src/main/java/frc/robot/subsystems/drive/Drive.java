@@ -312,12 +312,14 @@ public class Drive extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
+  @AutoLogOutput(key = "Odometry/HUBDistance")
   public double getDistanceToHub() {
     Translation2d allianceHubTranslation =
         AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
     return getPose().getTranslation().getDistance(allianceHubTranslation);
   }
 
+  @AutoLogOutput(key = "Odometry/FieldRelativeHUBAngle")
   public Rotation2d getFieldRelativeHUBAngle() {
     Translation2d robotLocation = getPose().getTranslation();
     Translation2d goalPose =

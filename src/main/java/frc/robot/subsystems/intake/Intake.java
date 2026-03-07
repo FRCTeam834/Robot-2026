@@ -84,7 +84,7 @@ public class Intake extends SubsystemBase {
 
   // Pivot Setter Methods
   public void setDesiredPivotState(PivotState pivotState) {
-    switch(pivotState) {
+    switch (pivotState) {
       case DEPLOYING -> io.setPivotAngle(PivotState.DEPLOYING.position);
       case UP -> io.setPivotAngle(PivotState.UP.position);
       case STOW -> io.setPivotAngle(PivotState.STOW.position);
@@ -129,6 +129,10 @@ public class Intake extends SubsystemBase {
 
   public double getPivotVelocity() {
     return inputs.pivotRPM;
+  }
+
+  public void setPivotAngle(double angle) {
+    io.setPivotAngle(angle);
   }
 
   public double getPivotCurrent() {

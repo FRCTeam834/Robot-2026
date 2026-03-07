@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import lombok.Getter;
@@ -173,7 +172,6 @@ public class FieldConstants {
     public static final double width = Units.inchesToMeters(73.0);
     public static final double height = Units.inchesToMeters(6.513);
     public static final double depth = Units.inchesToMeters(44.4);
-
 
     // Relevant reference points on alliance side
     public static final Translation2d nearLeftCorner =

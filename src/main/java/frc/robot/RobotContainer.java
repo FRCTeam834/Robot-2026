@@ -8,11 +8,16 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.intake.IntakeCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -43,7 +48,9 @@ public class RobotContainer {
   public static final Indexer indexer = new Indexer(new IndexerIOSparkFlex());
   public static final Intake intake = new Intake(new IntakeIOSpark());
   public static final Flywheel flywheel =
-      new Flywheel(new FlywheelIOTalonFX(), () -> drive.getDistanceToHub());
+      new Flywheel(new FlywheelIOTalonFX(), drive::getDistanceToHub);
+
+  public static final CommandXboxController XBOX_CONTROLLER = new CommandXboxController(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -123,25 +130,27 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -OI.getRightJoystickY(),
-            () -> -OI.getRightJoystickX(),
-            () -> -OI.getLeftJoystickX()));
+            () -> -XBOX_CONTROLLER.getRightY(),
+            () -> -XBOX_CONTROLLER.getRightX(),
+            () -> -XBOX_CONTROLLER.getLeftX()));
 
-    /* AUTO ALIGN TO HUB WHEN PRESSING RIGHT BUMPER */
-    /* EVENTUALLY THIS WILL BE CONSOLIDATED INTO A SUPER SHOOTING SEQUENCE */
+    intake.setDefaultCommand(
+        IntakeCommands.dumbArm(() -> XBOX_CONTROLLER.getRightY(), intake)
+    );
 
-    /*
-    OI.xbox
+    // FOR TESTING AUTO ALIGN
+    XBOX_CONTROLLER
         .rightBumper()
         .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
+            DriveCommands.AlignToAngleWithTolerance(
                 drive,
-                () -> -OI.getRightJoystickY(),
-                () -> -OI.getRightJoystickX(),
-                () -> drive.getFieldRelativeHUBAngle()));
+                () -> -XBOX_CONTROLLER.getRightY(),
+                () -> -XBOX_CONTROLLER.getRightX(),
+                drive::getFieldRelativeHUBAngle,
+                5));
 
     // Reset gyro to 0° when B button is pressed
-    OI.xbox
+    XBOX_CONTROLLER
         .b()
         .onTrue(
             Commands.runOnce(
@@ -150,8 +159,6 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-
-     */
   }
 
   /**

@@ -11,6 +11,9 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.math.MathUtil;
+
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 public class IntakeIOSpark implements IntakeIO {
@@ -45,8 +48,8 @@ public class IntakeIOSpark implements IntakeIO {
     // pivot config
     pivotConfig
         .encoder
-        .positionConversionFactor(2 * Math.PI)
-        .velocityConversionFactor(2 * Math.PI / 60);
+        .positionConversionFactor((2 * Math.PI) / 36.666)
+        .velocityConversionFactor((2 * Math.PI) / 36.666);
 
     pivotConfig
         .closedLoop
@@ -96,6 +99,7 @@ public class IntakeIOSpark implements IntakeIO {
 
   @Override
   public void setPivotAngle(double angle) {
+    angle = MathUtil.clamp(angle, -0.3, Math.PI);
     pivotController.setSetpoint(angle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 

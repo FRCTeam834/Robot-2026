@@ -96,16 +96,12 @@ public class DriveCommands {
         drive);
   }
 
-  /**
-   * Field relative drive command using joystick for linear control and PID for angular control.
-   * Possible use cases include snapping to an angle, aiming at a vision target, or controlling
-   * absolute rotation with a joystick.
-   */
-  public static Command joystickDriveAtAngle(
+  public static Command AlignToAngleWithTolerance(
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      Supplier<Rotation2d> rotationSupplier) {
+      Supplier<Rotation2d> rotationSupplier,
+      double toleranceDeg) {
 
     // Create PID controller
     ProfiledPIDController angleController =
@@ -145,6 +141,10 @@ public class DriveCommands {
                           : drive.getRotation()));
             },
             drive)
+        .onlyWhile(
+            () -> {
+              return Math.abs(angleController.getPositionError()) > Math.toRadians(toleranceDeg);
+            })
 
         // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));

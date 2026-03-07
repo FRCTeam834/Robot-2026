@@ -4,9 +4,15 @@
 
 package frc.robot.commands.intake;
 
+import java.util.function.DoubleSupplier;
+
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants.PivotState;
 import frc.robot.subsystems.intake.IntakeConstants.RollerState;
 
@@ -45,5 +51,15 @@ public class IntakeCommands {
               RobotContainer.intake)
           .alongWith(stopRollers)
           .onlyIf(RobotContainer.intake::isPivotZeroed);
-  ;
+
+    public static Command dumbArm(DoubleSupplier controllerJoystickY, Intake intake) {
+        double setpointAngle[] = new double[1];
+
+        return Commands.run(() -> {
+            setpointAngle[0] = controllerJoystickY.getAsDouble() * Math.PI;
+            intake.setPivotAngle(setpointAngle[0]);
+            SmartDashboard.putNumber("DumbArmSetpoint", setpointAngle[0]);
+        }, intake)
+        .beforeStarting(() -> setpointAngle[0] = intake.getCurrentPivotAngle());
+    }
 }

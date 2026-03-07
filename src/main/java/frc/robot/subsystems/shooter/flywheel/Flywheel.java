@@ -28,6 +28,7 @@ public class Flywheel extends SubsystemBase {
   public static final LoggedTunableNumber manual_flywheel_setpoint =
       new LoggedTunableNumber("Flywheel/manual_rpm_setpoint");
 
+  @AutoLogOutput(key = "Flywheel/SetpointRPM")
   private double flywheelSetpointRPM;
 
   static {
@@ -69,7 +70,7 @@ public class Flywheel extends SubsystemBase {
         io.setFlywheelVelocity(flywheelSetpointRPM);
       }
       case IDLE -> io.setFlywheelVelocity(FlywheelConstants.idleRPM);
-      case MANUAL_RPM -> io.setFlywheelVelocity(manual_flywheel_setpoint.get());
+      case MANUAL_RPM -> io.setFlywheelVelocity(flywheelSetpointRPM);
       case STOPPED -> io.stopMotor();
     }
   }
@@ -80,6 +81,10 @@ public class Flywheel extends SubsystemBase {
 
   public void setDesiredState(FlywheelState state) {
     flywheelState = state;
+  }
+
+  public void setVelocitySetpoint(double rpm) {
+    flywheelSetpointRPM = rpm;
   }
 
   // Miscellaneous Methods
