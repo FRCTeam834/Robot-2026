@@ -5,6 +5,7 @@
 package frc.robot.commands.shooter;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.drive.DriveCommands;
@@ -18,15 +19,26 @@ import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.subsystems.shooter.kicker.Kicker;
 import frc.robot.subsystems.shooter.kicker.KickerConstants.KickerState;
+import frc.robot.util.LoggedTunableNumber;
+
 import java.util.function.DoubleSupplier;
 
-/** Add your docs here. */
 public class ShooterCommands {
   public static Command idleShooter(Flywheel flywheel) {
-    return Commands.runOnce(() -> flywheel.setDesiredState(FlywheelState.IDLE), flywheel);
+    return Commands.run(() -> flywheel.setDesiredState(FlywheelState.IDLE), flywheel);
   }
 
-  public static Command runManualVelocity(
+  public static Command dumbFlywheel(DoubleSupplier controllerJoystickY, Flywheel flywheel) {
+    return Commands.run(() -> {
+        flywheel.setVelocitySetpoint(flywheel.getVelocitySetpoint() + controllerJoystickY.getAsDouble() * 20);
+    }, flywheel)
+    .beforeStarting(() -> {
+      flywheel.setDesiredState(FlywheelState.MANUAL_RPM);
+      flywheel.setVelocitySetpoint(0.0);
+    });
+  }
+
+  public static Command shootWhenReadyManualVelocity(
       double rpm, Flywheel flywheel, Kicker kicker, Intake intake, Indexer indexer) {
     Debouncer flywheelReady = new Debouncer(0.5);
     return Commands.sequence(
