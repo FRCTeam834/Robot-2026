@@ -43,7 +43,7 @@ public class ShooterCommands {
     Debouncer flywheelReady = new Debouncer(0.5);
     return Commands.sequence(
             // clear the shooter
-            Commands.run(
+            Commands.runOnce(
                     () -> {
                       kicker.setDesiredState(KickerState.REVERSE);
                       flywheel.setVelocitySetpoint(rpm);

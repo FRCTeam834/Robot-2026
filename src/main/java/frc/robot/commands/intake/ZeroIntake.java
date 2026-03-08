@@ -26,7 +26,7 @@ public class ZeroIntake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.setPivotVoltage(-0.5);
+    intake.setPivotVoltage(-0.75);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

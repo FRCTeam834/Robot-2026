@@ -8,6 +8,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -18,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.intake.IntakeCommands;
+import frc.robot.commands.shooter.ShooterCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -116,7 +119,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // Configure the button bindings
-    configureButtonBindings();
+    //configureButtonBindings();
+    configureTuningBinds();
   }
 
   /**
@@ -133,10 +137,7 @@ public class RobotContainer {
             () -> -XBOX_CONTROLLER.getRightY(),
             () -> -XBOX_CONTROLLER.getRightX(),
             () -> -XBOX_CONTROLLER.getLeftX()));
-
-    intake.setDefaultCommand(
-        IntakeCommands.dumbArm(() -> XBOX_CONTROLLER.getRightY(), intake)
-    );
+    
 
     // FOR TESTING AUTO ALIGN
     XBOX_CONTROLLER
@@ -159,6 +160,16 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+  }
+
+  private void configureTuningBinds() {
+    intake.setDefaultCommand(
+        IntakeCommands.dumbArm(() -> MathUtil.applyDeadband(-XBOX_CONTROLLER.getLeftY(), 0.05), intake)
+    );
+
+    flywheel.setDefaultCommand(
+        ShooterCommands.dumbFlywheel(() -> MathUtil.applyDeadband(-XBOX_CONTROLLER.getRightY(), 0.05), flywheel)
+    );
   }
 
   /**
