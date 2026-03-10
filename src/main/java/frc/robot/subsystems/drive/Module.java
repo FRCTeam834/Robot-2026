@@ -58,7 +58,7 @@ public class Module {
             AlertType.kError);
 
     turn_kP.initDefault(80);
-    drive_kP.initDefault(0.1);
+    drive_kP.initDefault(2.2);
   }
 
   public void periodic() {
@@ -107,10 +107,11 @@ public class Module {
     io.setDriveOpenLoop(output);
     io.setTurnPosition(Rotation2d.kZero);
   }
-  
+
   public void runAngularCharacterization(double output) {
     io.setDriveOpenLoop(output);
-    io.setTurnPosition(new Rotation2d(constants.LocationX, constants.LocationY).plus(Rotation2d.kCCW_Pi_2));
+    io.setTurnPosition(
+        new Rotation2d(constants.LocationX, constants.LocationY).plus(Rotation2d.kCCW_Pi_2));
   }
 
   /** Disables all outputs to motors. */

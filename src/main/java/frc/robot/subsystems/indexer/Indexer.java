@@ -25,6 +25,7 @@ public class Indexer extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Indexer", inputs);
+    setIndexerVoltage(indexerState.voltage);
   }
 
   // Setter Methods

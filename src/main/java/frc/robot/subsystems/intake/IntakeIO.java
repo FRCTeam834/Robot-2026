@@ -1,6 +1,6 @@
 package frc.robot.subsystems.intake;
 
-import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeIO {
@@ -14,7 +14,7 @@ public interface IntakeIO {
     // Pivot
     public double pivotPositionRads = 0.0;
     public double pivotAppliedVoltage = 0.0;
-    public double pivotRPM = 0.0;
+    public double pivotVelocity = 0.0;
     public double pivotCurrent = 0.0;
   }
 
@@ -28,7 +28,7 @@ public interface IntakeIO {
 
   public default void setEncoderAngle(double angle) {}
 
-  public default void updateClosedLoopConfig(ClosedLoopConfig config) {}
+  public default void updateClosedLoopConfig(SparkFlexConfig config) {}
 
   public default void stopPivot() {}
 

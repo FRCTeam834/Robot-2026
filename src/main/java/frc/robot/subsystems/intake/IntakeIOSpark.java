@@ -9,11 +9,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
-import edu.wpi.first.math.MathUtil;
-
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 public class IntakeIOSpark implements IntakeIO {
@@ -49,7 +45,7 @@ public class IntakeIOSpark implements IntakeIO {
     pivotConfig
         .encoder
         .positionConversionFactor((2 * Math.PI) / 36.666)
-        .velocityConversionFactor((2 * Math.PI) / 36.666);
+        .velocityConversionFactor((2 * Math.PI / 60) / 36.666);
 
     pivotConfig
         .closedLoop
@@ -58,14 +54,13 @@ public class IntakeIOSpark implements IntakeIO {
         .i(0)
         .d(0)
         .outputRange(-1, 1)
-        .positionWrappingEnabled(true)
-        .positionWrappingInputRange(-Math.PI, Math.PI);
+        .positionWrappingEnabled(false);
 
     rollerConfig.smartCurrentLimit(40).voltageCompensation(12).inverted(true);
 
     pivotMotor.configure(
         pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    pivotEncoder.setPosition(IntakeConstants.intakeZeroAngle);
+    pivotEncoder.setPosition(0);
 
     rollerMotor.configure(
         pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -81,7 +76,7 @@ public class IntakeIOSpark implements IntakeIO {
     // Pivot
     inputs.pivotPositionRads = pivotEncoder.getPosition();
     inputs.pivotAppliedVoltage = pivotMotor.getAppliedOutput() * pivotMotor.getBusVoltage();
-    inputs.pivotRPM = pivotEncoder.getVelocity();
+    inputs.pivotVelocity = pivotEncoder.getVelocity();
     inputs.pivotCurrent = pivotMotor.getOutputCurrent();
   }
 
@@ -99,7 +94,7 @@ public class IntakeIOSpark implements IntakeIO {
 
   @Override
   public void setPivotAngle(double angle) {
-    angle = MathUtil.clamp(angle, -0.3, Math.PI);
+    // angle = MathUtil.clamp(angle, 0, 2.6); // up is 0 and deployed is 2.5
     pivotController.setSetpoint(angle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
@@ -109,10 +104,9 @@ public class IntakeIOSpark implements IntakeIO {
   }
 
   @Override
-  public void updateClosedLoopConfig(ClosedLoopConfig config) {
-    var consolidatedConfig = new SparkFlexConfig().apply(config);
+  public void updateClosedLoopConfig(SparkFlexConfig config) {
     pivotMotor.configureAsync(
-        consolidatedConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+        config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   @Override

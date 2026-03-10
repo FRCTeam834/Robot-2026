@@ -5,7 +5,9 @@
 
 package frc.robot.subsystems.intake;
 
-import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.intake.IntakeConstants.PivotState;
@@ -20,8 +22,9 @@ public class Intake extends SubsystemBase {
 
   public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Intake/pivot_kP");
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
-  public static final LoggedTunableNumber pivot_kCos = new LoggedTunableNumber("Intake/pivot_kCos");
   public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Intake/pivot_kV");
+
+  private final PIDController pivotController = new PIDController(1, 0, 0);
 
   @AutoLogOutput(key = "SubsystemStates/rollerState")
   private RollerState rollerState;
@@ -34,15 +37,14 @@ public class Intake extends SubsystemBase {
   static {
     pivot_kP.initDefault(0);
     pivot_kS.initDefault(0);
-    pivot_kCos.initDefault(0);
     pivot_kV.initDefault(0);
   }
 
   public Intake(IntakeIO io) {
     this.io = io;
     rollerState = RollerState.STOP;
-    pivotState = PivotState.STOW;
-    isPivotZeroed = true;
+    pivotState = PivotState.OFF;
+    isPivotZeroed = false;
   }
 
   @Override
@@ -54,22 +56,36 @@ public class Intake extends SubsystemBase {
     if (Constants.TUNING_MODE
         && (pivot_kP.hasChanged(hashCode())
             || pivot_kS.hasChanged(hashCode())
-            || pivot_kV.hasChanged(hashCode())
-            || pivot_kCos.hasChanged(hashCode()))) {
+            || pivot_kV.hasChanged(hashCode()))) {
 
-      var pivotConfig = new ClosedLoopConfig();
-      pivotConfig.p(pivot_kP.get());
-      pivotConfig.feedForward.kS(pivot_kS.get()).kV(pivot_kV.get()).kG(pivot_kCos.get());
+      var pivotConfig = new SparkFlexConfig();
+      pivotConfig.closedLoop.p(pivot_kP.get());
+      pivotConfig.closedLoop.feedForward.kS(pivot_kS.get()).kV(pivot_kV.get());
+
+      System.out.println("changed p to " + pivot_kP.get());
 
       io.updateClosedLoopConfig(pivotConfig);
     }
 
     // handle the transition from deploying to deployed
+
     if (pivotState == PivotState.DEPLOYING
-        && pivotAtSetpoint(PivotState.DEPLOYED, IntakeConstants.pivotTolerance)) {
+        && pivotAtSetpoint(PivotState.DEPLOYING, IntakeConstants.pivotTolerance)) {
       stopPivot();
       pivotState = PivotState.DEPLOYED;
     }
+
+    switch (pivotState) {
+      case DEPLOYING -> io.setPivotVoltage(pivotController.calculate(getCurrentPivotAngle(), 2.5));
+      case UP -> io.setPivotAngle(PivotState.UP.position);
+      case STOW -> io.setPivotVoltage(pivotController.calculate(getCurrentPivotAngle(), 0.05));
+      case DEPLOYED -> {
+        io.setPivotVoltage(0.1);
+      }
+      case OFF -> {}
+    }
+
+    setRollerVoltage(rollerState.voltage);
   }
 
   // Roller Setter Methods
@@ -84,12 +100,6 @@ public class Intake extends SubsystemBase {
 
   // Pivot Setter Methods
   public void setDesiredPivotState(PivotState pivotState) {
-    switch (pivotState) {
-      case DEPLOYING -> io.setPivotAngle(PivotState.DEPLOYING.position);
-      case UP -> io.setPivotAngle(PivotState.UP.position);
-      case STOW -> io.setPivotAngle(PivotState.STOW.position);
-      case DEPLOYED -> {}
-    }
     this.pivotState = pivotState;
   }
 
@@ -128,7 +138,7 @@ public class Intake extends SubsystemBase {
   }
 
   public double getPivotVelocity() {
-    return inputs.pivotRPM;
+    return inputs.pivotVelocity;
   }
 
   public void setPivotAngle(double angle) {
@@ -148,7 +158,7 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean pivotAtSetpoint(PivotState state, double toleranceRads) {
-    return Math.abs(getCurrentPivotAngle() - state.position) <= toleranceRads;
+    return MathUtil.isNear(state.position, getCurrentPivotAngle(), toleranceRads);
   }
 
   public void stopPivot() {

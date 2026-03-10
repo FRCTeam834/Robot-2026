@@ -20,10 +20,11 @@ public class IntakeConstants {
   };
 
   public static enum PivotState {
-    STOW(Math.toRadians(0)),
-    UP(Math.toRadians(0)),
-    DEPLOYING(Math.toRadians(0)),
-    DEPLOYED(Math.toRadians(0));
+    STOW((0)),
+    UP((0)),
+    DEPLOYING((2.5)),
+    DEPLOYED((2.5)),
+    OFF((0));
 
     public final double position;
 
@@ -32,6 +33,5 @@ public class IntakeConstants {
     }
   }
 
-  public static double pivotTolerance = Math.toRadians(5);
-  public static double intakeZeroAngle = 1;
+  public static double pivotTolerance = Math.toRadians(2);
 }

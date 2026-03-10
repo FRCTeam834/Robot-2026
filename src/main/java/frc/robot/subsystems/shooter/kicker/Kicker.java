@@ -25,11 +25,16 @@ public class Kicker extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Kicker", inputs);
+    io.setKickerVoltage(kickerState.voltage);
   }
 
   public void setDesiredState(KickerState state) {
     io.setKickerVoltage(kickerState.voltage);
     kickerState = state;
+  }
+
+  public void setVoltage(double volts) {
+    io.setKickerVoltage(volts);
   }
 
   @AutoLogOutput

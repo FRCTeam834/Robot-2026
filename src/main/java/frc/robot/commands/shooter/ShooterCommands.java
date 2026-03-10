@@ -5,7 +5,6 @@
 package frc.robot.commands.shooter;
 
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.drive.DriveCommands;
@@ -19,8 +18,6 @@ import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.subsystems.shooter.kicker.Kicker;
 import frc.robot.subsystems.shooter.kicker.KickerConstants.KickerState;
-import frc.robot.util.LoggedTunableNumber;
-
 import java.util.function.DoubleSupplier;
 
 public class ShooterCommands {
@@ -29,13 +26,30 @@ public class ShooterCommands {
   }
 
   public static Command dumbFlywheel(DoubleSupplier controllerJoystickY, Flywheel flywheel) {
-    return Commands.run(() -> {
-        flywheel.setVelocitySetpoint(flywheel.getVelocitySetpoint() + controllerJoystickY.getAsDouble() * 20);
-    }, flywheel)
-    .beforeStarting(() -> {
-      flywheel.setDesiredState(FlywheelState.MANUAL_RPM);
-      flywheel.setVelocitySetpoint(0.0);
-    });
+    return Commands.run(
+            () -> {
+              flywheel.setVelocitySetpoint(
+                  flywheel.getVelocitySetpoint() + controllerJoystickY.getAsDouble() * 20);
+            },
+            flywheel)
+        .beforeStarting(
+            () -> {
+              flywheel.setDesiredState(FlywheelState.MANUAL_RPM);
+              flywheel.setVelocitySetpoint(0.0);
+            });
+  }
+
+  public static Command arbitraryRPM(double rpm, Flywheel flywheel) {
+    return Commands.run(
+            () -> {
+              flywheel.setVelocitySetpoint(rpm);
+            },
+            flywheel)
+        .beforeStarting(
+            () -> {
+              flywheel.setDesiredState(FlywheelState.MANUAL_RPM);
+              flywheel.setVelocitySetpoint(0.0);
+            });
   }
 
   public static Command shootWhenReadyManualVelocity(
@@ -52,15 +66,12 @@ public class ShooterCommands {
                     kicker,
                     flywheel)
                 .withTimeout(2),
-
             Commands.runOnce(
                 () -> {
                   kicker.setDesiredState(KickerState.STOP);
                 },
                 flywheel),
-
             Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM())),
-
             Commands.run(
                     () -> {
                       flywheel.setDesiredState(FlywheelState.ACTIVE);

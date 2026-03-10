@@ -26,14 +26,13 @@ public class Flywheel extends SubsystemBase {
   public static final LoggedTunableNumber flywheel_kV =
       new LoggedTunableNumber("Flywheel/flywheel_kV");
 
-
   @AutoLogOutput(key = "Flywheel/SetpointRPM")
   private double flywheelSetpointRPM;
 
   static {
-    flywheel_kP.initDefault(0);
-    flywheel_kS.initDefault(0);
-    flywheel_kV.initDefault(0);
+    flywheel_kP.initDefault(5);
+    flywheel_kS.initDefault(3.9);
+    flywheel_kV.initDefault(0.045);
   }
 
   @AutoLogOutput(key = "SubsystemStates/FlywheelState")
@@ -82,7 +81,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   public void setVelocitySetpoint(double rpm) {
-    if(flywheelState == FlywheelState.ACTIVE) return;
+    if (flywheelState == FlywheelState.ACTIVE) return;
     flywheelSetpointRPM = rpm;
   }
 

@@ -8,8 +8,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -20,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.intake.IntakeCommands;
-import frc.robot.commands.shooter.ShooterCommands;
+import frc.robot.commands.intake.ZeroIntake;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -34,6 +32,8 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
+import frc.robot.subsystems.shooter.kicker.Kicker;
+import frc.robot.subsystems.shooter.kicker.KickerIOSpark;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -48,10 +48,10 @@ public class RobotContainer {
   // Subsystems
   public static Drive drive;
   public static Vision vision;
-  public static final Indexer indexer = new Indexer(new IndexerIOSparkFlex());
-  public static final Intake intake = new Intake(new IntakeIOSpark());
-  public static final Flywheel flywheel =
-      new Flywheel(new FlywheelIOTalonFX(), drive::getDistanceToHub);
+  public static Indexer indexer;
+  public static Intake intake;
+  public static Flywheel flywheel;
+  public static Kicker kicker;
 
   public static final CommandXboxController XBOX_CONTROLLER = new CommandXboxController(0);
 
@@ -74,6 +74,11 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOLimelight("limelight-front", drive::getRotation),
                 new VisionIOLimelight("limelight-right", drive::getRotation));
+
+        indexer = new Indexer(new IndexerIOSparkFlex());
+        intake = new Intake(new IntakeIOSpark());
+        flywheel = new Flywheel(new FlywheelIOTalonFX(), drive::getDistanceToHub);
+        kicker = new Kicker(new KickerIOSpark());
 
         break;
 
@@ -119,7 +124,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // Configure the button bindings
-    //configureButtonBindings();
+    configureButtonBindings();
     configureTuningBinds();
   }
 
@@ -137,7 +142,6 @@ public class RobotContainer {
             () -> -XBOX_CONTROLLER.getRightY(),
             () -> -XBOX_CONTROLLER.getRightX(),
             () -> -XBOX_CONTROLLER.getLeftX()));
-    
 
     // FOR TESTING AUTO ALIGN
     XBOX_CONTROLLER
@@ -160,16 +164,35 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+
+    XBOX_CONTROLLER.povDown().onTrue(Commands.runOnce(() -> drive.setPose(new Pose2d()), drive));
   }
 
   private void configureTuningBinds() {
-    intake.setDefaultCommand(
-        IntakeCommands.dumbArm(() -> MathUtil.applyDeadband(-XBOX_CONTROLLER.getLeftY(), 0.05), intake)
-    );
+    // intake.setDefaultCommand(
+    //     IntakeCommands.dumbArm(
+    //         () -> MathUtil.applyDeadband(-XBOX_CONTROLLER.getLeftY(), 0.05), intake));
 
-    flywheel.setDefaultCommand(
-        ShooterCommands.dumbFlywheel(() -> MathUtil.applyDeadband(-XBOX_CONTROLLER.getRightY(), 0.05), flywheel)
-    );
+    // flywheel.setDefaultCommand(
+    // ShooterCommands.dumbFlywheel(
+    //     () -> {
+    //       return 1000;
+    //     },
+    //     flywheel));
+
+    // XBOX_CONTROLLER
+    //     .x()
+    //     .whileTrue(
+    //         Commands.run(
+    //                 () -> {
+    //                   kicker.setDesiredState(KickerState.FEED);
+    //                 },
+    //                 kicker)
+    //             .finallyDo(() -> kicker.setDesiredState(KickerState.STOP)));
+
+    XBOX_CONTROLLER.a().whileTrue(new ZeroIntake(intake));
+    XBOX_CONTROLLER.b().onTrue(IntakeCommands.deployIntake);
+    XBOX_CONTROLLER.y().onTrue(IntakeCommands.retractIntake);
   }
 
   /**
