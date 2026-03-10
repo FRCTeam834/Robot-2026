@@ -76,12 +76,10 @@ public class Intake extends SubsystemBase {
     }
 
     switch (pivotState) {
-      case DEPLOYING -> io.setPivotVoltage(pivotController.calculate(getCurrentPivotAngle(), 2.5));
-      case UP -> io.setPivotAngle(PivotState.UP.position);
-      case STOW -> io.setPivotVoltage(pivotController.calculate(getCurrentPivotAngle(), 0.05));
-      case DEPLOYED -> {
-        io.setPivotVoltage(0.1);
-      }
+      case DEPLOYING -> io.setPivotVoltage(pivotController.calculate(getCurrentPivotAngle(), PivotState.DEPLOYING.position));
+      case UP -> io.setPivotVoltage(pivotController.calculate(getCurrentPivotAngle(), PivotState.UP.position));
+      case STOW -> io.setPivotVoltage(pivotController.calculate(getCurrentPivotAngle(), PivotState.STOW.position));
+      case DEPLOYED -> io.setPivotVoltage(0.1);
       case OFF -> {}
     }
 
@@ -107,8 +105,8 @@ public class Intake extends SubsystemBase {
     io.setPivotVoltage(targetVolts);
   }
 
-  public boolean isPivotZeroed() {
-    return isPivotZeroed;
+  public boolean DoesPivotNeedZero() {
+    return !isPivotZeroed;
   }
 
   public void establishPivotZero(boolean state) {

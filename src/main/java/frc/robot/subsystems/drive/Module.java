@@ -34,8 +34,13 @@ public class Module {
   private final Alert turnEncoderDisconnectedAlert;
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
-  private final LoggedTunableNumber turn_kP = new LoggedTunableNumber("turn_kP");
-  private final LoggedTunableNumber drive_kP = new LoggedTunableNumber("drive_kP");
+  private final LoggedTunableNumber turn_kP = new LoggedTunableNumber("/Tuning/turn_kP", 80);
+  private final LoggedTunableNumber drive_kP = new LoggedTunableNumber("/Tuning/drive_kP", 2.2);
+  private final LoggedTunableNumber turn_kD = new LoggedTunableNumber("/Tuning/turn_kD", 0.1);
+  private final LoggedTunableNumber turn_kS = new LoggedTunableNumber("/Tuning/turn_kS", 0.3);
+  private final LoggedTunableNumber turn_kV = new LoggedTunableNumber("/Tuning/turn_kV", 0);
+
+
 
   public Module(
       ModuleIO io,
@@ -56,9 +61,6 @@ public class Module {
         new Alert(
             "Disconnected turn encoder on module " + Integer.toString(index) + ".",
             AlertType.kError);
-
-    turn_kP.initDefault(80);
-    drive_kP.initDefault(2.2);
   }
 
   public void periodic() {
@@ -70,9 +72,12 @@ public class Module {
       driveConfig.kP = drive_kP.get();
       io.updateDrivePID(driveConfig);
     }
-    if (Constants.TUNING_MODE && turn_kP.hasChanged(hashCode())) {
+    if (Constants.TUNING_MODE && turn_kP.hasChanged(hashCode()) || turn_kD.hasChanged(hashCode()) || turn_kS.hasChanged(hashCode()) || turn_kV.hasChanged(hashCode())) {
       var turnConfig = new Slot0Configs();
       turnConfig.kP = turn_kP.get();
+      turnConfig.kS = turn_kS.get();
+      turnConfig.kV = turn_kV.get();
+      turnConfig.kD = turn_kD.get();
       io.updateTurnPID(turnConfig);
     }
 

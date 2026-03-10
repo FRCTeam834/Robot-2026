@@ -20,8 +20,8 @@ public class IntakeConstants {
   };
 
   public static enum PivotState {
-    STOW((0)),
-    UP((0)),
+    STOW((0.05)),
+    UP((0.3)),
     DEPLOYING((2.5)),
     DEPLOYED((2.5)),
     OFF((0));

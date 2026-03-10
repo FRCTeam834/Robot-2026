@@ -15,10 +15,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.indexer.IndexerCommands;
 import frc.robot.commands.intake.IntakeCommands;
 import frc.robot.commands.intake.ZeroIntake;
+import frc.robot.commands.shooter.ShooterCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -53,7 +56,8 @@ public class RobotContainer {
   public static Flywheel flywheel;
   public static Kicker kicker;
 
-  public static final CommandXboxController XBOX_CONTROLLER = new CommandXboxController(0);
+  public static final CommandXboxController DRIVE_CONTROLLER = new CommandXboxController(0);
+  public static final CommandXboxController OPERATOR_CONTROLLER = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -139,24 +143,20 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -XBOX_CONTROLLER.getRightY(),
-            () -> -XBOX_CONTROLLER.getRightX(),
-            () -> -XBOX_CONTROLLER.getLeftX()));
+            () -> -DRIVE_CONTROLLER.getRightY(),
+            () -> -DRIVE_CONTROLLER.getRightX(),
+            () -> -DRIVE_CONTROLLER.getLeftX(),
+            () -> false));
 
-    // FOR TESTING AUTO ALIGN
-    XBOX_CONTROLLER
-        .rightBumper()
-        .whileTrue(
-            DriveCommands.AlignToAngleWithTolerance(
-                drive,
-                () -> -XBOX_CONTROLLER.getRightY(),
-                () -> -XBOX_CONTROLLER.getRightX(),
-                drive::getFieldRelativeHUBAngle,
-                5));
+    DRIVE_CONTROLLER
+      .rightTrigger()
+      .whileTrue(
+        ShooterCommands.shootWhenReadyManualVelocity(500, flywheel, kicker, intake, indexer)
+      );
 
-    // Reset gyro to 0° when B button is pressed
-    XBOX_CONTROLLER
-        .b()
+    // Reset gyro to 0° when povdown button is pressed
+    DRIVE_CONTROLLER
+        .povDown()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -164,21 +164,13 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-
-    XBOX_CONTROLLER.povDown().onTrue(Commands.runOnce(() -> drive.setPose(new Pose2d()), drive));
   }
 
   private void configureTuningBinds() {
-    // intake.setDefaultCommand(
-    //     IntakeCommands.dumbArm(
-    //         () -> MathUtil.applyDeadband(-XBOX_CONTROLLER.getLeftY(), 0.05), intake));
 
     // flywheel.setDefaultCommand(
-    // ShooterCommands.dumbFlywheel(
-    //     () -> {
-    //       return 1000;
-    //     },
-    //     flywheel));
+    //   ShooterCommands.dumbFlywheel(OPERATOR_CONTROLLER::getRightY, flywheel)
+    // );
 
     // XBOX_CONTROLLER
     //     .x()
@@ -190,9 +182,22 @@ public class RobotContainer {
     //                 kicker)
     //             .finallyDo(() -> kicker.setDesiredState(KickerState.STOP)));
 
-    XBOX_CONTROLLER.a().whileTrue(new ZeroIntake(intake));
-    XBOX_CONTROLLER.b().onTrue(IntakeCommands.deployIntake);
-    XBOX_CONTROLLER.y().onTrue(IntakeCommands.retractIntake);
+    OPERATOR_CONTROLLER.a().whileTrue(new ZeroIntake(intake));
+    OPERATOR_CONTROLLER.povDown().onTrue(IntakeCommands.deployIntake);
+    OPERATOR_CONTROLLER.povUp().onTrue(IntakeCommands.retractIntake);
+
+    OPERATOR_CONTROLLER.x().toggleOnTrue(IntakeCommands.fastRollers);
+
+        // FOR TESTING AUTO ALIGN
+    DRIVE_CONTROLLER
+        .rightBumper()
+        .whileTrue(
+            DriveCommands.AlignToAngleWithTolerance(
+                drive,
+                () -> -DRIVE_CONTROLLER.getRightY(),
+                () -> -DRIVE_CONTROLLER.getRightX(),
+                drive::getFieldRelativeHUBAngle,
+                5));
   }
 
   /**

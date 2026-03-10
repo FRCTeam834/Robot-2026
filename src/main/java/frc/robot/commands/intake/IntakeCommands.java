@@ -36,23 +36,34 @@ public class IntakeCommands {
           () -> RobotContainer.intake.setDesiredRollerState(RollerState.STOP),
           RobotContainer.intake);
 
+
+  public static Command toggleFastRollers = 
+    Commands.run(() -> RobotContainer.intake.setDesiredRollerState(RollerState.FAST), RobotContainer.intake)
+    .finallyDo(() -> RobotContainer.intake.setDesiredRollerState(RollerState.STOP));
+
   public static Command deployIntake =
-      Commands.runOnce(
+      Commands.sequence(
+        new ZeroIntake(RobotContainer.intake).onlyIf(RobotContainer.intake::DoesPivotNeedZero),
+
+        Commands.runOnce(
               () -> {
                 RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYING);
                 RobotContainer.intake.setDesiredRollerState(RollerState.FAST);
               },
               RobotContainer.intake)
-          .onlyIf(RobotContainer.intake::isPivotZeroed);
+      );
 
   public static Command retractIntake =
+    Commands.sequence(
+      new ZeroIntake(RobotContainer.intake).onlyIf(RobotContainer.intake::DoesPivotNeedZero),
+
       Commands.runOnce(
-              () -> {
-                RobotContainer.intake.setDesiredPivotState(PivotState.STOW);
-                RobotContainer.intake.setDesiredRollerState(RollerState.STOP);
-              },
-              RobotContainer.intake)
-          .onlyIf(RobotContainer.intake::isPivotZeroed);
+        () -> {
+          RobotContainer.intake.setDesiredPivotState(PivotState.STOW);
+          RobotContainer.intake.setDesiredRollerState(RollerState.STOP);
+        },
+        RobotContainer.intake)
+    );
 
   public static Command dumbArm(DoubleSupplier controllerJoystickY, Intake intake) {
     double setpointAngle[] = new double[1];

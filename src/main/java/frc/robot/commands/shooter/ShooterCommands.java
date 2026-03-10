@@ -59,32 +59,32 @@ public class ShooterCommands {
             // clear the shooter
             Commands.runOnce(
                     () -> {
-                      kicker.setDesiredState(KickerState.REVERSE);
+            //          kicker.setDesiredState(KickerState.REVERSE);
+                      kicker.setDesiredState(KickerState.STOP);
                       flywheel.setVelocitySetpoint(rpm);
                       flywheel.setDesiredState(FlywheelState.MANUAL_RPM);
                     },
                     kicker,
-                    flywheel)
-                .withTimeout(2),
-            Commands.runOnce(
-                () -> {
-                  kicker.setDesiredState(KickerState.STOP);
-                },
-                flywheel),
+                    flywheel),
+            //     .withTimeout(2),
+            // Commands.runOnce(
+            //     () -> {
+            //       kicker.setDesiredState(KickerState.STOP);
+            //     },
+            //     flywheel),
             Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM())),
             Commands.run(
                     () -> {
-                      flywheel.setDesiredState(FlywheelState.ACTIVE);
                       kicker.setDesiredState(KickerState.FEED);
                       indexer.setDesiredIndexerState(IndexerState.FAST);
-                      intake.setDesiredRollerState(RollerState.STOP);
+                      intake.setDesiredRollerState(RollerState.FAST);
                     },
                     flywheel,
                     kicker,
                     intake,
                     indexer)
                 .alongWith(
-                    Commands.waitUntil(() -> indexer.getIndexerCurrent() < 10)
+                    Commands.waitSeconds(4)
                         .andThen(
                             Commands.runOnce(
                                 () -> intake.setDesiredPivotState(PivotState.UP), intake))))
@@ -127,7 +127,7 @@ public class ShooterCommands {
                 ? Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM()))
                     .alongWith(
                         DriveCommands.AlignToAngleWithTolerance(
-                            drive, xSupplier, ySupplier, drive::getFieldRelativeHUBAngle, 7))
+                            drive, xSupplier, ySupplier, drive::getFieldRelativeHUBAngle, 5))
                 : Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM())),
 
             // phase 3, shoot and bring pivot up after there aren't as many balls in the hopper
@@ -143,7 +143,7 @@ public class ShooterCommands {
                     intake,
                     indexer)
                 .alongWith(
-                    Commands.waitUntil(() -> indexer.getIndexerCurrent() < 10)
+                    Commands.waitSeconds(4)
                         .andThen(
                             Commands.runOnce(
                                 () -> intake.setDesiredPivotState(PivotState.UP), intake))))
