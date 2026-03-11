@@ -8,6 +8,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -15,10 +17,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
-import frc.robot.commands.indexer.IndexerCommands;
 import frc.robot.commands.intake.IntakeCommands;
 import frc.robot.commands.intake.ZeroIntake;
 import frc.robot.commands.shooter.ShooterCommands;
@@ -36,9 +36,9 @@ import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.shooter.kicker.Kicker;
+import frc.robot.subsystems.shooter.kicker.KickerConstants.KickerState;
 import frc.robot.subsystems.shooter.kicker.KickerIOSpark;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOLimelight;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -73,11 +73,11 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOLimelight("limelight-front", drive::getRotation),
-                new VisionIOLimelight("limelight-right", drive::getRotation));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOLimelight("limelight-front", drive::getRotation),
+        //         new VisionIOLimelight("limelight-right", drive::getRotation));
 
         indexer = new Indexer(new IndexerIOSparkFlex());
         intake = new Intake(new IntakeIOSpark());
@@ -109,6 +109,14 @@ public class RobotContainer {
         break;
     }
 
+    drive.configureAutoBuilder();
+
+    NamedCommands.registerCommand(
+        "hubshot",
+        ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake, indexer));
+    NamedCommands.registerCommand("pivotdown", IntakeCommands.deployIntake);
+    NamedCommands.registerCommand("zerointake", new ZeroIntake(intake));
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -127,9 +135,11 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption("centerbuns", new PathPlannerAuto("centerbuns"));
+
     // Configure the button bindings
     configureButtonBindings();
-    configureTuningBinds();
   }
 
   /**
@@ -139,65 +149,64 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    flywheel.setDefaultCommand(
+        ShooterCommands.dumbFlywheel(OPERATOR_CONTROLLER::getRightY, flywheel));
+
     // * Default command just a plain drive */
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -DRIVE_CONTROLLER.getRightY(),
-            () -> -DRIVE_CONTROLLER.getRightX(),
+            () -> -DRIVE_CONTROLLER.getLeftY(),
             () -> -DRIVE_CONTROLLER.getLeftX(),
+            () -> -DRIVE_CONTROLLER.getRightX(),
             () -> false));
 
-    DRIVE_CONTROLLER
-      .rightTrigger()
-      .whileTrue(
-        ShooterCommands.shootWhenReadyManualVelocity(500, flywheel, kicker, intake, indexer)
-      );
+    // DRIVE_CONTROLLER
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         ShooterCommands.shootWhenReadyManualVelocity(500, flywheel, kicker, intake,
+    // indexer));
 
     // Reset gyro to 0° when povdown button is pressed
     DRIVE_CONTROLLER
         .povDown()
         .onTrue(
             Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+                    () -> {
+                      System.out.println("Running zero");
+                      drive.setPose(new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero));
+                    },
                     drive)
                 .ignoringDisable(true));
-  }
 
-  private void configureTuningBinds() {
+    DRIVE_CONTROLLER
+        .x()
+        .whileTrue(
+            Commands.run(
+                    () -> {
+                      kicker.setDesiredState(KickerState.FEED);
+                    },
+                    kicker)
+                .finallyDo(() -> kicker.setDesiredState(KickerState.STOP)));
 
-    // flywheel.setDefaultCommand(
-    //   ShooterCommands.dumbFlywheel(OPERATOR_CONTROLLER::getRightY, flywheel)
-    // );
-
-    // XBOX_CONTROLLER
-    //     .x()
-    //     .whileTrue(
-    //         Commands.run(
-    //                 () -> {
-    //                   kicker.setDesiredState(KickerState.FEED);
-    //                 },
-    //                 kicker)
-    //             .finallyDo(() -> kicker.setDesiredState(KickerState.STOP)));
+    DRIVE_CONTROLLER.leftTrigger().onTrue(IntakeCommands.getJoltIntake());
 
     OPERATOR_CONTROLLER.a().whileTrue(new ZeroIntake(intake));
     OPERATOR_CONTROLLER.povDown().onTrue(IntakeCommands.deployIntake);
     OPERATOR_CONTROLLER.povUp().onTrue(IntakeCommands.retractIntake);
 
-    OPERATOR_CONTROLLER.x().toggleOnTrue(IntakeCommands.fastRollers);
+    OPERATOR_CONTROLLER.x().toggleOnTrue(IntakeCommands.toggleFastRollers);
 
-        // FOR TESTING AUTO ALIGN
     DRIVE_CONTROLLER
         .rightBumper()
         .whileTrue(
-            DriveCommands.AlignToAngleWithTolerance(
-                drive,
-                () -> -DRIVE_CONTROLLER.getRightY(),
-                () -> -DRIVE_CONTROLLER.getRightX(),
-                drive::getFieldRelativeHUBAngle,
-                5));
+            ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake, indexer));
+
+    DRIVE_CONTROLLER
+        .leftBumper()
+        .whileTrue(
+            ShooterCommands.shootWhenReadyManualVelocity(1700, flywheel, kicker, intake, indexer));
   }
 
   /**

@@ -118,9 +118,6 @@ public class Drive extends SubsystemBase {
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
 
-    // Configure AutoBuilder for PathPlanner
-    configureAutoBuilder();
-
     // Configure SysId
     sysId =
         new SysIdRoutine(

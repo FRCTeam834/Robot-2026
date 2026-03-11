@@ -40,8 +40,6 @@ public class Module {
   private final LoggedTunableNumber turn_kS = new LoggedTunableNumber("/Tuning/turn_kS", 0.3);
   private final LoggedTunableNumber turn_kV = new LoggedTunableNumber("/Tuning/turn_kV", 0);
 
-
-
   public Module(
       ModuleIO io,
       int index,
@@ -72,7 +70,10 @@ public class Module {
       driveConfig.kP = drive_kP.get();
       io.updateDrivePID(driveConfig);
     }
-    if (Constants.TUNING_MODE && turn_kP.hasChanged(hashCode()) || turn_kD.hasChanged(hashCode()) || turn_kS.hasChanged(hashCode()) || turn_kV.hasChanged(hashCode())) {
+    if (Constants.TUNING_MODE && turn_kP.hasChanged(hashCode())
+        || turn_kD.hasChanged(hashCode())
+        || turn_kS.hasChanged(hashCode())
+        || turn_kV.hasChanged(hashCode())) {
       var turnConfig = new Slot0Configs();
       turnConfig.kP = turn_kP.get();
       turnConfig.kS = turn_kS.get();

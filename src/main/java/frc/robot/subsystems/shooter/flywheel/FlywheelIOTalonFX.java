@@ -30,7 +30,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
     inputs.flywheelConnected = flywheelMotor.isConnected();
-    inputs.flywheelVelocityRPM = flywheelMotor.getVelocity().getValueAsDouble();
+    inputs.flywheelVelocityRPM = flywheelMotor.getVelocity().getValue().in(RPM);
     inputs.flywheelCurrent = flywheelMotor.getTorqueCurrent().getValueAsDouble();
     inputs.flywheelDutyCycle = flywheelMotor.getDutyCycle().getValueAsDouble();
   }

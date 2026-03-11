@@ -7,7 +7,7 @@ package frc.robot.subsystems.intake;
 /** Add your docs here. */
 public class IntakeConstants {
   public static enum RollerState {
-    FAST(8.0),
+    FAST(7.0),
     SLOW(3.0),
     REVERSE(-3.0),
     STOP(0.0);

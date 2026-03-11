@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
   public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Intake/pivot_kV");
 
-  private final PIDController pivotController = new PIDController(1, 0, 0);
+  private final PIDController pivotController = new PIDController(2.5, 0, 0);
 
   @AutoLogOutput(key = "SubsystemStates/rollerState")
   private RollerState rollerState;
@@ -76,9 +76,12 @@ public class Intake extends SubsystemBase {
     }
 
     switch (pivotState) {
-      case DEPLOYING -> io.setPivotVoltage(pivotController.calculate(getCurrentPivotAngle(), PivotState.DEPLOYING.position));
-      case UP -> io.setPivotVoltage(pivotController.calculate(getCurrentPivotAngle(), PivotState.UP.position));
-      case STOW -> io.setPivotVoltage(pivotController.calculate(getCurrentPivotAngle(), PivotState.STOW.position));
+      case DEPLOYING -> io.setPivotVoltage(
+          pivotController.calculate(getCurrentPivotAngle(), PivotState.DEPLOYING.position));
+      case UP -> io.setPivotVoltage(
+          pivotController.calculate(getCurrentPivotAngle(), PivotState.UP.position));
+      case STOW -> io.setPivotVoltage(
+          pivotController.calculate(getCurrentPivotAngle(), PivotState.STOW.position));
       case DEPLOYED -> io.setPivotVoltage(0.1);
       case OFF -> {}
     }

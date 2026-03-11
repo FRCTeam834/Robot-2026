@@ -10,9 +10,6 @@ package frc.robot.util;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
-import java.util.Optional;
-import java.util.function.Supplier;
-import lombok.Setter;
 
 public class HubShiftUtil {
   public enum ShiftEnum {
@@ -41,7 +38,6 @@ public class HubShiftUtil {
   private static final boolean[] inactiveSchedule = {true, false, true, false, true, true};
   private static final double timeResetThreshold = 3.0;
   private static double shiftTimerOffset = 0.0;
-
 
   public static Alliance getFirstActiveAlliance() {
     var alliance = DriverStation.getAlliance().orElse(Alliance.Blue);

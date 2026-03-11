@@ -82,6 +82,7 @@ public class Flywheel extends SubsystemBase {
 
   public void setVelocitySetpoint(double rpm) {
     if (flywheelState == FlywheelState.ACTIVE) return;
+    rpm = MathUtil.clamp(rpm, 0, 3000);
     flywheelSetpointRPM = rpm;
   }
 

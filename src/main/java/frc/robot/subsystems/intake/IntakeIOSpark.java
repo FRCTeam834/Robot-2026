@@ -63,7 +63,7 @@ public class IntakeIOSpark implements IntakeIO {
     pivotEncoder.setPosition(0);
 
     rollerMotor.configure(
-        pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
