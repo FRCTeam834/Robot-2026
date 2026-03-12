@@ -110,8 +110,6 @@ public class RobotContainer {
         break;
     }
 
-    drive.configureAutoBuilder();
-
     NamedCommands.registerCommand(
         "hubshot",
         ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake, indexer));

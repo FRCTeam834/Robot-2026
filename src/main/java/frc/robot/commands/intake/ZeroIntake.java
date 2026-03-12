@@ -42,7 +42,6 @@ public class ZeroIntake extends Command {
     intake.setPivotVoltage(0);
     intake.establishPivotZero(true);
     intake.setDesiredPivotState(PivotState.STOW);
-    System.out.println("Done zeroing pivot");
   }
 
   // Returns true when the command should end.

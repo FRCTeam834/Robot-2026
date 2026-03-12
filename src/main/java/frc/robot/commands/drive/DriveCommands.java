@@ -71,7 +71,7 @@ public class DriveCommands {
         () -> {
           double slowFactor = 1;
           if (slowMode.getAsBoolean()) {
-            slowFactor = 10;
+            slowFactor = 2;
           } else {
             slowFactor = 1;
           }

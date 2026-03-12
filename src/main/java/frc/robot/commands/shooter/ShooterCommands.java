@@ -80,6 +80,35 @@ public class ShooterCommands {
             });
   }
 
+  public static Command AutonShootWhenReadyManualVelocity(
+      double rpm, Flywheel flywheel, Kicker kicker, Indexer indexer) {
+    Debouncer flywheelReady = new Debouncer(0.25);
+    return Commands.sequence(
+            // clear the shooter
+            Commands.runOnce(
+                () -> {
+                  kicker.setDesiredState(KickerState.STOP);
+                  flywheel.setVelocitySetpoint(rpm);
+                  flywheel.setDesiredState(FlywheelState.MANUAL_RPM);
+                },
+                flywheel),
+            Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM())),
+            Commands.run(
+                    () -> {
+                      kicker.setDesiredState(KickerState.FEED);
+                      indexer.setDesiredIndexerState(IndexerState.SLOW);
+                    },
+                    kicker,
+                    indexer)
+                .alongWith(IntakeCommands.shootingSequenceJolt().repeatedly()))
+        .finallyDo(
+            (interrupted) -> {
+              kicker.setDesiredState(KickerState.STOP);
+              indexer.setDesiredIndexerState(IndexerState.STOP);
+              flywheel.setDesiredState(FlywheelState.IDLE);
+            });
+  }
+
   public static Command shootWhenReady(
       boolean withYaw,
       DoubleSupplier xSupplier,
