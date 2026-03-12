@@ -24,6 +24,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     var flywheelConfig = new TalonFXConfiguration();
     flywheelConfig.withSlot0(FlywheelConstants.flywheelConfig);
     flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    flywheelConfig.CurrentLimits.StatorCurrentLimit = 50;
     flywheelMotor.getConfigurator().apply(flywheelConfig);
   }
 

@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.indexer;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -11,17 +13,19 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 public class IndexerIOSparkFlex implements IndexerIO {
   private SparkFlex indexerMotor;
-  public SparkFlexConfig indexerConfig;
 
   public IndexerIOSparkFlex() {
     indexerMotor = new SparkFlex(50, MotorType.kBrushless);
-    indexerConfig = new SparkFlexConfig();
+    SparkFlexConfig indexerConfig = new SparkFlexConfig();
 
     indexerConfig
-        .idleMode(IdleMode.kBrake)
-        .inverted(false)
-        .smartCurrentLimit(40)
+        .idleMode(IdleMode.kCoast)
+        .inverted(true)
+        .smartCurrentLimit(20)
         .voltageCompensation(12);
+
+    indexerMotor.configure(
+        indexerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override

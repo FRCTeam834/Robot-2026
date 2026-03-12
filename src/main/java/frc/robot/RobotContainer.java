@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.intake.IntakeCommands;
@@ -137,6 +138,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     autoChooser.addOption("centerbuns", new PathPlannerAuto("centerbuns"));
+    autoChooser.addOption("testbuns", new PathPlannerAuto("testbuns"));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -150,8 +152,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    flywheel.setDefaultCommand(
-        ShooterCommands.dumbFlywheel(OPERATOR_CONTROLLER::getRightY, flywheel));
+    // flywheel.setDefaultCommand(
+    //     ShooterCommands.dumbFlywheel(OPERATOR_CONTROLLER::getRightY, flywheel));
 
     // * Default command just a plain drive */
     drive.setDefaultCommand(
@@ -162,19 +164,12 @@ public class RobotContainer {
             () -> -DRIVE_CONTROLLER.getRightX(),
             () -> false));
 
-    // DRIVE_CONTROLLER
-    //     .rightTrigger()
-    //     .whileTrue(
-    //         ShooterCommands.shootWhenReadyManualVelocity(500, flywheel, kicker, intake,
-    // indexer));
-
     // Reset gyro to 0° when povdown button is pressed
     DRIVE_CONTROLLER
         .povDown()
         .onTrue(
             Commands.runOnce(
                     () -> {
-                      System.out.println("Running zero");
                       drive.setPose(new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero));
                     },
                     drive)
@@ -190,23 +185,32 @@ public class RobotContainer {
                     kicker)
                 .finallyDo(() -> kicker.setDesiredState(KickerState.STOP)));
 
-    DRIVE_CONTROLLER.leftTrigger().onTrue(IntakeCommands.getJoltIntake());
-
     OPERATOR_CONTROLLER.a().whileTrue(new ZeroIntake(intake));
     OPERATOR_CONTROLLER.povDown().onTrue(IntakeCommands.deployIntake);
     OPERATOR_CONTROLLER.povUp().onTrue(IntakeCommands.retractIntake);
 
-    OPERATOR_CONTROLLER.x().toggleOnTrue(IntakeCommands.toggleFastRollers);
+    OPERATOR_CONTROLLER.x().onTrue(IntakeCommands.toggleFastRollers);
+
+    OPERATOR_CONTROLLER.rightTrigger().onTrue(ShooterCommands.arbitraryRPM(1700, flywheel));
+    OPERATOR_CONTROLLER.leftTrigger().onTrue(ShooterCommands.arbitraryRPM(1550, flywheel));
+
+    OPERATOR_CONTROLLER
+        .y()
+        .whileTrue(
+            Commands.run(() -> kicker.setDesiredState(KickerState.FEED))
+                .finallyDo(() -> kicker.setDesiredState(KickerState.STOP)));
 
     DRIVE_CONTROLLER
-        .rightBumper()
+        .rightTrigger()
+        .whileTrue(
+            ShooterCommands.shootWhenReadyManualVelocity(1700, flywheel, kicker, intake, indexer));
+
+    DRIVE_CONTROLLER
+        .leftTrigger()
         .whileTrue(
             ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake, indexer));
 
-    DRIVE_CONTROLLER
-        .leftBumper()
-        .whileTrue(
-            ShooterCommands.shootWhenReadyManualVelocity(1700, flywheel, kicker, intake, indexer));
+    new JoystickButton(DRIVE_CONTROLLER.getHID(), 8).onTrue(IntakeCommands.getJoltIntake());
   }
 
   /**

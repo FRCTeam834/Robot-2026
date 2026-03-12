@@ -62,8 +62,6 @@ public class Intake extends SubsystemBase {
       pivotConfig.closedLoop.p(pivot_kP.get());
       pivotConfig.closedLoop.feedForward.kS(pivot_kS.get()).kV(pivot_kV.get());
 
-      System.out.println("changed p to " + pivot_kP.get());
-
       io.updateClosedLoopConfig(pivotConfig);
     }
 

@@ -29,7 +29,6 @@ public class ShooterCommands {
   public static Command dumbFlywheel(DoubleSupplier controllerJoystickY, Flywheel flywheel) {
     return Commands.run(
             () -> {
-              System.out.println(controllerJoystickY.getAsDouble());
               flywheel.setVelocitySetpoint(
                   flywheel.getVelocitySetpoint() - controllerJoystickY.getAsDouble() * 20);
             },
@@ -42,16 +41,12 @@ public class ShooterCommands {
   }
 
   public static Command arbitraryRPM(double rpm, Flywheel flywheel) {
-    return Commands.run(
-            () -> {
-              flywheel.setVelocitySetpoint(rpm);
-            },
-            flywheel)
-        .beforeStarting(
-            () -> {
-              flywheel.setDesiredState(FlywheelState.MANUAL_RPM);
-              flywheel.setVelocitySetpoint(0.0);
-            });
+    return Commands.runOnce(
+        () -> {
+          flywheel.setVelocitySetpoint(rpm);
+          flywheel.setDesiredState(FlywheelState.MANUAL_RPM);
+        },
+        flywheel);
   }
 
   public static Command shootWhenReadyManualVelocity(
@@ -70,17 +65,18 @@ public class ShooterCommands {
             Commands.run(
                     () -> {
                       kicker.setDesiredState(KickerState.FEED);
-                      indexer.setDesiredIndexerState(IndexerState.FAST);
+                      indexer.setDesiredIndexerState(IndexerState.SLOW);
                     },
                     kicker,
                     indexer)
-                .alongWith(IntakeCommands.getJoltIntake().repeatedly()))
+                .alongWith(IntakeCommands.shootingSequenceJolt().repeatedly()))
         .finallyDo(
             (interrupted) -> {
               kicker.setDesiredState(KickerState.STOP);
               indexer.setDesiredIndexerState(IndexerState.STOP);
               flywheel.setDesiredState(FlywheelState.IDLE);
-              intake.setDesiredRollerState(RollerState.STOP);
+              intake.setDesiredRollerState(RollerState.FAST);
+              intake.setDesiredPivotState(PivotState.DEPLOYING);
             });
   }
 

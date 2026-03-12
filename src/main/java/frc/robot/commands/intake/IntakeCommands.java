@@ -37,10 +37,15 @@ public class IntakeCommands {
           RobotContainer.intake);
 
   public static Command toggleFastRollers =
-      Commands.run(
-              () -> RobotContainer.intake.setDesiredRollerState(RollerState.FAST),
-              RobotContainer.intake)
-          .finallyDo(() -> RobotContainer.intake.setDesiredRollerState(RollerState.STOP));
+      Commands.runOnce(
+          () -> {
+            if (RobotContainer.intake.getRollersState() == RollerState.FAST) {
+              RobotContainer.intake.setDesiredRollerState(RollerState.STOP);
+            } else if (RobotContainer.intake.getRollersState() == RollerState.STOP) {
+              RobotContainer.intake.setDesiredRollerState(RollerState.FAST);
+            }
+          },
+          RobotContainer.intake);
 
   public static Command deployIntake =
       Commands.sequence(
@@ -75,6 +80,22 @@ public class IntakeCommands {
               RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYING);
             },
             RobotContainer.intake));
+  }
+
+  public static Command shootingSequenceJolt() {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> {
+              RobotContainer.intake.setDesiredPivotState(PivotState.STOW);
+            },
+            RobotContainer.intake),
+        Commands.waitSeconds(0.15),
+        Commands.runOnce(
+            () -> {
+              RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYING);
+            },
+            RobotContainer.intake),
+        Commands.waitSeconds(0.15));
   }
 
   public static Command dumbArm(DoubleSupplier controllerJoystickY, Intake intake) {

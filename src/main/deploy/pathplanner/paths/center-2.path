@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.4583112582781458,
-        "y": 0.6373509933774835
+        "x": 0.4728311258278147,
+        "y": 0.6881705298013252
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6852400662251652,
-        "y": 0.6954304635761581
+        "x": 1.6997599337748341,
+        "y": 0.7462499999999999
       },
       "isLocked": false,
       "linkedName": "CENTER1"
     },
     {
       "anchor": {
-        "x": 3.3259850993377484,
-        "y": 4.071299668874172
+        "x": 3.260645695364238,
+        "y": 4.056779801324502
       },
       "prevControl": {
-        "x": 2.091796357615894,
-        "y": 4.085819536423841
+        "x": 2.0264569536423838,
+        "y": 4.071299668874172
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "bankpoint"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

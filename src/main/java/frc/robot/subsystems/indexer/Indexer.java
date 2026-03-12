@@ -35,7 +35,6 @@ public class Indexer extends SubsystemBase {
 
   public void setDesiredIndexerState(IndexerState indexerState) {
     this.indexerState = indexerState;
-    setIndexerVoltage(indexerState.voltage);
   }
 
   // Getter Methods
