@@ -40,7 +40,7 @@ public class ShooterCommands {
             });
   }
 
-  public static Command arbitraryRPM(double rpm, Flywheel flywheel) {
+  public static Command rampToRPM(double rpm, Flywheel flywheel) {
     return Commands.runOnce(
         () -> {
           flywheel.setVelocitySetpoint(rpm);
@@ -59,6 +59,7 @@ public class ShooterCommands {
                   kicker.setDesiredState(KickerState.STOP);
                   flywheel.setVelocitySetpoint(rpm);
                   flywheel.setDesiredState(FlywheelState.MANUAL_RPM);
+                  intake.setDesiredRollerState(RollerState.STOP);
                 },
                 flywheel),
             Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM())),

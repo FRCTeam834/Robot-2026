@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 // Copyright (c) 2025-2026 Littleton Robotics
 // http://github.com/Mechanical-Advantage
 //
@@ -24,7 +26,7 @@ public class HubShiftUtil {
   }
 
   public record ShiftInfo(
-      ShiftEnum currentShift, double elapsedTime, double remainingTime, boolean active) {}
+      ShiftEnum currentShift, double elapsedTime, double remainingTime, double shiftRemainingTime, boolean active) {}
 
   private static Timer shiftTimer = new Timer();
   private static final ShiftEnum[] shiftsEnums = ShiftEnum.values();
@@ -79,6 +81,7 @@ public class HubShiftUtil {
     double currentTime = timerValue - shiftTimerOffset;
     double stateTimeElapsed = currentTime;
     double stateTimeRemaining = 0.0;
+    double shiftTimeRemaining = 0.0;
     boolean active = false;
     ShiftEnum currentShift = ShiftEnum.DISABLED;
     double fieldTeleopTime = 140.0 - DriverStation.getMatchTime();
@@ -86,6 +89,7 @@ public class HubShiftUtil {
     if (DriverStation.isAutonomousEnabled()) {
       stateTimeElapsed = currentTime;
       stateTimeRemaining = autoEndTime - currentTime;
+      shiftTimeRemaining = autoEndTime - currentTime;
       active = true;
       currentShift = ShiftEnum.AUTO;
     } else if (DriverStation.isEnabled()) {
@@ -111,6 +115,7 @@ public class HubShiftUtil {
       // Calculate elapsed and remaining time in the current shift, ignoring combined shifts
       stateTimeElapsed = currentTime - shiftStartTimes[currentShiftIndex];
       stateTimeRemaining = shiftEndTimes[currentShiftIndex] - currentTime;
+      shiftTimeRemaining = shiftEndTimes[currentShiftIndex] - currentTime;
 
       // If the state is the same as the last shift, combine the elapsed time
       if (currentShiftIndex > 0) {
@@ -129,10 +134,11 @@ public class HubShiftUtil {
       active = currentSchedule[currentShiftIndex];
       currentShift = shiftsEnums[currentShiftIndex];
     }
-    ShiftInfo shiftInfo = new ShiftInfo(currentShift, stateTimeElapsed, stateTimeRemaining, active);
+    ShiftInfo shiftInfo = new ShiftInfo(currentShift, stateTimeElapsed, stateTimeRemaining, shiftTimeRemaining, active);
     return shiftInfo;
   }
 
+  @AutoLogOutput(key = "Official Shift Info")
   public static ShiftInfo getOfficialShiftInfo() {
     return getShiftInfo(getSchedule(), shiftStartTimes, shiftEndTimes);
   }

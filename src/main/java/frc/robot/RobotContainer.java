@@ -115,6 +115,7 @@ public class RobotContainer {
         ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake, indexer));
     NamedCommands.registerCommand("pivotdown", IntakeCommands.deployIntake);
     NamedCommands.registerCommand("zerointake", new ZeroIntake(intake));
+    NamedCommands.registerCommand("rampup1700", ShooterCommands.rampToRPM(1700, flywheel));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -189,8 +190,8 @@ public class RobotContainer {
 
     OPERATOR_CONTROLLER.x().onTrue(IntakeCommands.toggleFastRollers);
 
-    OPERATOR_CONTROLLER.rightTrigger().onTrue(ShooterCommands.arbitraryRPM(1700, flywheel));
-    OPERATOR_CONTROLLER.leftTrigger().onTrue(ShooterCommands.arbitraryRPM(1550, flywheel));
+    OPERATOR_CONTROLLER.rightTrigger().onTrue(ShooterCommands.rampToRPM(1700, flywheel));
+    OPERATOR_CONTROLLER.leftTrigger().onTrue(ShooterCommands.rampToRPM(1550, flywheel));
 
     OPERATOR_CONTROLLER
         .y()

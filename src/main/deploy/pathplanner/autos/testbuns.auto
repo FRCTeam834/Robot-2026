@@ -5,9 +5,40 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "rampup1700"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "center-1"
+            "pathName": "forwardtest"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "pivotdown"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "hubshot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 7.0
+                }
+              }
+            ]
           }
         }
       ]
