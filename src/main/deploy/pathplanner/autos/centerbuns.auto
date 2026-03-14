@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "rampup1700"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "center-1"

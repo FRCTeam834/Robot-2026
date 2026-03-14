@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
   public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Intake/pivot_kV");
 
-  private final PIDController pivotController = new PIDController(2.5, 0, 0);
+  private final PIDController pivotController = new PIDController(2, 0, 0);
 
   @AutoLogOutput(key = "SubsystemStates/rollerState")
   private RollerState rollerState;
