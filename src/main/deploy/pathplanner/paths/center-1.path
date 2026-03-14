@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.318725165562914,
-        "y": 4.034999999999999
+        "x": 3.560875133226638,
+        "y": 4.023697448922774
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.786879139072848,
-        "y": 4.013220198675495
+        "x": 2.9507714077385696,
+        "y": 2.1569347560881376
       },
       "isLocked": false,
-      "linkedName": "bankpoint"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.4728311258278147,
-        "y": 0.6881705298013252
+        "x": 0.5123666003295357,
+        "y": 0.5072269402714427
       },
       "prevControl": {
-        "x": 2.1934354304635764,
-        "y": 0.6591307947019867
+        "x": 1.8617181864092576,
+        "y": 1.8735283919728478
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "CENTER1"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.9625668449197863,
+      "rotationDegrees": 90.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],

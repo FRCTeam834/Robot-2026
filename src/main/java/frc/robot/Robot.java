@@ -9,7 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-// import frc.robot.util.HubShiftUtil;
+import frc.robot.util.HubShiftUtil;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -88,6 +88,9 @@ public class Robot extends LoggedRobot {
 
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
+
+    // to display shift data on dashboard
+    Logger.recordOutput("HubShift/Official", HubShiftUtil.getOfficialShiftInfo());
   }
 
   /** This function is called once when the robot is disabled. */
@@ -124,9 +127,7 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-    // Logger.recordOutput("HubShift/Official", HubShiftUtil.getOfficialShiftInfo());
-  }
+  public void teleopPeriodic() {}
 
   /** This function is called once when test mode is enabled. */
   @Override
@@ -137,9 +138,7 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {
-    // Logger.recordOutput("HubShift/Official", HubShiftUtil.getOfficialShiftInfo());
-  }
+  public void testPeriodic() {}
 
   /** This function is called once when the robot is first started up. */
   @Override
