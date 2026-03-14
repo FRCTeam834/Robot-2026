@@ -90,7 +90,11 @@ public class Robot extends LoggedRobot {
     // Threads.setCurrentThreadPriority(false, 10);
 
     // to display shift data on dashboard
-    Logger.recordOutput("HubShift/Official", HubShiftUtil.getOfficialShiftInfo());
+    Logger.recordOutput(
+        "HubShift/CurrentShift", HubShiftUtil.getOfficialShiftInfo().currentShift());
+    Logger.recordOutput(
+        "HubShift/RemainingTime", HubShiftUtil.getOfficialShiftInfo().remainingTime());
+    Logger.recordOutput("HubShift/ElapsedTime", HubShiftUtil.getOfficialShiftInfo().elapsedTime());
   }
 
   /** This function is called once when the robot is disabled. */

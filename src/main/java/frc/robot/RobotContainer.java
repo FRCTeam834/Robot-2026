@@ -146,6 +146,7 @@ public class RobotContainer {
     //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     autoChooser.addOption("centerbuns", new PathPlannerAuto("centerbuns"));
+    autoChooser.addOption("centerquick", new PathPlannerAuto("centerquick"));
 
     // Configure the button bindings
     configureButtonBindings();

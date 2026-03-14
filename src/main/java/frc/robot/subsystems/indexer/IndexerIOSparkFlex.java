@@ -36,7 +36,7 @@ public class IndexerIOSparkFlex implements IndexerIO {
 
   @Override
   public void setIndexerVoltage(double volts) {
-    indexerMotor.setVoltage(volts);
+    // indexerMotor.setVoltage(volts);
   }
 
   @Override
