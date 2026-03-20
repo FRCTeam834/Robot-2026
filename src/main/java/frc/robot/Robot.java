@@ -94,7 +94,6 @@ public class Robot extends LoggedRobot {
         "HubShift/CurrentShift", HubShiftUtil.getOfficialShiftInfo().currentShift());
     Logger.recordOutput(
         "HubShift/RemainingTime", HubShiftUtil.getOfficialShiftInfo().remainingTime());
-    Logger.recordOutput("HubShift/ElapsedTime", HubShiftUtil.getOfficialShiftInfo().elapsedTime());
   }
 
   /** This function is called once when the robot is disabled. */

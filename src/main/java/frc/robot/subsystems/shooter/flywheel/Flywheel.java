@@ -73,7 +73,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   public double getFlywheelRPM() {
-    return inputs.flywheelVelocityRPM;
+    return inputs.ONE_flywheelVelocityRPM;
   }
 
   public void setDesiredState(FlywheelState state) {

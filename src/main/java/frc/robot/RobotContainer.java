@@ -125,6 +125,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("pivotdown", IntakeCommands.deployIntake);
     NamedCommands.registerCommand("zerointake", new ZeroIntake(intake));
     NamedCommands.registerCommand("rampup1700", ShooterCommands.rampToRPM(1700, flywheel));
+    NamedCommands.registerCommand("rampup2300", ShooterCommands.rampToRPM(2300, flywheel));
+    NamedCommands.registerCommand(
+        "2300shot",
+        ShooterCommands.shootWhenReadyManualVelocity(2300, flywheel, kicker, intake, indexer));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

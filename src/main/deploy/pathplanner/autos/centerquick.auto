@@ -7,7 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "rampup1700"
+            "name": "rampup2300"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "hubshot"
+            "name": "2300shot"
           }
         }
       ]
