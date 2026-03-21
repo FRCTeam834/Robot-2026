@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -27,8 +28,11 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
     var flywheelConfig = new TalonFXConfiguration();
     flywheelConfig.withSlot0(FlywheelConstants.flywheelConfig);
+    
     flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     flywheelConfig.CurrentLimits.StatorCurrentLimit = 50;
+    flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
     flywheelMotor1.getConfigurator().apply(flywheelConfig);
     flywheelMotor2.getConfigurator().apply(flywheelConfig);
 

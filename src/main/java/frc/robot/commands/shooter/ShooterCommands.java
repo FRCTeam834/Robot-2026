@@ -50,7 +50,7 @@ public class ShooterCommands {
   }
 
   public static Command shootWhenReadyManualVelocity(
-      double rpm, Flywheel flywheel, Kicker kicker, Intake intake, Indexer indexer) {
+      double rpm, Flywheel flywheel, Kicker kicker, Intake intake) {
     Debouncer flywheelReady = new Debouncer(0.25);
     return Commands.sequence(
             // clear the shooter
@@ -66,15 +66,12 @@ public class ShooterCommands {
             Commands.run(
                     () -> {
                       kicker.setDesiredState(KickerState.FEED);
-                      indexer.setDesiredIndexerState(IndexerState.SLOW);
                     },
-                    kicker,
-                    indexer)
+                    kicker)
                 .alongWith(IntakeCommands.shootingSequenceJolt().repeatedly()))
         .finallyDo(
             (interrupted) -> {
               kicker.setDesiredState(KickerState.STOP);
-              indexer.setDesiredIndexerState(IndexerState.STOP);
               flywheel.setDesiredState(FlywheelState.IDLE);
               intake.setDesiredRollerState(RollerState.FAST);
               intake.setDesiredPivotState(PivotState.DEPLOYING);

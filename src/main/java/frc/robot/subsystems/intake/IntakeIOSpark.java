@@ -3,12 +3,15 @@ package frc.robot.subsystems.intake;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.math.MathUtil;
 
 public class IntakeIOSpark implements IntakeIO {
   // Roller
@@ -81,19 +84,19 @@ public class IntakeIOSpark implements IntakeIO {
   // Roller Methods
   @Override
   public void setRollerVoltage(double volts) {
-    // rollerMotor.setVoltage(volts);
+    rollerMotor.setVoltage(volts);
   }
 
   // Pivot Methods
   @Override
   public void setPivotVoltage(double volts) {
-    // pivotMotor.setVoltage(volts);
+    pivotMotor.setVoltage(volts);
   }
 
   @Override
   public void setPivotAngle(double angle) {
-    // angle = MathUtil.clamp(angle, 0, 2.6); // up is 0 and deployed is 2.5
-    // pivotController.setSetpoint(angle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+    angle = MathUtil.clamp(angle, 0, 2.6); // up is 0 and deployed is 2.5
+    pivotController.setSetpoint(angle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
   @Override

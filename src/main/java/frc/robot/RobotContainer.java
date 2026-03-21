@@ -30,8 +30,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.indexer.IndexerIO;
-import frc.robot.subsystems.indexer.IndexerIOSparkFlex;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSpark;
@@ -83,7 +81,7 @@ public class RobotContainer {
         //         new VisionIOLimelight("limelight-front", drive::getRotation),
         //         new VisionIOLimelight("limelight-right", drive::getRotation));
 
-        indexer = new Indexer(new IndexerIOSparkFlex());
+        // indexer = new Indexer(new IndexerIOSparkFlex());
         intake = new Intake(new IntakeIOSpark());
         flywheel = new Flywheel(new FlywheelIOTalonFX(), drive::getDistanceToHub);
         kicker = new Kicker(new KickerIOSpark());
@@ -100,7 +98,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        indexer = new Indexer(new IndexerIO() {});
+        // indexer = new Indexer(new IndexerIO() {});
         intake = new Intake(new IntakeIO() {});
         flywheel = new Flywheel(new FlywheelIO() {}, drive::getDistanceToHub);
         kicker = new Kicker(new KickerIO() {});
@@ -120,15 +118,13 @@ public class RobotContainer {
     }
 
     NamedCommands.registerCommand(
-        "hubshot",
-        ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake, indexer));
+        "hubshot", ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake));
     NamedCommands.registerCommand("pivotdown", IntakeCommands.deployIntake);
     NamedCommands.registerCommand("zerointake", new ZeroIntake(intake));
     NamedCommands.registerCommand("rampup1700", ShooterCommands.rampToRPM(1700, flywheel));
     NamedCommands.registerCommand("rampup2300", ShooterCommands.rampToRPM(2300, flywheel));
     NamedCommands.registerCommand(
-        "2300shot",
-        ShooterCommands.shootWhenReadyManualVelocity(2300, flywheel, kicker, intake, indexer));
+        "2300shot", ShooterCommands.shootWhenReadyManualVelocity(2300, flywheel, kicker, intake));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -214,13 +210,11 @@ public class RobotContainer {
 
     DRIVE_CONTROLLER
         .rightTrigger()
-        .whileTrue(
-            ShooterCommands.shootWhenReadyManualVelocity(1700, flywheel, kicker, intake, indexer));
+        .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(1700, flywheel, kicker, intake));
 
     DRIVE_CONTROLLER
         .leftTrigger()
-        .whileTrue(
-            ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake, indexer));
+        .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake));
 
     new JoystickButton(DRIVE_CONTROLLER.getHID(), 8).onTrue(IntakeCommands.getJoltIntake());
   }
