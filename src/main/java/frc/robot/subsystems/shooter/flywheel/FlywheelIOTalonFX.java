@@ -11,6 +11,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -19,12 +21,14 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX flywheelMotor1;
   private final TalonFX flywheelMotor2;
-  private final VelocityTorqueCurrentFOC velocitySetpoint;
+
+  private final VelocityTorqueCurrentFOC velocityTorqueRequest = new VelocityTorqueCurrentFOC(0.0).withSlot(0);
+  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0);
+  private final VoltageOut voltageRequest = new VoltageOut(0.0);
 
   public FlywheelIOTalonFX() {
     flywheelMotor1 = new TalonFX(30);
     flywheelMotor2 = new TalonFX(32);
-    velocitySetpoint = new VelocityTorqueCurrentFOC(0.0).withSlot(0);
 
     var flywheelConfig = new TalonFXConfiguration();
     flywheelConfig.withSlot0(FlywheelConstants.flywheelConfig);
@@ -55,13 +59,13 @@ public class FlywheelIOTalonFX implements FlywheelIO {
    * -1 to 1
    */
   @Override
-  public void setFlywheelDutyCycle(double dutyCycle) {
-    flywheelMotor1.setControl(new DutyCycleOut(dutyCycle));
+  public void setFlywheelVoltage(double volts) {
+    flywheelMotor1.setControl(voltageRequest.withOutput(volts));
   }
 
   @Override
   public void setFlywheelVelocity(double targetRPM) {
-    flywheelMotor1.setControl(velocitySetpoint.withVelocity(RPM.of(targetRPM)));
+    flywheelMotor1.setControl(velocityTorqueRequest.withVelocity(RPM.of(targetRPM)));
   }
 
   @Override

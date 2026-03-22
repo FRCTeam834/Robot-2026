@@ -12,7 +12,8 @@ public class FlywheelConstants {
     STOPPED,
     IDLE,
     ACTIVE,
-    MANUAL_RPM
+    MANUAL_RPM,
+    SYSID
   }
 
   public static Slot0Configs flywheelConfig =

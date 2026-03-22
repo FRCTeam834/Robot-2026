@@ -22,7 +22,7 @@ public interface FlywheelIO {
 
   public default void setFlywheelVelocity(double RPM) {}
 
-  public default void setFlywheelDutyCycle(double dutyCycle) {}
+  public default void setFlywheelVoltage(double volts) {}
 
   public default void updateClosedLoopConfig(Slot0Configs config) {}
 

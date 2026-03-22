@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.intake.IntakeCommands;
 import frc.robot.commands.intake.ZeroIntake;
@@ -145,8 +146,14 @@ public class RobotContainer {
     // autoChooser.addOption(
     //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    autoChooser.addOption("centerbuns", new PathPlannerAuto("centerbuns"));
-    autoChooser.addOption("centerquick", new PathPlannerAuto("centerquick"));
+    autoChooser.addOption("Flywheel SysId (Quasistatic Forward)", flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption("Flywheel SysId (Quasistatic Reverse)", flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption("Flywheel SysId (Dynamic Forward)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption("Flywheel SysId (Dynamic Reverse)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption("middlenotbunsright", new PathPlannerAuto("middlenotbuns"));
+    autoChooser.addOption("middlenotbunsleft", new PathPlannerAuto("middlenotbuns", true));
+
 
     // Configure the button bindings
     configureButtonBindings();
