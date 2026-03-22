@@ -17,8 +17,8 @@ public class Robot extends TimedRobot {
     private final RobotContainer m_robotContainer;
 
     public Robot() {
-        SignalLogger.setPath("/media/sda1/ctre-logs/");
         m_robotContainer = new RobotContainer();
+        SignalLogger.setPath("/media/sda1/logs/");
     }
 
     @Override
