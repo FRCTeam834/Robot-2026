@@ -16,6 +16,7 @@ public interface FlywheelIO {
 
     public boolean TWO_flywheelConnected = false;
     public double TWO_flywheelCurrent;
+    public double TWO_flywheelDutyCycle;
   }
 
   public default void updateInputs(FlywheelIOInputs inputs) {}

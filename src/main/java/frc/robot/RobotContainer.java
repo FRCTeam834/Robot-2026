@@ -80,8 +80,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight("limelight-front", drive::getRotation),
-                new VisionIOLimelight("limelight-right", drive::getRotation));
+                new VisionIOLimelight("limelight-front", drive::getRotation));
+        // new VisionIOLimelight("limelight-right", drive::getRotation));
 
         // indexer = new Indexer(new IndexerIOSparkFlex());
         intake = new Intake(new IntakeIOSpark());
@@ -221,9 +221,21 @@ public class RobotContainer {
             Commands.run(() -> kicker.setDesiredState(KickerState.FEED))
                 .finallyDo(() -> kicker.setDesiredState(KickerState.STOP)));
 
+    // DRIVE_CONTROLLER
+    //     .rightTrigger()
+    //     .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(1700, flywheel, kicker, intake));
+
     DRIVE_CONTROLLER
         .rightTrigger()
-        .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(1700, flywheel, kicker, intake));
+        .whileTrue(
+            ShooterCommands.shootWhenReady(
+                false,
+                () -> -DRIVE_CONTROLLER.getLeftY(),
+                () -> -DRIVE_CONTROLLER.getLeftX(),
+                flywheel,
+                kicker,
+                intake,
+                drive));
 
     DRIVE_CONTROLLER
         .leftTrigger()

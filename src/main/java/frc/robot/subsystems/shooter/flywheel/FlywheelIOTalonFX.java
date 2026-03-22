@@ -23,7 +23,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
   private final VelocityTorqueCurrentFOC velocityTorqueRequest =
       new VelocityTorqueCurrentFOC(0.0).withSlot(0);
-  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0);
+  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0).withSlot(0);
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
 
   public FlywheelIOTalonFX() {
@@ -34,8 +34,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     flywheelConfig.withSlot0(FlywheelConstants.flywheelConfig);
 
     flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    flywheelConfig.CurrentLimits.StatorCurrentLimit = 50;
-    flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    flywheelConfig.CurrentLimits.StatorCurrentLimit = 60;
+    flywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     flywheelMotor1.getConfigurator().apply(flywheelConfig);
     flywheelMotor2.getConfigurator().apply(flywheelConfig);
@@ -53,6 +53,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
     inputs.TWO_flywheelConnected = flywheelMotor2.isConnected();
     inputs.TWO_flywheelCurrent = flywheelMotor2.getTorqueCurrent().getValueAsDouble();
+    inputs.TWO_flywheelDutyCycle = flywheelMotor2.getDutyCycle().getValueAsDouble();
   }
 
   /*
@@ -65,7 +66,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
   @Override
   public void setFlywheelVelocity(double targetRPM) {
-    flywheelMotor1.setControl(velocityTorqueRequest.withVelocity(RPM.of(targetRPM)));
+    // flywheelMotor1.setControl(velocityTorqueRequest.withVelocity(RPM.of(targetRPM)));
+    flywheelMotor1.setControl(velocityVoltageRequest.withVelocity(RPM.of(targetRPM)).withSlot(0));
   }
 
   @Override

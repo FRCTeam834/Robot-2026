@@ -39,9 +39,13 @@ public class Flywheel extends SubsystemBase {
   private final SysIdRoutine m_sysIdRoutine;
 
   static {
-    flywheel_kP.initDefault(5);
-    flywheel_kS.initDefault(3.9);
-    flywheel_kV.initDefault(0.045);
+    // flywheel_kP.initDefault(5);
+    // flywheel_kS.initDefault(3.9);
+    // flywheel_kV.initDefault(0.045);
+
+    flywheel_kP.initDefault(0.5);
+    flywheel_kS.initDefault(0.1429);
+    flywheel_kV.initDefault(0.12398);
   }
 
   public Flywheel(FlywheelIO io, DoubleSupplier hubDistance) {

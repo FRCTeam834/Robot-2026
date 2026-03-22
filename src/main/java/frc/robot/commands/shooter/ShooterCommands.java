@@ -114,21 +114,18 @@ public class ShooterCommands {
       Flywheel flywheel,
       Kicker kicker,
       Intake intake,
-      Indexer indexer,
       Drive drive) {
-    Debouncer flywheelReady = new Debouncer(0.5);
+    Debouncer flywheelReady = new Debouncer(0.25);
     return Commands.sequence(
             // phase 1
             Commands.runOnce(
                 () -> {
-                  flywheel.setDesiredState(FlywheelState.ACTIVE);
                   kicker.setDesiredState(KickerState.STOP);
-                  indexer.setDesiredIndexerState(IndexerState.SLOW);
-                  intake.setDesiredRollerState(RollerState.SLOW);
+                  flywheel.setDesiredState(FlywheelState.ACTIVE);
+                  intake.setDesiredRollerState(RollerState.STOP);
                 },
                 flywheel,
                 kicker,
-                indexer,
                 intake),
 
             // phase 2
@@ -142,28 +139,15 @@ public class ShooterCommands {
             // phase 3, shoot and bring pivot up after there aren't as many balls in the hopper
             Commands.run(
                     () -> {
-                      flywheel.setDesiredState(FlywheelState.ACTIVE);
                       kicker.setDesiredState(KickerState.FEED);
-                      indexer.setDesiredIndexerState(IndexerState.FAST);
-                      intake.setDesiredRollerState(RollerState.STOP);
                     },
-                    flywheel,
-                    kicker,
-                    intake,
-                    indexer)
-                .alongWith(
-                    Commands.waitSeconds(4)
-                        .andThen(
-                            Commands.runOnce(
-                                () -> intake.setDesiredPivotState(PivotState.UP), intake))))
-
-        // when command ends
+                    kicker)
+                .alongWith(IntakeCommands.shootingSequenceJolt().repeatedly()))
         .finallyDo(
             (interrupted) -> {
               kicker.setDesiredState(KickerState.STOP);
-              indexer.setDesiredIndexerState(IndexerState.STOP);
               flywheel.setDesiredState(FlywheelState.IDLE);
-              intake.setDesiredRollerState(RollerState.STOP);
+              intake.setDesiredRollerState(RollerState.FAST);
               intake.setDesiredPivotState(PivotState.DEPLOYING);
             });
   }
