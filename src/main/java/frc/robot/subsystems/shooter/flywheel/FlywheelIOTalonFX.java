@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.RPM;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -22,7 +21,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX flywheelMotor1;
   private final TalonFX flywheelMotor2;
 
-  private final VelocityTorqueCurrentFOC velocityTorqueRequest = new VelocityTorqueCurrentFOC(0.0).withSlot(0);
+  private final VelocityTorqueCurrentFOC velocityTorqueRequest =
+      new VelocityTorqueCurrentFOC(0.0).withSlot(0);
   private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0);
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
 
@@ -32,7 +32,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
     var flywheelConfig = new TalonFXConfiguration();
     flywheelConfig.withSlot0(FlywheelConstants.flywheelConfig);
-    
+
     flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     flywheelConfig.CurrentLimits.StatorCurrentLimit = 50;
     flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;

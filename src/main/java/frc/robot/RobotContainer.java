@@ -42,6 +42,7 @@ import frc.robot.subsystems.shooter.kicker.KickerConstants.KickerState;
 import frc.robot.subsystems.shooter.kicker.KickerIO;
 import frc.robot.subsystems.shooter.kicker.KickerIOSpark;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOLimelight;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -76,11 +77,11 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOLimelight("limelight-front", drive::getRotation),
-        //         new VisionIOLimelight("limelight-right", drive::getRotation));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight("limelight-front", drive::getRotation),
+                new VisionIOLimelight("limelight-right", drive::getRotation));
 
         // indexer = new Indexer(new IndexerIOSparkFlex());
         intake = new Intake(new IntakeIOSpark());
@@ -146,14 +147,19 @@ public class RobotContainer {
     // autoChooser.addOption(
     //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    autoChooser.addOption("Flywheel SysId (Quasistatic Forward)", flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption("Flywheel SysId (Quasistatic Reverse)", flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption("Flywheel SysId (Dynamic Forward)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption("Flywheel SysId (Dynamic Reverse)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Flywheel SysId (Quasistatic Forward)",
+        flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Flywheel SysId (Quasistatic Reverse)",
+        flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Flywheel SysId (Dynamic Forward)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Flywheel SysId (Dynamic Reverse)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     autoChooser.addOption("middlenotbunsright", new PathPlannerAuto("middlenotbuns"));
     autoChooser.addOption("middlenotbunsleft", new PathPlannerAuto("middlenotbuns", true));
-
 
     // Configure the button bindings
     configureButtonBindings();
