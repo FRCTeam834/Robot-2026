@@ -133,7 +133,7 @@ public class ShooterCommands {
                 ? Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM()))
                     .alongWith(
                         DriveCommands.AlignToAngleWithTolerance(
-                            drive, xSupplier, ySupplier, drive::getFieldRelativeHUBAngle, 5))
+                            drive, xSupplier, ySupplier, drive::getFieldRelativeHUBAngle, 2))
                 : Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM())),
 
             // phase 3, shoot and bring pivot up after there aren't as many balls in the hopper

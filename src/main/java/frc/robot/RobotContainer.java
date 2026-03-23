@@ -128,6 +128,17 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "2300shot", ShooterCommands.shootWhenReadyManualVelocity(2300, flywheel, kicker, intake));
 
+    NamedCommands.registerCommand(
+        "shootwhenready",
+        ShooterCommands.shootWhenReady(
+            true,
+            () -> -DRIVE_CONTROLLER.getLeftY(),
+            () -> -DRIVE_CONTROLLER.getLeftX(),
+            flywheel,
+            kicker,
+            intake,
+            drive));
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -229,7 +240,7 @@ public class RobotContainer {
         .rightTrigger()
         .whileTrue(
             ShooterCommands.shootWhenReady(
-                false,
+                true,
                 () -> -DRIVE_CONTROLLER.getLeftY(),
                 () -> -DRIVE_CONTROLLER.getLeftX(),
                 flywheel,
@@ -239,7 +250,17 @@ public class RobotContainer {
 
     DRIVE_CONTROLLER
         .leftTrigger()
-        .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake));
+        .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(2500, flywheel, kicker, intake));
+
+    DRIVE_CONTROLLER
+        .rightBumper()
+        .whileTrue(
+            DriveCommands.AlignToAngleWithTolerance(
+                drive,
+                () -> -DRIVE_CONTROLLER.getLeftY(),
+                () -> -DRIVE_CONTROLLER.getLeftX(),
+                drive::getFieldRelativeHUBAngle,
+                2));
 
     new JoystickButton(DRIVE_CONTROLLER.getHID(), 8).onTrue(IntakeCommands.getJoltIntake());
   }

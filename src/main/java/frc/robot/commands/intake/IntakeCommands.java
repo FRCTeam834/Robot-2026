@@ -89,13 +89,13 @@ public class IntakeCommands {
               RobotContainer.intake.setDesiredPivotState(PivotState.STOW);
             },
             RobotContainer.intake),
-        Commands.waitSeconds(0.25), // 0.3
+        Commands.waitSeconds(0.35), // 0.3
         Commands.runOnce(
             () -> {
               RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYING);
             },
             RobotContainer.intake),
-        Commands.waitSeconds(0.2)); // 0.25
+        Commands.waitSeconds(0.25)); // 0.25
   }
 
   public static Command dumbArm(DoubleSupplier controllerJoystickY, Intake intake) {
