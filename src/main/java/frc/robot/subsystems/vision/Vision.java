@@ -97,8 +97,9 @@ public class Vision extends SubsystemBase {
                 || observation.pose().getX() < 0.0
                 || observation.pose().getX() > aprilTagLayout.getFieldLength()
                 || observation.pose().getY() < 0.0
-                || observation.pose().getY() > aprilTagLayout.getFieldWidth();
-        // || observation.averageTagDistance() > 3;
+                || observation.pose().getY() > aprilTagLayout.getFieldWidth()
+                || observation.averageTagDistance() > 4;
+        // || observation.type() == PoseObservationType.MEGATAG_1;
 
         // Add pose to log
         robotPoses.add(observation.pose());
@@ -115,7 +116,8 @@ public class Vision extends SubsystemBase {
 
         // Calculate standard deviations
         double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+            Math.pow(observation.averageTagDistance(), 3.5)
+                / observation.tagCount(); // original dist is 2
         double linearStdDev = linearStdDevBaseline * stdDevFactor;
         double angularStdDev = angularStdDevBaseline * stdDevFactor;
         if (observation.type() == PoseObservationType.MEGATAG_2) {

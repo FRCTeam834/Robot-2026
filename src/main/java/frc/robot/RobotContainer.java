@@ -250,7 +250,7 @@ public class RobotContainer {
 
     DRIVE_CONTROLLER
         .leftTrigger()
-        .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(2500, flywheel, kicker, intake));
+        .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(2000, flywheel, kicker, intake));
 
     DRIVE_CONTROLLER
         .rightBumper()
