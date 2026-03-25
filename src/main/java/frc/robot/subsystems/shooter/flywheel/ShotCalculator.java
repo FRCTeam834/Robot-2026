@@ -25,5 +25,6 @@ public class ShotCalculator {
 
   public static double flywheelRPMForDistance(double meters) {
     return (175.58867 * (meters) + 1190.08186);
+    // return (129.65113 * (meters * meters) - 204.80128 * (meters) + 1300.53219);
   }
 }

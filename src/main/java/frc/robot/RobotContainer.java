@@ -80,8 +80,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight("limelight-front", drive::getRotation));
-        // new VisionIOLimelight("limelight-right", drive::getRotation));
+                new VisionIOLimelight("limelight-front", drive::getRotation),
+                new VisionIOLimelight("limelight-right", drive::getRotation));
 
         // indexer = new Indexer(new IndexerIOSparkFlex());
         intake = new Intake(new IntakeIOSpark());
@@ -184,8 +184,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    // flywheel.setDefaultCommand(
-    //     ShooterCommands.dumbFlywheel(OPERATOR_CONTROLLER::getRightY, flywheel));
+    flywheel.setDefaultCommand(
+        ShooterCommands.dumbFlywheel(OPERATOR_CONTROLLER::getRightY, flywheel));
 
     // * Default command just a plain drive */
     drive.setDefaultCommand(

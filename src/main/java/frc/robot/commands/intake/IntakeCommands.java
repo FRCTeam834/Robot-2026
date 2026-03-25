@@ -89,7 +89,7 @@ public class IntakeCommands {
               RobotContainer.intake.setDesiredPivotState(PivotState.STOW);
             },
             RobotContainer.intake),
-        Commands.waitSeconds(0.4), // 0.3
+        Commands.waitSeconds(0.33), // 0.4
         Commands.runOnce(
             () -> {
               RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYING);

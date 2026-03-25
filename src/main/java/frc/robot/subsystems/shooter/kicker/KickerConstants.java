@@ -7,7 +7,7 @@ package frc.robot.subsystems.shooter.kicker;
 /** Add your docs here. */
 public class KickerConstants {
   public static enum KickerState {
-    FEED(11.0),
+    FEED(11), // 11 for linear and 3 for quadratic
     REVERSE(-3.0),
     STOP(0.0);
 

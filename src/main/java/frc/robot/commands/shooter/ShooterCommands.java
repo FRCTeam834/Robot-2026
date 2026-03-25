@@ -142,7 +142,10 @@ public class ShooterCommands {
                       kicker.setDesiredState(KickerState.FEED);
                     },
                     kicker)
-                .alongWith(IntakeCommands.shootingSequenceJolt().repeatedly()))
+                .alongWith(
+                    IntakeCommands.shootingSequenceJolt()
+                        .repeatedly()
+                        .beforeStarting(Commands.waitSeconds(0.5))))
         .finallyDo(
             (interrupted) -> {
               kicker.setDesiredState(KickerState.STOP);
