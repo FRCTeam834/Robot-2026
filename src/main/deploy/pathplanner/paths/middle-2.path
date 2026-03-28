@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 7.742799525504152,
-        "y": 2.5556109134045073
+        "y": 2.3
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.548613071721496,
-        "y": 2.2605050409461818
+        "x": 6.516251482799527,
+        "y": 2.281259786476868
       },
       "isLocked": false,
       "linkedName": "middleballs"
@@ -51,7 +51,7 @@
     },
     {
       "waypointRelativePos": 1.9178316885964908,
-      "rotationDegrees": -3.352800193793418
+      "rotationDegrees": 5.0
     }
   ],
   "constraintZones": [
@@ -81,7 +81,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 51.4093220464424
+    "rotation": 40.63703903828296
   },
   "reversed": false,
   "folder": null,

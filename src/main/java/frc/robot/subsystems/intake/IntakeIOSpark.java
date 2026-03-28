@@ -37,7 +37,7 @@ public class IntakeIOSpark implements IntakeIO {
     pivotEncoder = pivotMotor.getEncoder();
 
     pivotConfig
-        .inverted(false)
+        .inverted(true)
         .idleMode(IdleMode.kBrake)
         .voltageCompensation(12.0)
         .smartCurrentLimit(40);

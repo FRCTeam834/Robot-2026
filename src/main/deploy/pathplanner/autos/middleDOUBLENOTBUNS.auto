@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "pivotdown"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Right1"
+            "pathName": "Copy of middle-1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of middle-2"
           }
         },
         {
@@ -17,22 +29,34 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "hubshot"
+                  "name": "shootwhenready"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 6.0
+                  "waitTime": 3.5
                 }
               }
             ]
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "pivotdown"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Right2"
+            "pathName": "Copy of middle-3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of middle-4"
           }
         },
         {
@@ -42,22 +66,16 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "pivotdown"
+                  "name": "shootwhenready"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 3.5
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "center-2"
           }
         }
       ]

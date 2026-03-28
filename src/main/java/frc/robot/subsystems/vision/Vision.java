@@ -12,6 +12,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
@@ -101,6 +103,9 @@ public class Vision extends SubsystemBase {
                 || observation.averageTagDistance() > 4
                 || observation.type() == PoseObservationType.MEGATAG_1;
 
+        if (RobotContainer.flywheel.getState() == FlywheelState.ACTIVE && cameraIndex == 1) {
+          rejectPose = true;
+        }
         // Add pose to log
         robotPoses.add(observation.pose());
         if (rejectPose) {

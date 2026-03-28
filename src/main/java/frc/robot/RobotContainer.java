@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.intake.IntakeCommands;
 import frc.robot.commands.intake.ZeroIntake;
@@ -140,7 +138,7 @@ public class RobotContainer {
             drive));
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices");
 
     // Set up SysId routines
     // autoChooser.addOption(
@@ -158,19 +156,12 @@ public class RobotContainer {
     // autoChooser.addOption(
     //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    autoChooser.addOption(
-        "Flywheel SysId (Quasistatic Forward)",
-        flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Flywheel SysId (Quasistatic Reverse)",
-        flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Flywheel SysId (Dynamic Forward)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Flywheel SysId (Dynamic Reverse)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
     autoChooser.addOption("middlenotbunsright", new PathPlannerAuto("middlenotbuns"));
     autoChooser.addOption("middlenotbunsleft", new PathPlannerAuto("middlenotbuns", true));
+
+    autoChooser.addOption("EXPERIMENTALmiddleright", new PathPlannerAuto("middleDOUBLENOTBUNS"));
+    autoChooser.addOption(
+        "EXPERIMENTALmiddleleft", new PathPlannerAuto("middleDOUBLENOTBUNS", true));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -223,8 +214,7 @@ public class RobotContainer {
 
     OPERATOR_CONTROLLER.x().onTrue(IntakeCommands.toggleFastRollers);
 
-    OPERATOR_CONTROLLER.rightTrigger().onTrue(ShooterCommands.rampToRPM(1700, flywheel));
-    OPERATOR_CONTROLLER.leftTrigger().onTrue(ShooterCommands.rampToRPM(1550, flywheel));
+    OPERATOR_CONTROLLER.b().onTrue(IntakeCommands.reverseRollers);
 
     OPERATOR_CONTROLLER
         .y()
@@ -232,9 +222,9 @@ public class RobotContainer {
             Commands.run(() -> kicker.setDesiredState(KickerState.FEED))
                 .finallyDo(() -> kicker.setDesiredState(KickerState.STOP)));
 
-    // DRIVE_CONTROLLER
-    //     .rightTrigger()
-    //     .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(1700, flywheel, kicker, intake));
+    DRIVE_CONTROLLER
+        .rightBumper()
+        .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(1700, flywheel, kicker, intake));
 
     DRIVE_CONTROLLER
         .rightTrigger()
@@ -251,16 +241,6 @@ public class RobotContainer {
     DRIVE_CONTROLLER
         .leftTrigger()
         .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(2000, flywheel, kicker, intake));
-
-    DRIVE_CONTROLLER
-        .rightBumper()
-        .whileTrue(
-            DriveCommands.AlignToAngleWithTolerance(
-                drive,
-                () -> -DRIVE_CONTROLLER.getLeftY(),
-                () -> -DRIVE_CONTROLLER.getLeftX(),
-                drive::getFieldRelativeHUBAngle,
-                2));
 
     new JoystickButton(DRIVE_CONTROLLER.getHID(), 8).onTrue(IntakeCommands.getJoltIntake());
   }

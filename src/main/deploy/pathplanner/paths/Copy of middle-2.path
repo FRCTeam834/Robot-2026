@@ -3,67 +3,67 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.371415562913907,
-        "y": 0.7428
+        "x": 7.742799525504152,
+        "y": 2.1
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.0721589947979995,
-        "y": 0.7341710887606873
+        "x": 6.44093712930012,
+        "y": 2.534092526690391
       },
       "isLocked": false,
-      "linkedName": "TRENCHSTART"
+      "linkedName": "middle-1-end-DOUBLE"
     },
     {
       "anchor": {
-        "x": 7.115670529801325,
-        "y": 0.8987086092715231
+        "x": 5.285032523653566,
+        "y": 2.474449429130276
       },
       "prevControl": {
-        "x": 6.868832781456953,
-        "y": 0.7752897350993384
+        "x": 6.23353480744753,
+        "y": 2.4701104770276325
       },
       "nextControl": {
-        "x": 7.841460600672169,
-        "y": 1.2616036447069405
+        "x": 3.9987439160298397,
+        "y": 2.4803335948871905
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.742799525504152,
-        "y": 2.3
+        "x": 2.9431345524017467,
+        "y": 2.577472195687773
       },
       "prevControl": {
-        "x": 7.70185969426325,
-        "y": 1.3237271424672494
+        "x": 3.750611638009462,
+        "y": 2.525512020105531
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "middleballs"
+      "linkedName": "middle-2-end-DOUBLE"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.55,
+      "waypointRelativePos": 0.9114583333333333,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 1.1,
-      "rotationDegrees": 81.97109905253753
+      "waypointRelativePos": 1.9178316885964908,
+      "rotationDegrees": 5.0
     }
   ],
   "constraintZones": [
     {
-      "name": "pickup",
-      "minWaypointRelativePos": 1.1387392241379313,
+      "name": "overbump",
+      "minWaypointRelativePos": 0.497741213527852,
       "maxWaypointRelativePos": 2.0,
       "constraints": {
-        "maxVelocity": 0.5,
-        "maxAcceleration": 2.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
+        "maxVelocity": 3.5,
+        "maxAcceleration": 3.5,
+        "maxAngularVelocity": 150.0,
+        "maxAngularAcceleration": 300.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -81,13 +81,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 40.63703903828296
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": 0.0
+    "velocity": 0,
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }
