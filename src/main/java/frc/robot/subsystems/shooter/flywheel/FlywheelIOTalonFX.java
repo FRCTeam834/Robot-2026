@@ -6,6 +6,7 @@ package frc.robot.subsystems.shooter.flywheel;
 
 import static edu.wpi.first.units.Units.RPM;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -42,16 +43,27 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
     flywheelMotor2.setControl(
         new Follower(flywheelMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        100,
+        flywheelMotor1.getVelocity(),
+        flywheelMotor1.getTorqueCurrent(),
+        flywheelMotor1.getDutyCycle(),
+        flywheelMotor2.getTorqueCurrent(),
+        flywheelMotor2.getDutyCycle());
+
+    flywheelMotor1.optimizeBusUtilization();
+    flywheelMotor2.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
-    inputs.ONE_flywheelConnected = flywheelMotor1.isConnected();
+    // inputs.ONE_flywheelConnected = flywheelMotor1.isConnected();
     inputs.ONE_flywheelVelocityRPM = flywheelMotor1.getVelocity().getValue().in(RPM);
     inputs.ONE_flywheelCurrent = flywheelMotor1.getTorqueCurrent().getValueAsDouble();
     inputs.ONE_flywheelDutyCycle = flywheelMotor1.getDutyCycle().getValueAsDouble();
 
-    inputs.TWO_flywheelConnected = flywheelMotor2.isConnected();
+    // inputs.TWO_flywheelConnected = flywheelMotor2.isConnected();
     inputs.TWO_flywheelCurrent = flywheelMotor2.getTorqueCurrent().getValueAsDouble();
     inputs.TWO_flywheelDutyCycle = flywheelMotor2.getDutyCycle().getValueAsDouble();
   }

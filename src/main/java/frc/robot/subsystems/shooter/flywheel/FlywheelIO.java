@@ -9,12 +9,12 @@ import org.littletonrobotics.junction.AutoLog;
 public interface FlywheelIO {
   @AutoLog
   public static class FlywheelIOInputs {
-    public boolean ONE_flywheelConnected = false;
+    // public boolean ONE_flywheelConnected = false;
     public double ONE_flywheelVelocityRPM;
     public double ONE_flywheelCurrent;
     public double ONE_flywheelDutyCycle;
 
-    public boolean TWO_flywheelConnected = false;
+    // public boolean TWO_flywheelConnected = false;
     public double TWO_flywheelCurrent;
     public double TWO_flywheelDutyCycle;
   }

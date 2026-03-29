@@ -175,8 +175,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    flywheel.setDefaultCommand(
-        ShooterCommands.dumbFlywheel(OPERATOR_CONTROLLER::getRightY, flywheel));
+    // flywheel.setDefaultCommand(
+    //     ShooterCommands.dumbFlywheel(OPERATOR_CONTROLLER::getRightY, flywheel));
 
     // * Default command just a plain drive */
     drive.setDefaultCommand(

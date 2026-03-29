@@ -22,6 +22,6 @@ public class FlywheelConstants {
   public static Slot0Configs flywheelConfig =
       new Slot0Configs().withKP(0.5).withKS(0.14291).withKV(0.12398);
 
-  public static double idleRPM = 500.0;
+  public static double idleRPM = 750.0; // 500
   public static double toleranceRPM = 25.0;
 }

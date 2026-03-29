@@ -59,7 +59,7 @@ public class ShooterCommands {
                   kicker.setDesiredState(KickerState.STOP);
                   flywheel.setVelocitySetpoint(rpm);
                   flywheel.setDesiredState(FlywheelState.MANUAL_RPM);
-                  intake.setDesiredRollerState(RollerState.STOP);
+                  intake.setDesiredRollerState(RollerState.SLOW);
                 },
                 flywheel),
             Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM())),
