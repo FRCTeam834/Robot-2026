@@ -65,6 +65,9 @@ public class IntakeIOSpark implements IntakeIO {
 
     rollerMotor.configure(
         rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    pivotMotor.setControlFramePeriodMs(50);
+    rollerMotor.setControlFramePeriodMs(50);
   }
 
   @Override

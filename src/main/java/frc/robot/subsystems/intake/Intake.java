@@ -5,11 +5,9 @@
 
 package frc.robot.subsystems.intake;
 
-import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.intake.IntakeConstants.PivotState;
 import frc.robot.subsystems.intake.IntakeConstants.RollerState;
 import frc.robot.util.LoggedTunableNumber;
@@ -51,19 +49,6 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-
-    // Pivot Tuning
-    if (Constants.TUNING_MODE
-        && (pivot_kP.hasChanged(hashCode())
-            || pivot_kS.hasChanged(hashCode())
-            || pivot_kV.hasChanged(hashCode()))) {
-
-      var pivotConfig = new SparkFlexConfig();
-      pivotConfig.closedLoop.p(pivot_kP.get());
-      pivotConfig.closedLoop.feedForward.kS(pivot_kS.get()).kV(pivot_kV.get());
-
-      io.updateClosedLoopConfig(pivotConfig);
-    }
 
     // handle the transition from deploying to deployed
 
