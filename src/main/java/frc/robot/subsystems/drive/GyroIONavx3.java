@@ -20,7 +20,11 @@ public class GyroIONavx3 extends SubsystemBase implements GyroIO {
   private final Queue<Double> yawTimestampQueue;
 
   public GyroIONavx3() {
-    navx = new Navx(20, (int) Drive.ODOMETRY_FREQUENCY);
+    navx = new Navx(20, 100);
+
+    int err = navx.enableOptionalMessages(true, true, true, true, true, true, true, true, true, true);
+    if (err == 1) System.out.println("!!NAVX3 MESSAGE ENABLE ERROR!!");
+
     yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
     yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(getYawDegrees());
   }
