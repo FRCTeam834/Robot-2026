@@ -6,8 +6,7 @@ package frc.robot.commands.ShooterCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
-
-import java.util.function.DoubleSupplier; 
+import java.util.function.DoubleSupplier;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SpinFlywheel extends Command {
@@ -15,11 +14,11 @@ public class SpinFlywheel extends Command {
   private final DoubleSupplier rpmSupplier;
 
   /**
-  * Spins the flywheel at a specific RPM.
-  * @param flywheel The flywheel subsystem.
-  * @param rpmSupplier A supplier for the target RPM. Allows for RPM changes on the fly    
-  */
-
+   * Spins the flywheel at a specific RPM.
+   *
+   * @param flywheel The flywheel subsystem.
+   * @param rpmSupplier A supplier for the target RPM. Allows for RPM changes on the fly
+   */
   public SpinFlywheel(Flywheel flywheel, DoubleSupplier rpmSupplier) {
     this.flywheel = flywheel;
     this.rpmSupplier = rpmSupplier;

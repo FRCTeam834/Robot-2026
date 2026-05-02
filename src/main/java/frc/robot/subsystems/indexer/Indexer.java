@@ -5,17 +5,16 @@
 package frc.robot.subsystems.indexer;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.Logger;
 import frc.robot.subsystems.indexer.IndexerConstants.IndexerState;
+import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
   private final IndexerIO io;
   private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
   private IndexerState indexerState;
 
-
   public Indexer(IndexerIO io) {
-    this.io = io; 
+    this.io = io;
     indexerState = IndexerState.STOP;
   }
 
@@ -40,11 +39,11 @@ public class Indexer extends SubsystemBase {
     return inputs.indexerAppliedVoltage;
   }
 
-  public IndexerState getIndexerState(){
+  public IndexerState getIndexerState() {
     return indexerState;
   }
 
-  public double getCurrent(){
+  public double getCurrent() {
     return inputs.indexerCurrent;
   }
 

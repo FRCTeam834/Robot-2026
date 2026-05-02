@@ -18,8 +18,7 @@ public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
   private double targetRPMSetpoint = 0.0;
-  private double idleSpeed = 300; //RPM
-
+  private double idleSpeed = 300; // RPM
 
   public static final LoggedTunableNumber flywheel_kP =
       new LoggedTunableNumber("Flywheel/flywheel_kP");

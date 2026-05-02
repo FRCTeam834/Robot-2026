@@ -6,7 +6,6 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,37 +13,15 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
+import frc.robot.subsystems.intake.IntakeConstants.RollerState;
+import frc.robot.subsystems.intake.IntakeConstants.PivotState;
 
 public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+  private RollerState rollerState;
+  private PivotState pivotState;
 
-  public static enum RollerState {
-    FAST(8.0),
-    SLOW(3.0),
-    REVERSE(-3.0),
-    STOP(0.0);
-
-    public final double voltage;
-
-    private RollerState(double voltage) {
-      this.voltage = voltage;
-    }
-  };
-
-  public static enum PivotState {
-        
-    STOW(0.0),              
-    OUT(Math.toRadians(90));  // GOING TO CHANGE LATER
-
-    public final double position;
-
-    private PivotState(double position) {
-      this.position = position;
-    }
-    
-    
-  };
 
   public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Intake/pivot_kP");
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
@@ -55,16 +32,9 @@ public class Intake extends SubsystemBase {
 
   public Intake(IntakeIO io) {
     this.io = io;
+    rollerState = RollerState.STOP;
+    pivotState = PivotState.STOW;
 
-    rollerSysId =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                null,
-                null,
-                null,
-                (state) -> Logger.recordOutput("RollerSysIdTestState", state.toString())),
-            new SysIdRoutine.Mechanism(
-                (Voltage voltage) -> io.setRollerVoltage(voltage.in(Units.Volts)), null, this));
   }
 
   @Override
@@ -72,23 +42,26 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Roller", inputs);
     Logger.processInputs("Pivot", inputs);
+    setDesiredPivotState(pivotState);
+    setDesiredRollerState(rollerState);
 
     // Pivot
     if (Constants.tuningMode
-        && (pivot_kP.hasChanged(hashCode())
-            || pivot_kS.hasChanged(hashCode())
-            || pivot_kV.hasChanged(hashCode())
-            || pivot_kG.hasChanged(hashCode()))) {
-      var pivotConfig = new SparkMaxConfig();
+        && (pivot_kP.hasChanged(hashCode()))
+        || (pivot_kS.hasChanged(hashCode()))
+        || (pivot_kG.hasChanged(hashCode()))
+        || (pivot_kV.hasChanged(hashCode())) ){
+          
+      var pivotConfig = new SparkFlexConfig();
       pivotConfig.closedLoop.p(pivot_kP.get());
-      io.updatePivotPID(pivotConfig);
-      io.updatePivotFeedforward(pivot_kS.get(), pivot_kG.get(), pivot_kV.get());
+      io.updatePivotClosedLoopConfig(pivotConfig);
     }
   }
 
   // Roller Setter Methods
-  public void setRollerState(RollerState intakeState) {
-    setRollerVoltage(intakeState.voltage);
+  public void setDesiredRollerState(RollerState rollerState) {
+    this.rollerState = rollerState;
+    setRollerVoltage(rollerState.voltage);
   }
 
   public void setRollerVoltage(double targetVolts) {
@@ -96,12 +69,9 @@ public class Intake extends SubsystemBase {
   }
 
   // Pivot Setter Methods
-  public void setPivotState(PivotState pivotState) {
+  public void setDesiredPivotState(PivotState pivotState) {
+    this.pivotState = pivotState;
     setPivotPosition(pivotState.position);
-  }
-
-  public void setPivotVoltage(double targetVolts) {
-    io.setPivotVoltage(targetVolts);
   }
 
   public void setPivotPosition(double targetPosition) {
@@ -109,30 +79,41 @@ public class Intake extends SubsystemBase {
   }
 
   // Roller Getter Methods
-  public double getCurrentRollerVelocity() {
+  public double getRollerVelocity() {
     return inputs.rollerRPM;
   }
 
-  public double getCurrentRollerVoltage() {
+  public double getRollerVoltage() {
     return inputs.rollerAppliedVoltage;
   }
 
+  public double getRollerCurrent() {
+    return inputs.rollerCurrent;
+  }
+
   // Pivot Getter Methods
-  public double getCurrentPivotPosition() {
+  public double getPivotPosition() {
     return inputs.pivotPositionRads;
   }
 
-  public double getCurrentPivotVoltage() {
+  public double getPivotVoltage() {
     return inputs.pivotAppliedVoltage;
   }
 
-  // Roller Miscellaneous Methods
-  public boolean rollerAtSetpoint(double targetRPM) {
-    final double toleranceRPM = 50.0;
-    return Math.abs(targetRPM - inputs.rollerRPM) <= toleranceRPM;
+  public double getPivotCurrent() {
+    return inputs.pivotCurrent;
   }
 
-  public void stopMotors() {
-    io.stopMotors();
+  // Roller Miscellaneous Methods
+  public boolean pivotAtSetpoint(double targetPositionRadians) {
+    final double tolerancePositionRadians = 0.05;
+    return Math.abs(targetPositionRadians - inputs.pivotPositionRads) <= tolerancePositionRadians;
+  }
+  public void stopRollerMotor() {
+    io.stopRollerMotor();
+  }
+
+  public void stopPivotMotor() {
+    io.stopPivotMotor();
   }
 }
