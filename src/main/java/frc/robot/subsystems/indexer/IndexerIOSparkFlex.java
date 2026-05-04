@@ -25,6 +25,7 @@ public class IndexerIOSparkFlex implements IndexerIO {
   public void updateInputs(IndexerIOInputs inputs) {
     inputs.indexerConnected = true;
     inputs.indexerAppliedVoltage = indexerMotor.getAppliedOutput() * indexerMotor.getBusVoltage();
+    inputs.indexerCurrent = indexerMotor.getOutputCurrent();
   }
 
   @Override

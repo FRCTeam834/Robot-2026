@@ -1,29 +1,25 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.SparkRelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class IntakeIOSpark implements IntakeIO {
   // Roller
   private SparkFlex rollerMotor;
-  private RelativeEncoder rollerEncoder; 
+  private RelativeEncoder rollerEncoder;
   private SparkFlexConfig rollerConfig;
 
   // Pivot
   private SparkFlex pivotMotor;
   private SparkClosedLoopController pivotController;
-  private RelativeEncoder pivotEncoder; 
+  private RelativeEncoder pivotEncoder;
   private SparkFlexConfig pivotConfig;
 
   public IntakeIOSpark() {
@@ -39,32 +35,41 @@ public class IntakeIOSpark implements IntakeIO {
     pivotController = pivotMotor.getClosedLoopController();
     // pivotFeedforward = new ArmFeedforward(0, 0, 0);
 
+    rollerConfig
+        .idleMode(IdleMode.kCoast)
+        .smartCurrentLimit(40)
+        .voltageCompensation(12)
+        .inverted(true); // NOT SURE IF TRUE OR FALSE. MUST TEST EMPIRICALLY
 
-    rollerConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder).pid(0, 0, 0);
+    pivotConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(40)
+        .voltageCompensation(12)
+        .inverted(true); // MUST BE CHANGED LATER
 
-    pivotConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder).pid(0, 0, 0);
+    pivotConfig
+        .encoder
+        .positionConversionFactor(2.0 * Math.PI) // 2pi/gear ratio; MUST BE CHANGED LATER
+        .velocityConversionFactor(2.0 * Math.PI / 60) // (2pi/60)/gear ratio; MUST BE CHANGED LATER
+        .inverted(true); // MUST BE CHANGED LATER
 
-    rollerConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(40).voltageCompensation(12.0);
-
-    pivotConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12.0);
-
-    rollerEncoderConfig
-        .positionConversionFactor(2 * Math.PI)
-        .velocityConversionFactor(2 * Math.PI / 60);
-
-    pivotEncoderConfig
-        .zeroOffset(0)
-        .positionConversionFactor(2 * Math.PI)
-        .velocityConversionFactor(2 * Math.PI / 60);
+    pivotConfig
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .p(0)
+        .i(0)
+        .d(0)
+        .outputRange(-1, 1)
+        .positionWrappingEnabled(false);
 
     rollerMotor.configure(
         rollerConfig,
-        com.revrobotics.ResetMode.kNoResetSafeParameters,
-        com.revrobotics.PersistMode.kNoPersistParameters);
+        com.revrobotics.ResetMode.kResetSafeParameters,
+        com.revrobotics.PersistMode.kNoPersistParameters); // Change when done tuning
 
     pivotMotor.configure(
         pivotConfig,
-        com.revrobotics.ResetMode.kNoResetSafeParameters,
+        com.revrobotics.ResetMode.kResetSafeParameters,
         com.revrobotics.PersistMode.kNoPersistParameters);
   }
 
@@ -96,12 +101,7 @@ public class IntakeIOSpark implements IntakeIO {
 
   @Override
   public void setPivotPosition(double targetPositionRads) {
-    pivotSetpoint =
-        pivotProfile.calculate(
-            0.020, pivotSetpoint, new TrapezoidProfile.State(targetPositionRads, 0));
-    double ffVolts = pivotFeedforward.calculate(pivotSetpoint.position, pivotSetpoint.velocity);
-    pivotController.setSetpoint(
-        pivotSetpoint.position, SparkMax.ControlType.kPosition, ClosedLoopSlot.kSlot0, ffVolts);
+    pivotController.setSetpoint(targetPositionRads, ControlType.kPosition);
   }
 
   @Override
@@ -112,17 +112,18 @@ public class IntakeIOSpark implements IntakeIO {
         com.revrobotics.ResetMode.kNoResetSafeParameters,
         com.revrobotics.PersistMode.kNoPersistParameters);
   }
+
   @Override
-  public void stopRollerMotor(){
+  public void stopRollerMotor() {
     rollerMotor.stopMotor();
   }
 
   @Override
-  public void stopPivotMotor(){
+  public void stopPivotMotor() {
     pivotMotor.stopMotor();
   }
 
-    // @Override
+  // @Override
   // public void updatePivotFeedforward(double kS, double kG, double kV) {
   //  this.pivotFeedforward = new ArmFeedforward(kS, kG, kV);
   // }

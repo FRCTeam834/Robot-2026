@@ -1,7 +1,6 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeIO {

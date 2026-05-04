@@ -6,15 +6,13 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+// import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.subsystems.intake.IntakeConstants.PivotState;
+import frc.robot.subsystems.intake.IntakeConstants.RollerState;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
-import frc.robot.subsystems.intake.IntakeConstants.RollerState;
-import frc.robot.subsystems.intake.IntakeConstants.PivotState;
 
 public class Intake extends SubsystemBase {
   private final IntakeIO io;
@@ -22,19 +20,17 @@ public class Intake extends SubsystemBase {
   private RollerState rollerState;
   private PivotState pivotState;
 
-
   public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Intake/pivot_kP");
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
   public static final LoggedTunableNumber pivot_kG = new LoggedTunableNumber("Intake/pivot_kG");
   public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Intake/pivot_kV");
 
-  final SysIdRoutine rollerSysId;
+  // final SysIdRoutine pivotSysIdRoutine; NO FEEFDFORWARD SO NO SYSID
 
   public Intake(IntakeIO io) {
     this.io = io;
     rollerState = RollerState.STOP;
     pivotState = PivotState.STOW;
-
   }
 
   @Override
@@ -46,12 +42,11 @@ public class Intake extends SubsystemBase {
     setDesiredRollerState(rollerState);
 
     // Pivot
-    if (Constants.tuningMode
-        && (pivot_kP.hasChanged(hashCode()))
+    if (Constants.tuningMode && (pivot_kP.hasChanged(hashCode()))
         || (pivot_kS.hasChanged(hashCode()))
         || (pivot_kG.hasChanged(hashCode()))
-        || (pivot_kV.hasChanged(hashCode())) ){
-          
+        || (pivot_kV.hasChanged(hashCode()))) {
+
       var pivotConfig = new SparkFlexConfig();
       pivotConfig.closedLoop.p(pivot_kP.get());
       io.updatePivotClosedLoopConfig(pivotConfig);
@@ -109,6 +104,7 @@ public class Intake extends SubsystemBase {
     final double tolerancePositionRadians = 0.05;
     return Math.abs(targetPositionRadians - inputs.pivotPositionRads) <= tolerancePositionRadians;
   }
+
   public void stopRollerMotor() {
     io.stopRollerMotor();
   }

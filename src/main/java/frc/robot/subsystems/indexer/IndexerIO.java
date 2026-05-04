@@ -7,6 +7,7 @@ public interface IndexerIO {
   public static class IndexerIOInputs {
     public boolean indexerConnected = false;
     public double indexerAppliedVoltage = 0.0;
+    public double indexerCurrent = 0.0;
   }
 
   public default void updateInputs(IndexerIOInputs inputs) {}

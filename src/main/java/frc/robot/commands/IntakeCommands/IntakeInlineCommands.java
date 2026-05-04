@@ -7,23 +7,37 @@ package frc.robot.commands.IntakeCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.intake.Intake.RollerState;
+import frc.robot.subsystems.intake.IntakeConstants.PivotState;
+import frc.robot.subsystems.intake.IntakeConstants.RollerState;
 
 /** Add your docs here. */
 public class IntakeInlineCommands {
   public static Command fastRollers =
       Commands.runOnce(
-          () -> RobotContainer.intake.setRollerState(RollerState.FAST), RobotContainer.intake);
+          () -> RobotContainer.intake.setDesiredRollerState(RollerState.FAST),
+          RobotContainer.intake);
 
   public static Command slowRollers =
       Commands.runOnce(
-          () -> RobotContainer.intake.setRollerState(RollerState.SLOW), RobotContainer.intake);
+          () -> RobotContainer.intake.setDesiredRollerState(RollerState.SLOW),
+          RobotContainer.intake);
 
   public static Command reverseRollers =
       Commands.runOnce(
-          () -> RobotContainer.intake.setRollerState(RollerState.REVERSE), RobotContainer.intake);
+          () -> RobotContainer.intake.setDesiredRollerState(RollerState.REVERSE),
+          RobotContainer.intake);
 
   public static Command stopRollers =
       Commands.runOnce(
-          () -> RobotContainer.intake.setRollerState(RollerState.STOP), RobotContainer.intake);
+          () -> RobotContainer.intake.setDesiredRollerState(RollerState.STOP),
+          RobotContainer.intake);
+
+  public static Command stowPivot =
+      Commands.runOnce(
+          () -> RobotContainer.intake.setDesiredPivotState(PivotState.STOW), RobotContainer.intake);
+
+  public static Command deployPivot =
+      Commands.runOnce(
+          () -> RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOY),
+          RobotContainer.intake);
 }
