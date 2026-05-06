@@ -6,8 +6,8 @@ import org.littletonrobotics.junction.AutoLog;
 public interface KickerIO {
   @AutoLog
   public static class KickerIOInputs {
-    public boolean kickerConnected = false;
     public double kickerRPM = 0.0;
+    public double kickerCurrent = 0.0;
     public double kickerAppliedVoltage = 0.0;
   }
 
@@ -18,8 +18,6 @@ public interface KickerIO {
   public default void setKickerVelocity(double targetRPM) {}
 
   public default void updateKickerPID(SparkFlexConfig kickerConfig) {}
-
-  public default void updateKickerFeedforward(double kS, double kV) {}
 
   public default void stopMotor() {}
 }

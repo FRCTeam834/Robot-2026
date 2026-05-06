@@ -20,6 +20,9 @@ public class ShotCalculator {
   }
 
   public static double flywheelRPMForDistance(double meters) {
-    return shotSpeedTable.get(meters);
+    return (4.64927 * meters + 4146.9507);
   }
+
+
+
 }

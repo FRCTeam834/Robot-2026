@@ -28,6 +28,9 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
+import frc.robot.subsystems.shooter.kicker.Kicker;
+import frc.robot.subsystems.shooter.kicker.KickerIOSparkMax;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -49,6 +52,7 @@ public class RobotContainer {
   public static final Indexer indexer = new Indexer(new IndexerIOSparkFlex());
   public static final Intake intake = new Intake(new IntakeIOSpark());
   public static final Flywheel flywheel = new Flywheel(new FlywheelIOTalonFX());
+  public static final Kicker kicker = new Kicker(new KickerIOSparkMax());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

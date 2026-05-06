@@ -14,6 +14,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
+import frc.robot.subsystems.shooter.flywheel.FlywheelConstants;
 
 public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
@@ -48,11 +49,14 @@ public class Flywheel extends SubsystemBase {
 
     FlywheelState currentState = FlywheelState.STOP;
     switch (currentState) {
-      case ACTIVE {
+      case ACTIVE -> {
+
+      },
+      case MANUAL -> {
         
       },
-      case MANUAL {
-
+      case IDLE -> {
+        io.setFlywheelRPM(idleRPM);
       };
   }
     io.updateInputs(inputs);
@@ -67,7 +71,6 @@ public class Flywheel extends SubsystemBase {
       flywheelConfig.kS = flywheel_kS.get();
       flywheelConfig.kV = flywheel_kV.get();
       io.updateFlywheelPID(flywheelConfig);
-      io.updateFlywheelFeedforward(flywheel_kS.get(), flywheel_kV.get());
     }
   }
 
@@ -124,21 +127,18 @@ public class Flywheel extends SubsystemBase {
   }
 
   public void setFlywheelVelocityForDistance(double distanceMeters) {
-    targetRPMSetpoint = ShotCalculator.flywheelRPMForDistance(distanceMeters);
-    io.setFlywheelVelocity(targetRPMSetpoint);
-  }
-
+    double targetRPMSetpoint = ShotCalculator.flywheelRPMForDistance(distanceMeters);
+    io.setFlywheelVelocity(targetRPMSetpoint); 
+  } 
+  
   // Miscellaneous Methods
-  public boolean flywheelrpmAtSetpoint(double targetRPM) {
-    final double toleranceRPM = 50.0;
-    return Math.abs(targetRPM - inputs.flywheelVelocityRPM) <= toleranceRPM;
-  }
-
-  public void setIdleSpeed() {
-    io.setFlywheelVelocity(idleSpeed);
+  public boolean flywheelRPMAtSetpoint(double targetRPM) {
+    return Math.abs(targetRPM - inputs.upperFlywheelVelocityRPM) <= FlywheelConstants.toleranceRPM;
   }
 
   public void stopMotor() {
     io.stopMotor();
   }
+
+  
 }

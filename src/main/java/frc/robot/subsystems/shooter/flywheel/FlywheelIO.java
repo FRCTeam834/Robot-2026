@@ -26,7 +26,5 @@ public interface FlywheelIO {
 
   public default void updateFlywheelPID(Slot0Configs configs) {}
 
-  public default void updateFlywheelFeedforward(double kS, double kV) {}
-
   public default void stopMotor() {}
 }
