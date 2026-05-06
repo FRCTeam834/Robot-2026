@@ -16,42 +16,68 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.util.Units;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
-  private final TalonFX flywheelMotor;
+  private final TalonFX lowerFlywheelMotor;
+  private final TalonFX upperFlywheelMotor;
   public SimpleMotorFeedforward flywheelFeedforward;
   private final VelocityVoltage velocitySetPoint;
-  private final TalonFXConfiguration flywheelConfig;
+  private final TalonFXConfiguration upperFlywheelConfig;
+  private final TalonFXConfiguration lowerFlywheelConfig;
+
 
   public FlywheelIOTalonFX() {
-    flywheelMotor = new TalonFX(9, "canBus"); // Change Later
+    lowerFlywheelMotor = new TalonFX(9, "canBus"); 
+    upperFlywheelMotor = new TalonFX(10, "canBus");
+    
     flywheelFeedforward = new SimpleMotorFeedforward(0, 0);
     velocitySetPoint = new VelocityVoltage(0.0).withSlot(0);
-    flywheelConfig = new TalonFXConfiguration();
+    lowerFlywheelConfig = new TalonFXConfiguration();
+    upperFlywheelConfig = new TalonFXConfiguration();
 
-    flywheelConfig.Slot0.kP = 0.1;
-    flywheelConfig.Slot0.kI = 0.0;
-    flywheelConfig.Slot0.kD = 0.0;
-    flywheelConfig.Slot0.kS = 0.01;
-    flywheelConfig.Slot0.kV = 0.01;
-    flywheelConfig.Slot0.kA = 0.0;
-    flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    flywheelConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
+    upperFlywheelConfig.Slot0.kP = 0.1;
+    upperFlywheelConfig.Slot0.kI = 0.0;
+    upperFlywheelConfig.Slot0.kD = 0.0;
+    upperFlywheelConfig.Slot0.kS = 0.01;
+    upperFlywheelConfig.Slot0.kV = 0.01;
+    upperFlywheelConfig.Slot0.kA = 0.0;
+    upperFlywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    upperFlywheelConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
 
-    flywheelConfig.Voltage.PeakForwardVoltage = 12.0;
-    flywheelConfig.Voltage.PeakReverseVoltage = -12.0;
+    upperFlywheelConfig.Voltage.PeakForwardVoltage = 12.0;
+    upperFlywheelConfig.Voltage.PeakReverseVoltage = -12.0;
 
-    flywheelMotor.getConfigurator().apply(flywheelConfig);
+    lowerFlywheelConfig.Slot0.kP = 0.1;
+    lowerFlywheelConfig.Slot0.kI = 0.0;
+    lowerFlywheelConfig.Slot0.kD = 0.0;
+    lowerFlywheelConfig.Slot0.kS = 0.01;
+    lowerFlywheelConfig.Slot0.kV = 0.01;
+    lowerFlywheelConfig.Slot0.kA = 0.0;
+    lowerFlywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    lowerFlywheelConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
+
+    lowerFlywheelConfig.Voltage.PeakForwardVoltage = 12.0;
+    lowerFlywheelConfig.Voltage.PeakReverseVoltage = -12.0;
+
+    upperFlywheelMotor.getConfigurator().apply(upperFlywheelConfig);
+    
+    lowerFlywheelMotor.getConfigurator().apply(lowerFlywheelConfig);
+
   }
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
-    inputs.flywheelConnected = flywheelMotor.isConnected();
-    inputs.flywheelVelocityRPM = flywheelMotor.getVelocity().getValueAsDouble() * 60;
-    inputs.flywheelAppliedVoltage = flywheelMotor.getMotorVoltage().getValueAsDouble();
+    inputs.lowerFlywheelVelocityRPM = lowerFlywheelMotor.getVelocity().getValueAsDouble()*60; //mult by 60 to go from rot/sec to rot/min
+    inputs.lowerFlywheelCurrent = lowerFlywheelMotor.getTorqueCurrent().getValueAsDouble();
+    inputs.lowerFlywheelDutyCycle = lowerFlywheelMotor.getDutyCycle().getValueAsDouble();
+
+    inputs.upperFlywheelVelocityRPM = upperFlywheelMotor.getVelocity().getValueAsDouble()*60; //mult by 60 to go from rot/sec to rot/min
+    inputs.upperFlywheelCurrent = upperFlywheelMotor.getTorqueCurrent().getValueAsDouble();
+    inputs.upperFlywheelDutyCycle = upperFlywheelMotor.getDutyCycle().getValueAsDouble();
   }
 
   @Override
   public void setFlywheelVoltage(double targetVolts) {
-    flywheelMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
+    upperFlywheelMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
+    lowerFlywheelMotor.setVoltage(MathUtil.clamp(targetVolts, -12.0, 12.0));
   }
 
   @Override
@@ -59,12 +85,14 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     var velocity = RPM.of(targetRPM);
     double rps = Units.rotationsPerMinuteToRadiansPerSecond(targetRPM);
     double ffVolts = flywheelFeedforward.calculate(rps);
-    flywheelMotor.setControl(velocitySetPoint.withVelocity(velocity).withFeedForward(ffVolts));
+    upperFlywheelMotor.setControl(velocitySetPoint.withVelocity(velocity).withFeedForward(ffVolts));
+    lowerFlywheelMotor.setControl(velocitySetPoint.withVelocity(velocity).withFeedForward(ffVolts));
   }
 
   @Override
   public void updateFlywheelPID(Slot0Configs config) {
-    flywheelMotor.getConfigurator().apply(config);
+    upperFlywheelMotor.getConfigurator().apply(config);
+    lowerFlywheelMotor.getConfigurator().apply(config);
   }
 
   @Override
@@ -74,6 +102,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
   @Override
   public void stopMotor() {
-    flywheelMotor.stopMotor();
+    upperFlywheelMotor.stopMotor();
+    lowerFlywheelMotor.stopMotor();
   }
 }

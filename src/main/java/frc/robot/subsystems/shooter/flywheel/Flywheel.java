@@ -11,14 +11,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
-  private double targetRPMSetpoint = 0.0;
-  private double idleSpeed = 300; // RPM
 
   public static final LoggedTunableNumber flywheel_kP =
       new LoggedTunableNumber("Flywheel/flywheel_kP");
@@ -46,6 +45,16 @@ public class Flywheel extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    FlywheelState currentState = FlywheelState.STOP;
+    switch (currentState) {
+      case ACTIVE {
+        
+      },
+      case MANUAL {
+
+      };
+  }
     io.updateInputs(inputs);
     Logger.processInputs("Flywheel", inputs);
 
@@ -80,12 +89,29 @@ public class Flywheel extends SubsystemBase {
   }
 
   // Flywheel Getter Methods
-  public double getFlywheelVoltage() {
-    return inputs.flywheelAppliedVoltage;
+
+  public double getLowerFlywheelVelocityRPM() {
+    return inputs.lowerFlywheelVelocityRPM;
   }
 
-  public double getFlywheelRPM() {
-    return inputs.flywheelVelocityRPM;
+  public double getLowerFlywheelCurrent(){
+    return inputs.lowerFlywheelCurrent;
+  }
+
+  public double getLowerFlywheelDutyCycle() {
+    return inputs.lowerFlywheelDutyCycle;
+  }
+
+    public double getUpperFlywheelVelocityRPM() {
+    return inputs.upperFlywheelVelocityRPM;
+  }
+
+  public double getUpperFlywheelCurrent(){
+    return inputs.upperFlywheelCurrent;
+  }
+
+  public double getUpperFlywheelDutyCycle() {
+    return inputs.upperFlywheelDutyCycle;
   }
 
   // Flywheel Setter Methods
