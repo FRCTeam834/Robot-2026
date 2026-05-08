@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.intake.IntakeConstants.PivotState;
 import frc.robot.subsystems.intake.IntakeConstants.RollerState;
+import frc.robot.subsystems.intake.IntakeIOSpark;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.Intake;
 
 /** Add your docs here. */
 public class IntakeInlineCommands {
@@ -37,16 +40,26 @@ public class IntakeInlineCommands {
         Commands.runOnce(
             () -> RobotContainer.intake.setDesiredPivotState(PivotState.STOW), RobotContainer.intake);
 
-    public static Command deployPivot =
+    public static Command deployedPivot =
         Commands.runOnce(
-            () -> RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOY),
+            () -> RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYED),
             RobotContainer.intake);
 
     private static Debouncer pivotDebouncer = new Debouncer(0.5);    
     public static Command zeroIntake = 
             Commands.runOnce(
-            () -> RobotContainer.intake
-            )
+            () -> { 
+                  RobotContainer.intake.setPivotVoltage(-1.5);
+                  RobotContainer.intake.setDesiredPivotState(PivotState.OFF);
+                  boolean isVelocityZero = pivotDebouncer.calculate(RobotContainer.intake.getPivotVelocity() <= 0.05);
+                  if (isVelocityZero) {
+                    RobotContainer.intake.setPivotEncoderAngle(0.0);
+                    RobotContainer.intake.setPivotVoltage(0.0);
+                    RobotContainer.intake.establishPivotZero(true);
+                    RobotContainer.intake.setDesiredPivotState(PivotState.STOW);
+                    }
+                },
+            RobotContainer.intake);
 
     
     

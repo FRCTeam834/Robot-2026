@@ -20,7 +20,6 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final VelocityVoltage velocityRequest;
   private final TalonFXConfiguration flywheelConfig;
 
-
   public FlywheelIOTalonFX() {
     lowerFlywheelMotor = new TalonFX(9); 
     upperFlywheelMotor = new TalonFX(10);

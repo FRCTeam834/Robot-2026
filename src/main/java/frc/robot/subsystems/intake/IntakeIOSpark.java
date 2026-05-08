@@ -105,6 +105,11 @@ public class IntakeIOSpark implements IntakeIO {
   }
 
   @Override
+  public void setPivotEncoderAngle(double targetAngleRadians){
+    pivotEncoder.setPosition(targetAngleRadians);
+  }
+
+  @Override
   public void updatePivotClosedLoopConfig(SparkFlexConfig config) {
     this.pivotConfig = config;
     pivotMotor.configure(

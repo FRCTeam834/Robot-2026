@@ -16,14 +16,17 @@ public class IntakeConstants {
   };
 
   public static enum PivotState {
-    STOW(0.0),
-    DEPLOYING(1), // GOING TO CHANGE LATER
-    DEPLOY(Math.toRadians(90)); // GOING TO CHANGE LATER
+    STOW(0.05),
+    UP(0.3),
+    DEPLOYING(2.15), 
+    DEPLOYED(2.15),
+    OFF(0); 
 
     public final double position;
 
-    private PivotState(double position) {
+    private PivotState(double position){
       this.position = position;
     }
+
   };
 }

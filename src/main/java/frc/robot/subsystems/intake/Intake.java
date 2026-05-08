@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.intake.IntakeConstants.PivotState;
 import frc.robot.subsystems.intake.IntakeConstants.RollerState;
+import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -24,13 +25,25 @@ public class Intake extends SubsystemBase {
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
   public static final LoggedTunableNumber pivot_kG = new LoggedTunableNumber("Intake/pivot_kG");
   public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Intake/pivot_kV");
+  public boolean isPivotStateZeroed;
 
   // final SysIdRoutine pivotSysIdRoutine; NO FEEFDFORWARD SO NO SYSID
 
   public Intake(IntakeIO io) {
     this.io = io;
     rollerState = RollerState.STOP;
-    pivotState = PivotState.STOW;
+
+    PivotState currentState = PivotState.STOW;
+    switch (currentState) {
+      case STOW -> {
+
+      },
+      case DEPLOYING -> {
+        
+      },
+      case DEPLOYED -> {
+  
+      };
   }
 
   @Override
@@ -64,13 +77,24 @@ public class Intake extends SubsystemBase {
   }
 
   // Pivot Setter Methods
+  public void establishPivotZero (boolean state) {
+    isPivotStateZeroed = state;
+  }
+
   public void setDesiredPivotState(PivotState pivotState) {
     this.pivotState = pivotState;
-    setPivotPosition(pivotState.position);
   }
 
   public void setPivotPosition(double targetPosition) {
     io.setPivotPosition(targetPosition);
+  }
+
+  public void setPivotVoltage(double targetVoltage) {
+    io.setPivotVoltage(targetVoltage);
+  }
+
+  public void setPivotEncoderAngle(double targetAngleRadians){
+    io.setPivotEncoderAngle(targetAngleRadians);
   }
 
   // Roller Getter Methods
@@ -97,6 +121,10 @@ public class Intake extends SubsystemBase {
 
   public double getPivotCurrent() {
     return inputs.pivotCurrent;
+  }
+
+  public double getPivotVelocity() {
+    return inputs.pivotVelocity;
   }
 
   // Roller Miscellaneous Methods
