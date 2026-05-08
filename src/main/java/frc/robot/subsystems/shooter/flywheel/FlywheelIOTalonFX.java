@@ -26,7 +26,6 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     velocityRequest = new VelocityVoltage(0.0).withSlot(0);
     flywheelConfig = new TalonFXConfiguration();
 
-
     flywheelConfig.Slot0.kP = 0.1;
     flywheelConfig.Slot0.kI = 0.0;
     flywheelConfig.Slot0.kD = 0.0;
