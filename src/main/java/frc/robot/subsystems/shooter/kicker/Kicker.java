@@ -5,9 +5,8 @@
 package frc.robot.subsystems.shooter.kicker;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.subsystems.shooter.kicker.KickerConstants.KickerState;
 import org.littletonrobotics.junction.Logger;
-import frc.robot.subsystems.shooter.kicker.KickerConstants.KickerState;;
 
 public class Kicker extends SubsystemBase {
   private final KickerIO io;
@@ -39,7 +38,7 @@ public class Kicker extends SubsystemBase {
   public double getKickerRPM() {
     return inputs.kickerRPM;
   }
-  
+
   public double getKickerCurrent() {
     return inputs.kickerCurrent;
   }

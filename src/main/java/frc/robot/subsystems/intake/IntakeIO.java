@@ -24,7 +24,7 @@ public interface IntakeIO {
 
   public default void setPivotVoltage(double volts) {}
 
-  public default void setPivotEncoderAngle(double targetAngleRadians){}
+  public default void setPivotEncoderAngle(double targetAngleRadians) {}
 
   public default void setPivotPosition(double targetPosition) {}
 

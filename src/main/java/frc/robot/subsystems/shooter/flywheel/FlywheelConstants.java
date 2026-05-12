@@ -11,6 +11,4 @@ public class FlywheelConstants {
     IDLE,
     STOP
   };
-
-
 }

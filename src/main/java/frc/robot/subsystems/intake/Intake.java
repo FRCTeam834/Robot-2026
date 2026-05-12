@@ -6,12 +6,12 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.subsystems.intake.IntakeConstants.PivotState;
 import frc.robot.subsystems.intake.IntakeConstants.RollerState;
-import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -20,6 +20,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private RollerState rollerState;
   private PivotState pivotState;
+  private final PIDController pivotController = new PIDController(0, 0, 0);
 
   public static final LoggedTunableNumber pivot_kP = new LoggedTunableNumber("Intake/pivot_kP");
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
@@ -33,21 +34,24 @@ public class Intake extends SubsystemBase {
     this.io = io;
     rollerState = RollerState.STOP;
 
-    PivotState currentState = PivotState.STOW;
-    switch (currentState) {
-      case STOW -> {
-
-      },
-      case DEPLOYING -> {
-        
-      },
-      case DEPLOYED -> {
-  
-      };
+    pivotState = PivotState.STOW;
   }
 
   @Override
   public void periodic() {
+    switch (pivotState) {
+      case STOW -> io.setPivotVoltage(
+          pivotController.calculate(getPivotPosition(), PivotState.STOW.position));
+      case DEPLOYING -> io.setPivotVoltage(
+          pivotController.calculate(getPivotPosition(), PivotState.DEPLOYING.position));
+      case DEPLOYED -> io.setPivotVoltage(
+          pivotController.calculate(getPivotPosition(), PivotState.DEPLOYED.position));
+      case OFF -> io.setPivotVoltage(
+          pivotController.calculate(getPivotPosition(), PivotState.OFF.position));
+      case UP -> io.setPivotVoltage(
+          pivotController.calculate(getPivotPosition(), PivotState.UP.position));
+    }
+
     io.updateInputs(inputs);
     Logger.processInputs("Roller", inputs);
     Logger.processInputs("Pivot", inputs);
@@ -77,7 +81,7 @@ public class Intake extends SubsystemBase {
   }
 
   // Pivot Setter Methods
-  public void establishPivotZero (boolean state) {
+  public void establishPivotZero(boolean state) {
     isPivotStateZeroed = state;
   }
 
@@ -93,7 +97,7 @@ public class Intake extends SubsystemBase {
     io.setPivotVoltage(targetVoltage);
   }
 
-  public void setPivotEncoderAngle(double targetAngleRadians){
+  public void setPivotEncoderAngle(double targetAngleRadians) {
     io.setPivotEncoderAngle(targetAngleRadians);
   }
 

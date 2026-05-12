@@ -14,7 +14,7 @@ public interface FlywheelIO {
     public double lowerFlywheelDutyCycle = 0.0;
 
     public double upperFlywheelVelocityRPM = 0.0;
-    public double upperFlywheelCurrent = 0.0; 
+    public double upperFlywheelCurrent = 0.0;
     public double upperFlywheelDutyCycle = 0.0;
   }
 

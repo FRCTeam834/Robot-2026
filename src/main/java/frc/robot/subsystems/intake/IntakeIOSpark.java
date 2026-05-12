@@ -105,7 +105,7 @@ public class IntakeIOSpark implements IntakeIO {
   }
 
   @Override
-  public void setPivotEncoderAngle(double targetAngleRadians){
+  public void setPivotEncoderAngle(double targetAngleRadians) {
     pivotEncoder.setPosition(targetAngleRadians);
   }
 

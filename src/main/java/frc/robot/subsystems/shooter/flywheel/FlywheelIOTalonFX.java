@@ -13,7 +13,6 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 
-
 public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX lowerFlywheelMotor;
   private final TalonFX upperFlywheelMotor;
@@ -21,7 +20,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFXConfiguration flywheelConfig;
 
   public FlywheelIOTalonFX() {
-    lowerFlywheelMotor = new TalonFX(9); 
+    lowerFlywheelMotor = new TalonFX(9);
     upperFlywheelMotor = new TalonFX(10);
     velocityRequest = new VelocityVoltage(0.0).withSlot(0);
     flywheelConfig = new TalonFXConfiguration();
@@ -39,16 +38,21 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     upperFlywheelMotor.getConfigurator().apply(flywheelConfig);
     lowerFlywheelMotor.getConfigurator().apply(flywheelConfig);
 
-    upperFlywheelMotor.setControl(new Follower(lowerFlywheelMotor.getDeviceID(), MotorAlignmentValue.Opposed));
+    upperFlywheelMotor.setControl(
+        new Follower(lowerFlywheelMotor.getDeviceID(), MotorAlignmentValue.Opposed));
   }
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
-    inputs.lowerFlywheelVelocityRPM = lowerFlywheelMotor.getVelocity().getValueAsDouble()*60; //mult by 60 to go from rot/sec to rot/min
+    inputs.lowerFlywheelVelocityRPM =
+        lowerFlywheelMotor.getVelocity().getValueAsDouble()
+            * 60; // mult by 60 to go from rot/sec to rot/min
     inputs.lowerFlywheelCurrent = lowerFlywheelMotor.getTorqueCurrent().getValueAsDouble();
     inputs.lowerFlywheelDutyCycle = lowerFlywheelMotor.getDutyCycle().getValueAsDouble();
 
-    inputs.upperFlywheelVelocityRPM = upperFlywheelMotor.getVelocity().getValueAsDouble()*60; //mult by 60 to go from rot/sec to rot/min
+    inputs.upperFlywheelVelocityRPM =
+        upperFlywheelMotor.getVelocity().getValueAsDouble()
+            * 60; // mult by 60 to go from rot/sec to rot/min
     inputs.upperFlywheelCurrent = upperFlywheelMotor.getTorqueCurrent().getValueAsDouble();
     inputs.upperFlywheelDutyCycle = upperFlywheelMotor.getDutyCycle().getValueAsDouble();
   }
