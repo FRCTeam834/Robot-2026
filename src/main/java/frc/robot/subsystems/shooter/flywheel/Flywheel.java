@@ -49,6 +49,8 @@ public class Flywheel extends SubsystemBase {
                 (state) -> Logger.recordOutput("FlywheelSysIdTestState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (Voltage voltage) -> io.setFlywheelVoltage(voltage.in(Units.Volts)), null, this));
+
+    currentState = FlywheelState.STOP;
   }
 
   @Override
@@ -68,7 +70,6 @@ public class Flywheel extends SubsystemBase {
       io.updateFlywheelPID(flywheelConfig);
     }
 
-    currentState = FlywheelState.STOP;
     switch (currentState) {
       case ACTIVE -> {
         flywheelSetpointRPM = ShotCalculator.flywheelRPMForDistance(distanceFromHub.getAsDouble());
@@ -153,6 +154,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   public boolean flywheelRPMAtSetpoint(double targetRPM) {
+    targetRPM = flywheelSetpointRPM;
     return Math.abs(targetRPM - inputs.upperFlywheelVelocityRPM) <= FlywheelConstants.toleranceRPM
         && Math.abs(targetRPM - inputs.lowerFlywheelVelocityRPM) <= FlywheelConstants.toleranceRPM;
   }
