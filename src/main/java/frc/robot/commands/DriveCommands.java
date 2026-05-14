@@ -60,6 +60,53 @@ public class DriveCommands {
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
    */
+
+   
+  public static Command alignToAngle(
+      Drive drive,
+      Supplier<Rotation2d> targetAngleSupplier,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier) {
+
+    ProfiledPIDController driveController =
+        new ProfiledPIDController(
+            ANGLE_KP,
+            0.0,
+            ANGLE_KD,
+            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+
+    driveController.enableContinuousInput(-Math.PI, Math.PI);
+    driveController.setTolerance(Math.toRadians(1.5));
+
+    return Commands.run(
+            () -> {
+              Translation2d linearVelocity =
+                  getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+              double omega =
+                  driveController.calculate(
+                      drive.getRotation().getRadians(), targetAngleSupplier.get().getRadians());
+              ChassisSpeeds speeds =
+                  new ChassisSpeeds(
+                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                      omega);
+
+              boolean isFlipped =
+                  DriverStation.getAlliance().isPresent()
+                      && DriverStation.getAlliance().get() == Alliance.Red;
+
+              drive.runVelocity(
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
+                      speeds,
+                      isFlipped
+                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                          : drive.getRotation()));
+            },
+            drive)
+        .beforeStarting(() -> driveController.reset(drive.getRotation().getRadians()));
+  }
+
+
   public static Command joystickDrive(
       Drive drive,
       DoubleSupplier xSupplier,

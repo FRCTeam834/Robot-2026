@@ -65,7 +65,6 @@ public class IntakeInlineCommands {
           },
           RobotContainer.intake);
 
-  // nest command with deployedPivot after setting the pivot state to up?
   public static Command joltPivot =
       Commands.run(
               () -> RobotContainer.intake.setDesiredPivotState(PivotState.UP),
