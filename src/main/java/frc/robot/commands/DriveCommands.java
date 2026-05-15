@@ -57,11 +57,6 @@ public class DriveCommands {
         .getTranslation();
   }
 
-  /**
-   * Field relative drive command using two joysticks (controlling linear and angular velocities).
-   */
-
-   
   public static Command alignToAngle(
       Drive drive,
       Supplier<Rotation2d> targetAngleSupplier,
@@ -85,7 +80,7 @@ public class DriveCommands {
               double omega =
                   driveController.calculate(
                       drive.getRotation().getRadians(), targetAngleSupplier.get().getRadians());
-              ChassisSpeeds speeds =
+              ChassisSpeeds chassisSpeeds =
                   new ChassisSpeeds(
                       linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                       linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
@@ -97,15 +92,17 @@ public class DriveCommands {
 
               drive.runVelocity(
                   ChassisSpeeds.fromFieldRelativeSpeeds(
-                      speeds,
-                      isFlipped
-                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                          : drive.getRotation()));
+                      chassisSpeeds,
+                      isFlipped ? 
+                      drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
             },
             drive)
         .beforeStarting(() -> driveController.reset(drive.getRotation().getRadians()));
   }
 
+  /**
+   * Field relative drive command using two joysticks (controlling linear and angular velocities).
+   */
 
   public static Command joystickDrive(
       Drive drive,

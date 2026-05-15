@@ -149,7 +149,7 @@ public class Flywheel extends SubsystemBase {
 
   // Miscellaneous Methods
 
-  public double getFlywheelSetpointRPM() {
+  public double getFlywheelVelocitySetpoint() {
     return flywheelSetpointRPM;
   }
 
