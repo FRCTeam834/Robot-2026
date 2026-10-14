@@ -6,56 +6,89 @@ package frc.robot.subsystems.shooter.flywheel;
 
 import static edu.wpi.first.units.Units.RPM;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
-  private final TalonFX flywheelMotor;
-  private final VelocityTorqueCurrentFOC velocitySetpoint;
+  private final TalonFX flywheelMotor1;
+  private final TalonFX flywheelMotor2;
+
+  private final VelocityTorqueCurrentFOC velocityTorqueRequest =
+      new VelocityTorqueCurrentFOC(0.0).withSlot(0);
+  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0).withSlot(0);
+  private final VoltageOut voltageRequest = new VoltageOut(0.0);
 
   public FlywheelIOTalonFX() {
-    flywheelMotor = new TalonFX(30);
-    velocitySetpoint = new VelocityTorqueCurrentFOC(0.0).withSlot(0);
+    flywheelMotor1 = new TalonFX(30);
+    flywheelMotor2 = new TalonFX(32);
 
     var flywheelConfig = new TalonFXConfiguration();
     flywheelConfig.withSlot0(FlywheelConstants.flywheelConfig);
+
     flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    flywheelConfig.CurrentLimits.StatorCurrentLimit = 50;
-    flywheelMotor.getConfigurator().apply(flywheelConfig);
+    flywheelConfig.CurrentLimits.StatorCurrentLimit = 60;
+    flywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    flywheelMotor1.getConfigurator().apply(flywheelConfig);
+    flywheelMotor2.getConfigurator().apply(flywheelConfig);
+
+    flywheelMotor2.setControl(
+        new Follower(flywheelMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50,
+        flywheelMotor1.getVelocity(),
+        flywheelMotor1.getTorqueCurrent(),
+        flywheelMotor1.getDutyCycle(),
+        flywheelMotor2.getTorqueCurrent(),
+        flywheelMotor2.getDutyCycle());
+
+    flywheelMotor1.optimizeBusUtilization();
+    flywheelMotor2.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
-    inputs.flywheelConnected = flywheelMotor.isConnected();
-    inputs.flywheelVelocityRPM = flywheelMotor.getVelocity().getValue().in(RPM);
-    inputs.flywheelCurrent = flywheelMotor.getTorqueCurrent().getValueAsDouble();
-    inputs.flywheelDutyCycle = flywheelMotor.getDutyCycle().getValueAsDouble();
+    // inputs.ONE_flywheelConnected = flywheelMotor1.isConnected();
+    inputs.ONE_flywheelVelocityRPM = flywheelMotor1.getVelocity().getValue().in(RPM);
+    inputs.ONE_flywheelCurrent = flywheelMotor1.getTorqueCurrent().getValueAsDouble();
+    inputs.ONE_flywheelDutyCycle = flywheelMotor1.getDutyCycle().getValueAsDouble();
+
+    // inputs.TWO_flywheelConnected = flywheelMotor2.isConnected();
+    inputs.TWO_flywheelCurrent = flywheelMotor2.getTorqueCurrent().getValueAsDouble();
+    inputs.TWO_flywheelDutyCycle = flywheelMotor2.getDutyCycle().getValueAsDouble();
   }
 
   /*
    * -1 to 1
    */
   @Override
-  public void setFlywheelDutyCycle(double dutyCycle) {
-    flywheelMotor.setControl(new DutyCycleOut(dutyCycle));
+  public void setFlywheelVoltage(double volts) {
+    flywheelMotor1.setControl(voltageRequest.withOutput(volts));
   }
 
   @Override
   public void setFlywheelVelocity(double targetRPM) {
-    flywheelMotor.setControl(velocitySetpoint.withVelocity(RPM.of(targetRPM)));
+    // flywheelMotor1.setControl(velocityTorqueRequest.withVelocity(RPM.of(targetRPM)));
+    flywheelMotor1.setControl(velocityVoltageRequest.withVelocity(RPM.of(targetRPM)).withSlot(0));
   }
 
   @Override
   public void updateClosedLoopConfig(Slot0Configs config) {
-    flywheelMotor.getConfigurator().apply(config);
+    flywheelMotor1.getConfigurator().apply(config);
   }
 
   @Override
   public void stopMotor() {
-    flywheelMotor.stopMotor();
+    flywheelMotor1.stopMotor();
   }
 }

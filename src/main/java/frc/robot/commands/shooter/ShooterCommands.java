@@ -50,7 +50,7 @@ public class ShooterCommands {
   }
 
   public static Command shootWhenReadyManualVelocity(
-      double rpm, Flywheel flywheel, Kicker kicker, Intake intake, Indexer indexer) {
+      double rpm, Flywheel flywheel, Kicker kicker, Intake intake) {
     Debouncer flywheelReady = new Debouncer(0.25);
     return Commands.sequence(
             // clear the shooter
@@ -59,22 +59,22 @@ public class ShooterCommands {
                   kicker.setDesiredState(KickerState.STOP);
                   flywheel.setVelocitySetpoint(rpm);
                   flywheel.setDesiredState(FlywheelState.MANUAL_RPM);
-                  intake.setDesiredRollerState(RollerState.STOP);
+                  intake.setDesiredRollerState(RollerState.SLOW);
                 },
                 flywheel),
             Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM())),
             Commands.run(
                     () -> {
                       kicker.setDesiredState(KickerState.FEED);
-                      indexer.setDesiredIndexerState(IndexerState.SLOW);
                     },
-                    kicker,
-                    indexer)
-                .alongWith(IntakeCommands.shootingSequenceJolt().repeatedly()))
+                    kicker)
+                .alongWith(
+                    IntakeCommands.shootingSequenceJolt()
+                        .repeatedly()
+                        .beforeStarting(Commands.waitSeconds(0.25)))) // 0.5))
         .finallyDo(
             (interrupted) -> {
               kicker.setDesiredState(KickerState.STOP);
-              indexer.setDesiredIndexerState(IndexerState.STOP);
               flywheel.setDesiredState(FlywheelState.IDLE);
               intake.setDesiredRollerState(RollerState.FAST);
               intake.setDesiredPivotState(PivotState.DEPLOYING);
@@ -117,21 +117,18 @@ public class ShooterCommands {
       Flywheel flywheel,
       Kicker kicker,
       Intake intake,
-      Indexer indexer,
       Drive drive) {
-    Debouncer flywheelReady = new Debouncer(0.5);
+    Debouncer flywheelReady = new Debouncer(0.25);
     return Commands.sequence(
             // phase 1
             Commands.runOnce(
                 () -> {
-                  flywheel.setDesiredState(FlywheelState.ACTIVE);
                   kicker.setDesiredState(KickerState.STOP);
-                  indexer.setDesiredIndexerState(IndexerState.SLOW);
-                  intake.setDesiredRollerState(RollerState.SLOW);
+                  flywheel.setDesiredState(FlywheelState.ACTIVE);
+                  intake.setDesiredRollerState(RollerState.STOP);
                 },
                 flywheel,
                 kicker,
-                indexer,
                 intake),
 
             // phase 2
@@ -139,34 +136,24 @@ public class ShooterCommands {
                 ? Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM()))
                     .alongWith(
                         DriveCommands.AlignToAngleWithTolerance(
-                            drive, xSupplier, ySupplier, drive::getFieldRelativeHUBAngle, 5))
+                            drive, xSupplier, ySupplier, drive::getFieldRelativeHUBAngle, 2))
                 : Commands.waitUntil(() -> flywheelReady.calculate(flywheel.isAtSetpointRPM())),
 
             // phase 3, shoot and bring pivot up after there aren't as many balls in the hopper
             Commands.run(
                     () -> {
-                      flywheel.setDesiredState(FlywheelState.ACTIVE);
                       kicker.setDesiredState(KickerState.FEED);
-                      indexer.setDesiredIndexerState(IndexerState.FAST);
-                      intake.setDesiredRollerState(RollerState.STOP);
                     },
-                    flywheel,
-                    kicker,
-                    intake,
-                    indexer)
+                    kicker)
                 .alongWith(
-                    Commands.waitSeconds(4)
-                        .andThen(
-                            Commands.runOnce(
-                                () -> intake.setDesiredPivotState(PivotState.UP), intake))))
-
-        // when command ends
+                    IntakeCommands.shootingSequenceJolt()
+                        .repeatedly()
+                        .beforeStarting(Commands.waitSeconds(0.25)))) // 0.5
         .finallyDo(
             (interrupted) -> {
               kicker.setDesiredState(KickerState.STOP);
-              indexer.setDesiredIndexerState(IndexerState.STOP);
               flywheel.setDesiredState(FlywheelState.IDLE);
-              intake.setDesiredRollerState(RollerState.STOP);
+              intake.setDesiredRollerState(RollerState.FAST);
               intake.setDesiredPivotState(PivotState.DEPLOYING);
             });
   }

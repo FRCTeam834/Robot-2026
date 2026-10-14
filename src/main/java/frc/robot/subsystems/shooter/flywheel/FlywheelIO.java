@@ -9,17 +9,21 @@ import org.littletonrobotics.junction.AutoLog;
 public interface FlywheelIO {
   @AutoLog
   public static class FlywheelIOInputs {
-    public boolean flywheelConnected = false;
-    public double flywheelVelocityRPM;
-    public double flywheelCurrent = 0.0;
-    public double flywheelDutyCycle = 0.0;
+    // public boolean ONE_flywheelConnected = false;
+    public double ONE_flywheelVelocityRPM;
+    public double ONE_flywheelCurrent;
+    public double ONE_flywheelDutyCycle;
+
+    // public boolean TWO_flywheelConnected = false;
+    public double TWO_flywheelCurrent;
+    public double TWO_flywheelDutyCycle;
   }
 
   public default void updateInputs(FlywheelIOInputs inputs) {}
 
   public default void setFlywheelVelocity(double RPM) {}
 
-  public default void setFlywheelDutyCycle(double dutyCycle) {}
+  public default void setFlywheelVoltage(double volts) {}
 
   public default void updateClosedLoopConfig(Slot0Configs config) {}
 

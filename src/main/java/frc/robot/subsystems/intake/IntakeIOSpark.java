@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.math.MathUtil;
 
 public class IntakeIOSpark implements IntakeIO {
   // Roller
@@ -36,7 +37,7 @@ public class IntakeIOSpark implements IntakeIO {
     pivotEncoder = pivotMotor.getEncoder();
 
     pivotConfig
-        .inverted(false)
+        .inverted(true)
         .idleMode(IdleMode.kBrake)
         .voltageCompensation(12.0)
         .smartCurrentLimit(40);
@@ -64,6 +65,9 @@ public class IntakeIOSpark implements IntakeIO {
 
     rollerMotor.configure(
         rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    pivotMotor.setControlFramePeriodMs(50);
+    rollerMotor.setControlFramePeriodMs(50);
   }
 
   @Override
@@ -94,7 +98,7 @@ public class IntakeIOSpark implements IntakeIO {
 
   @Override
   public void setPivotAngle(double angle) {
-    // angle = MathUtil.clamp(angle, 0, 2.6); // up is 0 and deployed is 2.5
+    angle = MathUtil.clamp(angle, 0, 2.6); // up is 0 and deployed is 2.5
     pivotController.setSetpoint(angle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 

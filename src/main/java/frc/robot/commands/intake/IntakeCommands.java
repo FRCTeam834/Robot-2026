@@ -41,7 +41,7 @@ public class IntakeCommands {
           () -> {
             if (RobotContainer.intake.getRollersState() == RollerState.FAST) {
               RobotContainer.intake.setDesiredRollerState(RollerState.STOP);
-            } else if (RobotContainer.intake.getRollersState() == RollerState.STOP) {
+            } else {
               RobotContainer.intake.setDesiredRollerState(RollerState.FAST);
             }
           },
@@ -89,13 +89,13 @@ public class IntakeCommands {
               RobotContainer.intake.setDesiredPivotState(PivotState.STOW);
             },
             RobotContainer.intake),
-        Commands.waitSeconds(0.15),
+        Commands.waitSeconds(0.45), // 0.4
         Commands.runOnce(
             () -> {
               RobotContainer.intake.setDesiredPivotState(PivotState.DEPLOYING);
             },
             RobotContainer.intake),
-        Commands.waitSeconds(0.15));
+        Commands.waitSeconds(0.25)); // 0.25
   }
 
   public static Command dumbArm(DoubleSupplier controllerJoystickY, Intake intake) {

@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,13 +24,11 @@ import frc.robot.commands.shooter.ShooterCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIONavx3;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.indexer.IndexerIO;
-import frc.robot.subsystems.indexer.IndexerIOSparkFlex;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSpark;
@@ -43,6 +40,7 @@ import frc.robot.subsystems.shooter.kicker.KickerConstants.KickerState;
 import frc.robot.subsystems.shooter.kicker.KickerIO;
 import frc.robot.subsystems.shooter.kicker.KickerIOSpark;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOLimelight;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -71,19 +69,19 @@ public class RobotContainer {
       case REAL:
         drive =
             new Drive(
-                new GyroIOPigeon2(),
+                new GyroIONavx3(),
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOLimelight("limelight-front", drive::getRotation),
-        //         new VisionIOLimelight("limelight-right", drive::getRotation));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight("limelight-front", drive::getRotation),
+                new VisionIOLimelight("limelight-right", drive::getRotation));
 
-        indexer = new Indexer(new IndexerIOSparkFlex());
+        // indexer = new Indexer(new IndexerIOSparkFlex());
         intake = new Intake(new IntakeIOSpark());
         flywheel = new Flywheel(new FlywheelIOTalonFX(), drive::getDistanceToHub);
         kicker = new Kicker(new KickerIOSpark());
@@ -100,7 +98,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        indexer = new Indexer(new IndexerIO() {});
+        // indexer = new Indexer(new IndexerIO() {});
         intake = new Intake(new IntakeIO() {});
         flywheel = new Flywheel(new FlywheelIO() {}, drive::getDistanceToHub);
         kicker = new Kicker(new KickerIO() {});
@@ -120,14 +118,27 @@ public class RobotContainer {
     }
 
     NamedCommands.registerCommand(
-        "hubshot",
-        ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake, indexer));
+        "hubshot", ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake));
     NamedCommands.registerCommand("pivotdown", IntakeCommands.deployIntake);
     NamedCommands.registerCommand("zerointake", new ZeroIntake(intake));
     NamedCommands.registerCommand("rampup1700", ShooterCommands.rampToRPM(1700, flywheel));
+    NamedCommands.registerCommand("rampup2300", ShooterCommands.rampToRPM(2300, flywheel));
+    NamedCommands.registerCommand(
+        "2300shot", ShooterCommands.shootWhenReadyManualVelocity(2300, flywheel, kicker, intake));
+
+    NamedCommands.registerCommand(
+        "shootwhenready",
+        ShooterCommands.shootWhenReady(
+            true,
+            () -> -DRIVE_CONTROLLER.getLeftY(),
+            () -> -DRIVE_CONTROLLER.getLeftX(),
+            flywheel,
+            kicker,
+            intake,
+            drive));
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices");
 
     // Set up SysId routines
     // autoChooser.addOption(
@@ -145,7 +156,12 @@ public class RobotContainer {
     // autoChooser.addOption(
     //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    autoChooser.addOption("centerbuns", new PathPlannerAuto("centerbuns"));
+    autoChooser.addOption("middlenotbunsright", new PathPlannerAuto("middlenotbuns"));
+    autoChooser.addOption("middlenotbunsleft", new PathPlannerAuto("middlenotbuns", true));
+
+    autoChooser.addOption("EXPERIMENTALmiddleright", new PathPlannerAuto("middleDOUBLENOTBUNS"));
+    autoChooser.addOption(
+        "EXPERIMENTALmiddleleft", new PathPlannerAuto("middleDOUBLENOTBUNS", true));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -198,8 +214,7 @@ public class RobotContainer {
 
     OPERATOR_CONTROLLER.x().onTrue(IntakeCommands.toggleFastRollers);
 
-    OPERATOR_CONTROLLER.rightTrigger().onTrue(ShooterCommands.rampToRPM(1700, flywheel));
-    OPERATOR_CONTROLLER.leftTrigger().onTrue(ShooterCommands.rampToRPM(1550, flywheel));
+    OPERATOR_CONTROLLER.b().onTrue(IntakeCommands.reverseRollers);
 
     OPERATOR_CONTROLLER
         .y()
@@ -208,14 +223,24 @@ public class RobotContainer {
                 .finallyDo(() -> kicker.setDesiredState(KickerState.STOP)));
 
     DRIVE_CONTROLLER
+        .rightBumper()
+        .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(1700, flywheel, kicker, intake));
+
+    DRIVE_CONTROLLER
         .rightTrigger()
         .whileTrue(
-            ShooterCommands.shootWhenReadyManualVelocity(1700, flywheel, kicker, intake, indexer));
+            ShooterCommands.shootWhenReady(
+                true,
+                () -> -DRIVE_CONTROLLER.getLeftY(),
+                () -> -DRIVE_CONTROLLER.getLeftX(),
+                flywheel,
+                kicker,
+                intake,
+                drive));
 
     DRIVE_CONTROLLER
         .leftTrigger()
-        .whileTrue(
-            ShooterCommands.shootWhenReadyManualVelocity(1530, flywheel, kicker, intake, indexer));
+        .whileTrue(ShooterCommands.shootWhenReadyManualVelocity(2000, flywheel, kicker, intake));
 
     new JoystickButton(DRIVE_CONTROLLER.getHID(), 8).onTrue(IntakeCommands.getJoltIntake());
   }

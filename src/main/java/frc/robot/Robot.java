@@ -7,8 +7,11 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.util.HubShiftUtil;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -26,9 +29,13 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+  private final GyroIO.GyroIOInputs pigeonTestInputs;
+  private final GyroIOPigeon2 pigeonTest;
 
   public Robot() {
     // Record metadata
+    SignalLogger.enableAutoLogging(false);
+
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
@@ -69,6 +76,12 @@ public class Robot extends LoggedRobot {
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
+
+    // Pigeon Testing!
+    pigeonTest = new GyroIOPigeon2();
+    pigeonTestInputs = new GyroIO.GyroIOInputs();
+
+
     robotContainer = new RobotContainer();
   }
 
@@ -90,7 +103,15 @@ public class Robot extends LoggedRobot {
     // Threads.setCurrentThreadPriority(false, 10);
 
     // to display shift data on dashboard
-    Logger.recordOutput("HubShift/Official", HubShiftUtil.getOfficialShiftInfo());
+    Logger.recordOutput(
+        "HubShift/CurrentShift", HubShiftUtil.getOfficialShiftInfo().currentShift());
+    Logger.recordOutput(
+        "HubShift/RemainingTime", HubShiftUtil.getOfficialShiftInfo().remainingTime());
+
+    // Pigeon Test Logging
+    Logger.recordOutput("PigeonTest/Connected", pigeonTestInputs.connected);
+    Logger.recordOutput("PigeonTest/YawDeg", pigeonTestInputs.yawPosition.getDegrees());
+    Logger.recordOutput("PigeonTest/YawRateRadPerSec", pigeonTestInputs.yawVelocityRadPerSec);
   }
 
   /** This function is called once when the robot is disabled. */

@@ -12,6 +12,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.shooter.flywheel.FlywheelConstants.FlywheelState;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,7 +64,6 @@ public class Vision extends SubsystemBase {
     List<Pose3d> allTagPoses = new LinkedList<>();
     List<Pose3d> allRobotPoses = new LinkedList<>();
     List<Pose3d> allRobotPosesAccepted = new LinkedList<>();
-    List<Pose3d> allRobotPosesRejected = new LinkedList<>();
 
     // Loop over cameras
     for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
@@ -73,7 +74,6 @@ public class Vision extends SubsystemBase {
       List<Pose3d> tagPoses = new LinkedList<>();
       List<Pose3d> robotPoses = new LinkedList<>();
       List<Pose3d> robotPosesAccepted = new LinkedList<>();
-      List<Pose3d> robotPosesRejected = new LinkedList<>();
 
       // Add tag poses
       for (int tagId : inputs[cameraIndex].tagIds) {
@@ -97,16 +97,20 @@ public class Vision extends SubsystemBase {
                 || observation.pose().getX() < 0.0
                 || observation.pose().getX() > aprilTagLayout.getFieldLength()
                 || observation.pose().getY() < 0.0
-                || observation.pose().getY() > aprilTagLayout.getFieldWidth();
-        // || observation.averageTagDistance() > 3;
+                || observation.pose().getY() > aprilTagLayout.getFieldWidth()
+                || observation.averageTagDistance() > 4
+                || observation.type() == PoseObservationType.MEGATAG_1;
 
-        // Add pose to log
-        robotPoses.add(observation.pose());
-        if (rejectPose) {
-          robotPosesRejected.add(observation.pose());
-        } else {
-          robotPosesAccepted.add(observation.pose());
+        if (RobotContainer.flywheel.getState() == FlywheelState.ACTIVE && cameraIndex == 1) {
+          rejectPose = true;
         }
+        // Add pose to log
+        // robotPoses.add(observation.pose());
+        // if (rejectPose) {
+        //   robotPosesRejected.add(observation.pose());
+        // } else {
+        //   robotPosesAccepted.add(observation.pose());
+        // }
 
         // Skip if rejected
         if (rejectPose) {
@@ -115,7 +119,8 @@ public class Vision extends SubsystemBase {
 
         // Calculate standard deviations
         double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+            Math.pow(observation.averageTagDistance(), 3.5)
+                / observation.tagCount(); // original dist is 2
         double linearStdDev = linearStdDevBaseline * stdDevFactor;
         double angularStdDev = angularStdDevBaseline * stdDevFactor;
         if (observation.type() == PoseObservationType.MEGATAG_2) {
@@ -135,22 +140,22 @@ public class Vision extends SubsystemBase {
       }
 
       // Log camera metadata
-      Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
-          tagPoses.toArray(new Pose3d[0]));
-      Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
-          robotPoses.toArray(new Pose3d[0]));
-      Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
-          robotPosesAccepted.toArray(new Pose3d[0]));
-      Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
-          robotPosesRejected.toArray(new Pose3d[0]));
-      allTagPoses.addAll(tagPoses);
-      allRobotPoses.addAll(robotPoses);
-      allRobotPosesAccepted.addAll(robotPosesAccepted);
-      allRobotPosesRejected.addAll(robotPosesRejected);
+      // Logger.recordOutput(
+      //     "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
+      //     tagPoses.toArray(new Pose3d[0]));
+      // Logger.recordOutput(
+      //     "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
+      //     robotPoses.toArray(new Pose3d[0]));
+      // Logger.recordOutput(
+      //     "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
+      //     robotPosesAccepted.toArray(new Pose3d[0]));
+      // Logger.recordOutput(
+      //     "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
+      //     robotPosesRejected.toArray(new Pose3d[0]));
+      // allTagPoses.addAll(tagPoses);
+      // allRobotPoses.addAll(robotPoses);
+      // allRobotPosesAccepted.addAll(robotPosesAccepted);
+      // allRobotPosesRejected.addAll(robotPosesRejected);
     }
 
     // Log summary data
@@ -158,8 +163,6 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput("Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[0]));
     Logger.recordOutput(
         "Vision/Summary/RobotPosesAccepted", allRobotPosesAccepted.toArray(new Pose3d[0]));
-    Logger.recordOutput(
-        "Vision/Summary/RobotPosesRejected", allRobotPosesRejected.toArray(new Pose3d[0]));
   }
 
   @FunctionalInterface

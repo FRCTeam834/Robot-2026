@@ -19,7 +19,12 @@ public class ShotCalculator {
     shotSpeedTable.put(100.0, 4600.0);
   }
 
+  // public static double flywheelRPMForDistance(double meters) {
+  //   return shotSpeedTable.get(meters);
+  // }
+
   public static double flywheelRPMForDistance(double meters) {
-    return shotSpeedTable.get(meters);
+    return (175.58867 * (meters) + 1190.08186);
+    // return (129.65113 * (meters * meters) - 204.80128 * (meters) + 1300.53219);
   }
 }

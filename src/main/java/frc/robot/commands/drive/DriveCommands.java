@@ -8,14 +8,13 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -113,12 +112,8 @@ public class DriveCommands {
       double toleranceDeg) {
 
     // Create PID controller
-    ProfiledPIDController angleController =
-        new ProfiledPIDController(
-            ANGLE_KP,
-            0.0,
-            ANGLE_KD,
-            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+    PIDController angleController = new PIDController(ANGLE_KP, 0.0, ANGLE_KD);
+
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Construct command
@@ -152,11 +147,12 @@ public class DriveCommands {
             drive)
         .onlyWhile(
             () -> {
-              return Math.abs(angleController.getPositionError()) > Math.toRadians(toleranceDeg);
+              return !MathUtil.isNear(
+                  rotationSupplier.get().getRadians(),
+                  drive.getRotation().getRadians(),
+                  Math.toRadians(toleranceDeg));
             })
-
-        // Reset PID controller when command starts
-        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+        .finallyDo(drive::stop);
   }
 
   /**

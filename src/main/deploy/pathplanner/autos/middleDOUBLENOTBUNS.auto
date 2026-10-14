@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "pivotdown"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Left1"
+            "pathName": "double-1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "double-2"
           }
         },
         {
@@ -17,22 +29,34 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "hubshot"
+                  "name": "shootwhenready"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 6.0
+                  "waitTime": 3.5
                 }
               }
             ]
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "pivotdown"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Left2"
+            "pathName": "double-3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "double-4"
           }
         },
         {
@@ -42,22 +66,16 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "pivotdown"
+                  "name": "shootwhenready"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 4.0
+                  "waitTime": 3.5
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "center-2"
           }
         }
       ]

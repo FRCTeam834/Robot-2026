@@ -5,11 +5,9 @@
 
 package frc.robot.subsystems.intake;
 
-import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.intake.IntakeConstants.PivotState;
 import frc.robot.subsystems.intake.IntakeConstants.RollerState;
 import frc.robot.util.LoggedTunableNumber;
@@ -24,7 +22,7 @@ public class Intake extends SubsystemBase {
   public static final LoggedTunableNumber pivot_kS = new LoggedTunableNumber("Intake/pivot_kS");
   public static final LoggedTunableNumber pivot_kV = new LoggedTunableNumber("Intake/pivot_kV");
 
-  private final PIDController pivotController = new PIDController(2, 0, 0);
+  private final PIDController pivotController = new PIDController(2.5, 0, 0);
 
   @AutoLogOutput(key = "SubsystemStates/rollerState")
   private RollerState rollerState;
@@ -52,19 +50,6 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
 
-    // Pivot Tuning
-    if (Constants.TUNING_MODE
-        && (pivot_kP.hasChanged(hashCode())
-            || pivot_kS.hasChanged(hashCode())
-            || pivot_kV.hasChanged(hashCode()))) {
-
-      var pivotConfig = new SparkFlexConfig();
-      pivotConfig.closedLoop.p(pivot_kP.get());
-      pivotConfig.closedLoop.feedForward.kS(pivot_kS.get()).kV(pivot_kV.get());
-
-      io.updateClosedLoopConfig(pivotConfig);
-    }
-
     // handle the transition from deploying to deployed
 
     if (pivotState == PivotState.DEPLOYING
@@ -80,7 +65,7 @@ public class Intake extends SubsystemBase {
           pivotController.calculate(getCurrentPivotAngle(), PivotState.UP.position));
       case STOW -> io.setPivotVoltage(
           pivotController.calculate(getCurrentPivotAngle(), PivotState.STOW.position));
-      case DEPLOYED -> io.setPivotVoltage(0.1);
+      case DEPLOYED -> io.setPivotVoltage(0.07);
       case OFF -> {}
     }
 

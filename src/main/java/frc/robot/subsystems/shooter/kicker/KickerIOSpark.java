@@ -32,6 +32,8 @@ public class KickerIOSpark implements KickerIO {
 
     kickerMotor.configure(
         kickerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    kickerMotor.setControlFramePeriodMs(50);
   }
 
   @Override
