@@ -22,7 +22,8 @@ public class GyroIONavx3 extends SubsystemBase implements GyroIO {
   public GyroIONavx3() {
     navx = new Navx(20, 100);
 
-    int err = navx.enableOptionalMessages(true, true, true, true, true, true, true, true, true, true);
+    int err =
+        navx.enableOptionalMessages(true, true, true, true, true, true, true, true, true, true);
     if (err == 1) System.out.println("!!NAVX3 MESSAGE ENABLE ERROR!!");
 
     yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
